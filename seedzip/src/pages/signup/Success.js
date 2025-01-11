@@ -16,7 +16,7 @@ const Success = ({ navigation }) => {
       </View>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('birthday')}
+        onPress={() => navigation.navigate('main')}
       >
         <Text style={styles.buttonText}>홈으로 가기</Text>
       </TouchableOpacity>

@@ -1,96 +1,134 @@
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import React, { useState } from 'react';
-import Checkbox from 'expo-checkbox';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import DropDownPicker from 'react-native-dropdown-picker';
 
-const Consent = ({ navigation }) => {
-  const [checked, setChecked] = React.useState([false, false, false]);
+const Birthday = ({ navigation }) => {
+  const [open, setOpen] = useState(false);
+  const [monthOpen, setMonthOpen] = useState(false);
+  const [dayOpen, setDayOpen] = useState(false);
+  const [year, setYear] = React.useState('');
+  const [month, setMonth] = React.useState('');
+  const [day, setDay] = React.useState('');
   const [touched, setTouched] = useState(false);
 
-  const handleChange1 = (value) => {
-    setChecked([value, value, value]);
-    setTouched(true);
-  };
+  const years = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({ length: currentYear - 1970 + 1 }, (_, i) => ({
+      label: `${currentYear - i}`,
+      value: currentYear - i,
+    }));
+  }, []);
 
-  const handleChange2 = (value) => {
-    setChecked([value, checked[1], checked[2]]);
-    setTouched(true);
-  };
+  const months = useMemo(
+    () =>
+      Array.from({ length: 12 }, (_, i) => ({
+        label: `${(i + 1).toString().padStart(2, '0')}`, // 한 자리수일 경우 0 추가
+        value: i + 1,
+      })),
+    [],
+  );
 
-  const handleChange3 = (value) => {
-    setChecked([checked[0], value, checked[2]]);
-    setTouched(true);
-  };
+  const days = useMemo(
+    () =>
+      Array.from({ length: 31 }, (_, i) => ({
+        label: `${(i + 1).toString().padStart(2, '0')}`, // 한 자리수일 경우 0 추가
+        value: i + 1,
+      })),
+    [],
+  );
+  const [items, setItems] = useState(years);
+  const [monthItem, setMonthItem] = useState(months);
+  const [dayItem, setDayItem] = useState(days);
 
-  const handleChange4 = (value) => {
-    setChecked([checked[0], checked[1], value]);
-  };
-
-  const error = touched && (!checked[0] || !checked[1]);
+  const error = touched && (!year || !month || !day);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        seedzip 회원가입을 위한 {'\n'}약관에 동의해주세요
-      </Text>
-      {!error || !touched ? (
-        <Text style={styles.short}>
-          여기저기 흩어진 링크와 사진을 seedzip에 모아요!
-        </Text>
-      ) : (
-        <Text style={[styles.short, { color: 'red' }]}>
-          필수 약관에 모두 동의해주세요
-        </Text>
+      <Text style={styles.title}>생년원일을 입력해주세요</Text>
+      <View style={styles.picker}>
+        <View style={{ zIndex: 3 }}>
+          <DropDownPicker
+            placeholder="YYYY"
+            open={open}
+            value={year}
+            items={items}
+            setOpen={(open) => {
+              setOpen(open);
+              if (!touched) setTouched(true);
+            }}
+            setValue={setYear}
+            setItems={setItems}
+            style={{ width: 145, borderColor: '#DCDADA' }}
+            dropDownContainerStyle={{ width: 145, borderColor: '#DCDADA' }}
+            zIndex={3000}
+            zIndexInverse={1000}
+            textStyle={{
+              fontSize: 20,
+              fontWeight: 400,
+            }}
+            placeholderStyle={{
+              color: '#DCDADA',
+            }}
+          />
+        </View>
+        <View style={{ zIndex: 2 }}>
+          <DropDownPicker
+            placeholder="MM"
+            open={monthOpen}
+            value={month}
+            items={monthItem}
+            setOpen={(open) => {
+              setMonthOpen(open);
+              if (!touched) setTouched(true);
+            }}
+            setValue={setMonth}
+            setItems={setMonthItem}
+            style={{ width: 93, borderColor: '#DCDADA' }}
+            dropDownContainerStyle={{ width: 93, borderColor: '#DCDADA' }}
+            zIndex={2000}
+            zIndexInverse={2000}
+            textStyle={{
+              fontSize: 20,
+              fontWeight: 400,
+            }}
+            placeholderStyle={{
+              color: '#DCDADA',
+            }}
+          />
+        </View>
+        <View style={{ zIndex: 1 }}>
+          <DropDownPicker
+            placeholder="DD"
+            open={dayOpen}
+            value={day}
+            items={dayItem}
+            setOpen={(open) => {
+              setDayOpen(open);
+              if (!touched) setTouched(true);
+            }}
+            setValue={setDay}
+            setItems={setDayItem}
+            style={{ width: 93, borderColor: '#DCDADA' }}
+            dropDownContainerStyle={{ width: 93, borderColor: '#DCDADA' }}
+            zIndex={1000}
+            zIndexInverse={3000}
+            textStyle={{
+              fontSize: 20,
+              fontWeight: 400,
+            }}
+            placeholderStyle={{
+              color: '#DCDADA',
+            }}
+          />
+        </View>
+      </View>
+      {error && (
+        <Text style={styles.error}>생년원일을 모두 입력하지 않았어요</Text>
       )}
-      <View style={styles.check}>
-        <Text style={styles.all}>전체 동의</Text>
-        <Checkbox
-          style={styles.checkbox}
-          value={checked[0] && checked[1] && checked[2]}
-          onValueChange={handleChange1}
-          color={checked[0] && checked[1] && checked[2] ? '#41C3AB' : '#9F9F9F'}
-        />
-      </View>
-      <View style={styles.line} />
-      <View style={styles.check}>
-        <Text style={styles.option}>
-          <Text style={{ color: 'red' }}>(필수)</Text> 서비스 이용 약관 {'>'}
-        </Text>
-        <Checkbox
-          style={styles.checkbox}
-          value={checked[0]}
-          onValueChange={handleChange2}
-          color={checked[0] ? '#41C3AB' : '#9F9F9F'}
-        />
-      </View>
-      <View style={styles.check}>
-        <Text style={styles.option}>
-          <Text style={{ color: 'red' }}>(필수)</Text> 개인정보 수집 및 이용동의{' '}
-          {'>'}
-        </Text>
-        <Checkbox
-          style={styles.checkbox}
-          value={checked[1]}
-          onValueChange={handleChange3}
-          color={checked[1] ? '#41C3AB' : '#9F9F9F'}
-        />
-      </View>
-      <View style={styles.check}>
-        <Text style={styles.option}>
-          (선택) 마케팅 활용 및 광고성 정보 수신 동의 {'>'}
-        </Text>
-        <Checkbox
-          style={styles.checkbox}
-          value={checked[2]}
-          onValueChange={handleChange4}
-          color={checked[2] ? '#41C3AB' : '#9F9F9F'}
-        />
-      </View>
       <TouchableOpacity
         style={styles.button}
         disabled={error || !touched}
-        onPress={() => {
-          navigation.navigate('success'), setTouched(true);
-        }}
+        onPress={() => navigation.navigate('field')}
       >
         <Text style={styles.buttonText}>다음</Text>
       </TouchableOpacity>
@@ -102,17 +140,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    zIndex: 3000,
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
-  title: { marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4 },
-  short: {
-    color: '#898989',
-    fontWeight: 400,
-    fontSize: 14,
-    marginBottom: 28,
+  title: { marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 20 },
+  input: {
+    borderBottomWidth: 1,
+    fontSize: 20,
+    paddingBottom: 13,
   },
-
   button: {
     border: 0,
     borderRadius: 10,
@@ -134,33 +171,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 8,
   },
-  check: {
+  picker: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  line: {
-    height: 1,
-    backgroundColor: '#DCDADA',
-    marginTop: 4,
-    marginBottom: 16,
-  },
-  all: {
-    color: '#4F4F4F',
-    fontWeight: 600,
-    fontSize: 18,
-  },
-  option: {
-    fontWeight: 400,
-    fontSize: 16,
-    color: '#4F4F4F',
-  },
-  checkbox: {
-    width: 16,
-    height: 16,
-    border: 1,
+    columnGap: 9,
+    zIndex: 1,
   },
 });
 
-export default Consent;
+export default Birthday;

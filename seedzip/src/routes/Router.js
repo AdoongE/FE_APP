@@ -7,6 +7,7 @@ import Consent from '../pages/signup/Consent';
 import Success from '../pages/signup/Success';
 import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
+import Home from '../pages/Home';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +47,7 @@ function Router() {
           headerShown: false,
         }}
       />
+      <Stack.Screen name="main" component={Home} />
     </Stack.Navigator>
   );
 }
