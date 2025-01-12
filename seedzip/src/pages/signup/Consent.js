@@ -2,8 +2,9 @@ import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import React, { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 
-const Consent = ({ navigation }) => {
-  const [checked, setChecked] = React.useState([false, false, false]);
+const Consent = ({ navigation, route }) => {
+  const { nickname, birthday, occupation, field } = route.params;
+  const [checked, setChecked] = useState([false, false, false]);
   const [touched, setTouched] = useState(false);
 
   const handleChange1 = (value) => {
@@ -26,6 +27,18 @@ const Consent = ({ navigation }) => {
   };
 
   const error = touched && (!checked[0] || !checked[1]);
+
+  const handleNext = () => {
+    navigation.navigate('success', {
+      nickname,
+      birthday,
+      occupation,
+      field,
+      consentToTermsOfService: checked[0],
+      consentToPersonalInformation: checked[1],
+      consentToMarketingAndAds: checked[2],
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -88,9 +101,7 @@ const Consent = ({ navigation }) => {
       <TouchableOpacity
         style={styles.button}
         disabled={error || !touched}
-        onPress={() => {
-          navigation.navigate('success'), setTouched(true);
-        }}
+        onPress={handleNext}
       >
         <Text style={styles.buttonText}>다음</Text>
       </TouchableOpacity>

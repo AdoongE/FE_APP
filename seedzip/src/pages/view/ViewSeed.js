@@ -5,6 +5,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 // import { Icon } from 'react-native-vector-icons/Ionicons';
 // import { axiosInstance } from './api/axios-instance';
 import ThumbnailModal from './ThumbnailModal';
+import axiosInstance from '../../api/axios-instance';
 
 function ViewContent() {
   const navigation = useNavigation();

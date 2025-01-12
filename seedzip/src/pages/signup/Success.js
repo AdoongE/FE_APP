@@ -2,11 +2,35 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import Check from '../../assets/icons/check.png';
 import { SignUpHandler } from '../../api/SignUpApi';
+import { useRoute } from '@react-navigation/native';
 
 const Success = ({ navigation }) => {
+  const route = useRoute();
+  const {
+    nickname,
+    birthday,
+    occupation,
+    field,
+    consentToTermsOfService,
+    consentToPersonalInformation,
+    consentToMarketingAndAds,
+  } = route.params;
+  const gender = 'FEMALE'; // 성별 페이지 생성 이후 수정
+
   const handleSignupAndNavigate = async () => {
+    const formData = {
+      nickname,
+      birthday,
+      gender,
+      occupation,
+      field,
+      consentToTermsOfService,
+      consentToPersonalInformation,
+      consentToMarketingAndAds,
+    };
+
     try {
-      const result = await SignUpHandler();
+      const result = await SignUpHandler(formData);
       if (result?.data?.status?.code === 200) {
         alert('회원가입 성공: ' + result.data.status.message);
         navigation.navigate('main');

@@ -67,7 +67,7 @@ const Nickname = ({ navigation }) => {
       <TouchableOpacity
         style={styles.button}
         disabled={!touched || error !== false || nickname.trim() === ''}
-        onPress={() => navigation.navigate('birthday')}
+        onPress={() => navigation.navigate('birthday', { nickname })}
       >
         <Text style={styles.buttonText}>다음</Text>
       </TouchableOpacity>

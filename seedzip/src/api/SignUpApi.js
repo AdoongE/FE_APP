@@ -9,29 +9,17 @@ const SignUpHandler = async (data) => {
     console.log('AccessToken 회원가입: ', AccessToken);
     console.log('SocialType 회원가입: ', SocialType);
 
-    // const requestData = {
-    //     socialType: SocialType,
-    //     accessToken: AccessToken,
-    //     nickname: data.nickname,
-    //     birthday: data.birthday,
-    //     gender: data.gender,
-    //     occupation: data.occupation,
-    //     field: data.field,
-    //     consentToTermsOfService: data.consentToTermsOfService,
-    //     consentToPersonalInformation: data.consentToPersonalInformation,
-    //     consentToMarketingAndAds: data.consentToMarketingAndAds,
-    // };
     const requestData = {
         socialType: SocialType,
         accessToken: AccessToken,
-        nickname: 'M70cG',
-        birthday: '2025-01-12',
-        gender: 'MALE',
-        occupation: 'string',
-        field: 'string',
-        consentToTermsOfService: true,
-        consentToPersonalInformation: true,
-        consentToMarketingAndAds: true,
+        nickname: data.nickname,
+        birthday: data.birthday,
+        gender: data.gender,
+        occupation: data.occupation,
+        field: data.field,
+        consentToTermsOfService: data.consentToTermsOfService,
+        consentToPersonalInformation: data.consentToPersonalInformation,
+        consentToMarketingAndAds: data.consentToMarketingAndAds,
     };
 
     console.log('회원가입 요청 데이터:', requestData);
@@ -41,7 +29,7 @@ const SignUpHandler = async (data) => {
         if (response.data.status.code === 200) {
         console.log('회원가입 성공: ', response.data.status.message);
 
-        const jwtToken = response.headers['authorization'];
+        const jwtToken = response.headers.authorization;
 
         await AsyncStorage.setItem('jwtToken', jwtToken);
         const savedJwtToken = AsyncStorage.getItem('jwtToken');

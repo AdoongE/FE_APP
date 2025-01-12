@@ -2,7 +2,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState, useMemo } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-const Birthday = ({ navigation }) => {
+const Birthday = ({ navigation, route }) => {
+  const { nickname } = route.params;
   const [open, setOpen] = useState(false);
   const [monthOpen, setMonthOpen] = useState(false);
   const [dayOpen, setDayOpen] = useState(false);
@@ -42,9 +43,16 @@ const Birthday = ({ navigation }) => {
 
   const error = touched && (!year || !month || !day);
 
+  const handleNext = () => {
+    const formattedMonth = month.toString().padStart(2, '0');
+    const formattedDay = day.toString().padStart(2, '0');
+    const birthday = `${year}-${formattedMonth}-${formattedDay}`;
+    navigation.navigate('field', { nickname, birthday });
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>생년원일을 입력해주세요</Text>
+      <Text style={styles.title}>생년월일을 입력해주세요</Text>
       <View style={styles.picker}>
         <View style={{ zIndex: 3 }}>
           <DropDownPicker
@@ -123,12 +131,12 @@ const Birthday = ({ navigation }) => {
         </View>
       </View>
       {error && (
-        <Text style={styles.error}>생년원일을 모두 입력하지 않았어요</Text>
+        <Text style={styles.error}>생년월일을 모두 입력하지 않았어요</Text>
       )}
       <TouchableOpacity
         style={styles.button}
         disabled={error || !touched}
-        onPress={() => navigation.navigate('field')}
+        onPress={handleNext}
       >
         <Text style={styles.buttonText}>다음</Text>
       </TouchableOpacity>
