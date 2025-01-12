@@ -1,0 +1,62 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { axiosInstance } from './axios-instance';
+
+
+const SignUpHandler = async () => {
+    const AccessToken = await AsyncStorage.getItem('accessToken');
+    const SocialType = await AsyncStorage.getItem('socialType');
+
+    console.log('AccessToken 회원가입: ', AccessToken);
+    console.log('SocialType 회원가입: ', SocialType);
+
+    // const requestData = {
+    //     socialType: SocialType,
+    //     accessToken: AccessToken,
+    //     nickname: data.nickname,
+    //     birthday: data.birthday,
+    //     gender: data.gender,
+    //     occupation: data.occupation,
+    //     field: data.field,
+    //     consentToTermsOfService: data.consentToTermsOfService,
+    //     consentToPersonalInformation: data.consentToPersonalInformation,
+    //     consentToMarketingAndAds: data.consentToMarketingAndAds,
+    // };
+    const requestData = {
+        socialType: SocialType,
+        accessToken: AccessToken,
+        nickname: 'M70cG',
+        birthday: '2025-01-12',
+        gender: 'MALE',
+        occupation: 'string',
+        field: 'string',
+        consentToTermsOfService: true,
+        consentToPersonalInformation: true,
+        consentToMarketingAndAds: true,
+    };
+
+    // API 요청에 보낼 데이터 전체 출력
+    console.log('회원가입 요청 데이터:', requestData);
+    try {
+        const response = await axiosInstance.post('/api/v1/auth/signup', requestData);
+
+        if (response.data.status.code === 200) {
+        console.log('회원가입 성공: ', response.data.status.message);
+
+        // JWT 토큰을 응답 헤더에서 가져옵니다.
+        const jwtToken = response.headers['authorization'];
+
+        await AsyncStorage.setItem('jwtToken', jwtToken);
+        const savedJwtToken = AsyncStorage.getItem('jwtToken');
+        console.log('회원가입 JWT Token:', savedJwtToken);
+
+        return response;
+        } else {
+            throw new Error(response.data.status.message || '회원가입 실패');
+        }
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export { SignUpHandler };

@@ -1,8 +1,23 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import React, { useLayoutEffect } from 'react';
 import Check from '../../assets/icons/check.png';
+import { SignUpHandler } from '../../api/SignUpApi';
 
 const Success = ({ navigation }) => {
+  const handleSignupAndNavigate = async () => {
+    try {
+      const result = await SignUpHandler();
+      if (result?.data?.status?.code === 200) {
+        alert('회원가입 성공: ' + result.data.status.message);
+        navigation.navigate('main');
+      }
+    } catch (error) {
+      console.log(error);
+      alert(
+        `회원가입 실패: ${error.message || '알 수 없는 오류가 발생했습니다.'}`,
+      );
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.box}>
@@ -16,7 +31,7 @@ const Success = ({ navigation }) => {
       </View>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('main')}
+        onPress={handleSignupAndNavigate}
       >
         <Text style={styles.buttonText}>홈으로 가기</Text>
       </TouchableOpacity>
