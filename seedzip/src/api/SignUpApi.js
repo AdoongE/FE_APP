@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { axiosInstance } from './axios-instance';
 
 
-const SignUpHandler = async () => {
+const SignUpHandler = async (data) => {
     const AccessToken = await AsyncStorage.getItem('accessToken');
     const SocialType = await AsyncStorage.getItem('socialType');
 
@@ -34,7 +34,6 @@ const SignUpHandler = async () => {
         consentToMarketingAndAds: true,
     };
 
-    // API 요청에 보낼 데이터 전체 출력
     console.log('회원가입 요청 데이터:', requestData);
     try {
         const response = await axiosInstance.post('/api/v1/auth/signup', requestData);
@@ -42,7 +41,6 @@ const SignUpHandler = async () => {
         if (response.data.status.code === 200) {
         console.log('회원가입 성공: ', response.data.status.message);
 
-        // JWT 토큰을 응답 헤더에서 가져옵니다.
         const jwtToken = response.headers['authorization'];
 
         await AsyncStorage.setItem('jwtToken', jwtToken);

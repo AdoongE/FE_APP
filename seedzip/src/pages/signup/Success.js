@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import Check from '../../assets/icons/check.png';
 import { SignUpHandler } from '../../api/SignUpApi';
 
