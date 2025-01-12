@@ -8,6 +8,7 @@ import Success from '../pages/signup/Success';
 import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
 import Home from '../pages/Home';
+import View from '../pages/view/ViewSeed';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +49,7 @@ function Router() {
         }}
       />
       <Stack.Screen name="main" component={Home} />
+      <Stack.Screen name="view" component={View} />
     </Stack.Navigator>
   );
 }
