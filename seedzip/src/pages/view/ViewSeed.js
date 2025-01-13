@@ -3,9 +3,8 @@ import { View, ScrollView, Text, Image, TouchableOpacity, Linking, StyleSheet } 
 import { useRoute, useNavigation } from '@react-navigation/native';
 // import Clipboard from '@react-native-clipboard/clipboard';
 // import { Icon } from 'react-native-vector-icons/Ionicons';
-// import { axiosInstance } from './api/axios-instance';
+import { axiosInstance } from '../../api/axios-instance';
 import ThumbnailModal from './ThumbnailModal';
-import axiosInstance from '../../api/axios-instance';
 
 function ViewContent() {
   const navigation = useNavigation();
@@ -30,20 +29,7 @@ function ViewContent() {
   const closeModal = () => setSelectedFile(null);
 
   useEffect(() => {
-    setContentInfo({
-        contentId: 5,
-        contentDataType: 'IMAGE',
-        contentName: '제목입니다~~',
-        contentLink: 'https://www.naver.com',
-        contentImage: ['https://content-img.s3.ap-northeast-2.amazonaws.com/1736524061934_1736101988625_%E1%84%82%E1%85%A9%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B7%E1%84%80%E1%85%A9%E1%86%B71.png', 'https://content-img.s3.ap-northeast-2.amazonaws.com/1736089813040_chiikawa.png'],
-        contentDoc: [''],
-        thumbnailImage: 0,
-        boardCategory: ['네이버', '구글', '곰돌이'],
-        tags: ['태그1', '태그2', '곰곰'],
-        dday: '2025-1-15',
-        contentDetail: '이것은 메모장입니다. 그걸 잘 고려하시기 바랍니다.',
-        filename: ['농담곰.png', '치.png'],
-        });
+    handleViewContent();
   }, []);
 
   useEffect(() => {
@@ -61,30 +47,32 @@ function ViewContent() {
     setRemainingDays(dayDiff);
   };
 
-//   const handleViewContent = async () => {
-//     try {
-//       const response = await axiosInstance.get(
-//         `/api/v1/content/all/${route.params.contentId}`,
-//       );
-//       const results = response.data.results[0];
-//       setContentInfo({
-//         contentId: results.contentId,
-//         contentDataType: results.contentDataType,
-//         contentName: results.contentName,
-//         contentLink: results.contentLink,
-//         contentImage: results.contentImage,
-//         contentDoc: results.contentDoc,
-//         thumbnailImage: results.thumbnailImage,
-//         boardCategory: results.boardCategory,
-//         tags: results.tags,
-//         dday: results.dday,
-//         contentDetail: results.contentDetail,
-//         filename: results.title,
-//       });
-//     } catch (error) {
-//       console.error('Error fetching content:', error);
-//     }
-//   };
+  const handleViewContent = async () => {
+    try {
+      const axios = await axiosInstance();
+      const response = await axios.get(
+        // `/api/v1/content/all/${route.params.contentId}`,
+        '/api/v1/content/all/56',
+      );
+      const results = response.data.results[0];
+      setContentInfo({
+        contentId: results.contentId,
+        contentDataType: results.contentDataType,
+        contentName: results.contentName,
+        contentLink: results.contentLink,
+        contentImage: results.contentImage,
+        contentDoc: results.contentDoc,
+        thumbnailImage: results.thumbnailImage,
+        boardCategory: results.boardCategory,
+        tags: results.tags,
+        dday: results.dday,
+        contentDetail: results.contentDetail,
+        filename: results.title,
+      });
+    } catch (error) {
+      console.error('Error fetching content:', error);
+    }
+  };
 
   const handleLinkClick = (url) => {
     Linking.openURL(url);

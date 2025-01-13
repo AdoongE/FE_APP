@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import { login } from '@react-native-kakao/user';
 import { Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { axiosInstance } from '../../api/axios-instance';
 import { REACT_NATIVE_APP_KEY } from '@env';
 
@@ -27,7 +27,8 @@ const NextSplash = () => {
       const kakaoAccessToken = token.accessToken;
       console.log('로그인 성공, 액세스 토큰:', kakaoAccessToken);
 
-      const response = await axiosInstance.post(
+      const axios = await axiosInstance();
+      const response = await axios.post(
         `/api/v1/auth/login/kakao/app?accessToken=${kakaoAccessToken}`
       );
       
@@ -94,6 +95,7 @@ const NextSplash = () => {
             <TouchableOpacity
               type="naver"
               style={[styles.button, { backgroundColor: '#03C75A' }]}
+              onPress={() => navigation.navigate('view')}
             >
               <Image source={naver} />
               <Text style={{ color: 'white' }}>네이버로 로그인하기</Text>
