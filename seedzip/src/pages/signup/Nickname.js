@@ -1,5 +1,3 @@
-// 단축어: rnfe
-
 import {
   View,
   Text,
@@ -28,10 +26,6 @@ const Nickname = ({ navigation }) => {
       setError(false);
     }
   };
-
-  useEffect(() => {
-    console.log('nickname: ', nickname);
-  }, [nickname]);
 
   return (
     <View style={styles.container}>

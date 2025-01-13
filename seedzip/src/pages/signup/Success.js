@@ -9,13 +9,13 @@ const Success = ({ navigation }) => {
   const {
     nickname,
     birthday,
+    gender,
     occupation,
     field,
     consentToTermsOfService,
     consentToPersonalInformation,
     consentToMarketingAndAds,
   } = route.params;
-  const gender = 'FEMALE'; // 성별 페이지 생성 이후 수정
 
   const handleSignupAndNavigate = async () => {
     const formData = {
