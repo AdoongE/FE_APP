@@ -46,13 +46,13 @@ function ViewContent() {
     const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     setRemainingDays(dayDiff);
   };
-
+  // 56 57 59 62
   const handleViewContent = async () => {
     try {
       const axios = await axiosInstance();
       const response = await axios.get(
         // `/api/v1/content/all/${route.params.contentId}`,
-        '/api/v1/content/all/56',
+        '/api/v1/content/all/62',
       );
       const results = response.data.results[0];
       setContentInfo({
@@ -131,19 +131,23 @@ function ViewContent() {
               ))}
             </ScrollView>
           )}
-
           {contentInfo.contentDataType === 'PDF' && (
-            <View style={styles.filesWrapper}>
+            <ScrollView horizontal style={styles.imagesWrapper}>
               {contentInfo.contentDoc.map((file, index) => (
-                <View key={file} style={styles.fileContainer}>
+                <View key={file} style={styles.imageContainer}>
                   <TouchableOpacity onPress={() => openModal(file)}>
-                    {index === contentInfo.thumbnailImage &0(
-                      <Text style={styles.representativeLabel}>대표</Text>
+                    {index === contentInfo.thumbnailImage && (
+                      <View style={styles.represenDiv}>
+                        <Text style={styles.represenLabel}>대표</Text>
+                      </View>
                     )}
+                    <View style={styles.imageDiv}>
+                      <Image source={{ uri: file }} style={styles.imagePreview} />
+                    </View>
                   </TouchableOpacity>
                 </View>
               ))}
-            </View>
+            </ScrollView>
           )}
 
           {selectedFile && (
@@ -325,13 +329,17 @@ grayBox: {
     top: 0,
     left: 0,
     zIndex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 5,
+    backgroundColor: 'white',
     borderRadius: 10,
     width: 26,
     height: 14,
     alignItems: 'center',
     justifyContent: 'center',
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
   },
   represenLabel: {
     color: '#4f4f4f',
