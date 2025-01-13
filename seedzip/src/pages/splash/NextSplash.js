@@ -12,13 +12,14 @@ import { login } from '@react-native-kakao/user';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { axiosInstance } from '../../api/axios-instance';
+import { REACT_NATIVE_APP_KEY } from '@env';
 
 const NextSplash = () => {
   const navigation = useNavigation();
   
   useEffect(() => {
-    initializeKakaoSDK('c4983c95d07b63e3f1a2b0e2ec4b3b30');
-  });
+    initializeKakaoSDK(`${REACT_NATIVE_APP_KEY}`);
+  }, []);
 
   const handleKakaoLogin = async () => {
     try {
