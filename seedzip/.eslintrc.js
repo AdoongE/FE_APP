@@ -1,6 +1,5 @@
 module.exports = {
   root: true,
-  extends: '@react-native',
   extends: [
     '@react-native',
     'eslint:recommended',
@@ -11,8 +10,8 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
     },
-    // 'ecmaFeatures': {
-    //   'jsx': true
-    // },
+    babelOptions: {
+      "presets": ["@babel/preset-react"]
+   },
   },
 };
