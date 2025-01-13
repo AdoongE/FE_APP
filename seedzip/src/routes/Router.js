@@ -1,4 +1,4 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import Nickname from '../pages/signup/Nickname';
 import Birthday from '../pages/signup/Birthday';
@@ -21,8 +21,7 @@ function Router() {
         headerBackVisible: true,
         headerBackTitleVisible: false,
         headerTintColor: '#000',
-      }}
-    >
+      }}>
       <Stack.Screen
         name="splash"
         component={SplashPage}

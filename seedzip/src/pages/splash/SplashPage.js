@@ -1,11 +1,11 @@
-import { View, StyleSheet, Animated, Easing } from 'react-native';
-import React, { useEffect, useRef } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
+import {View, StyleSheet, Animated, Easing} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import {LinearGradient} from 'expo-linear-gradient';
 import logo from '../../assets/icons/logo.png';
 import seedzip from '../../assets/icons/seedzip.png';
 import newLogo from '../../assets/icons/whiteLogo.png';
 
-const SplashPage = ({ navigation }) => {
+const SplashPage = ({navigation}) => {
   const animaion = useRef(new Animated.Value(1)).current;
   const moveAnimation = useRef(new Animated.Value(0)).current;
   const fadeAnimation = useRef(new Animated.Value(0)).current;
@@ -75,20 +75,18 @@ const SplashPage = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Animated.View
-        style={[StyleSheet.absoluteFill, { backgroundColor: color1, color2 }]}
-      >
+        style={[StyleSheet.absoluteFill, {backgroundColor: color1, color2}]}>
         <LinearGradient
           colors={[color1, color2]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradientContainer}
-        >
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 1}}
+          style={styles.gradientContainer}>
           <Animated.Image
             source={logo}
             style={[
               styles.logo,
               {
-                transform: [{ scale: animaion }],
+                transform: [{scale: animaion}],
                 opacity: animaion,
               },
             ]}
@@ -99,14 +97,13 @@ const SplashPage = ({ navigation }) => {
               {
                 opacity: fadeAnimation,
               },
-            ]}
-          >
+            ]}>
             <Animated.Image
               source={newLogo}
               style={[
                 styles.newLogo,
                 {
-                  transform: [{ translateX: moveAnimation }],
+                  transform: [{translateX: moveAnimation}],
                 },
               ]}
             />
@@ -142,7 +139,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    transform: [{ translateX: 10 }],
+    transform: [{translateX: 10}],
   },
   newLogo: {
     width: 36,
