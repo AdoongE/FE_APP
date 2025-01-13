@@ -9,7 +9,7 @@ import {
   import DropDownPicker from 'react-native-dropdown-picker';
   
   const Field = ({ navigation, route }) => {
-    const { nickname, birthday } = route.params;
+    const { nickname, birthday, gender } = route.params;
     const [open, setOpen] = useState(false);
     const [fieldOpen, setFieldOpen] = useState(false);
     const [occupation, setOccupation] = React.useState('');
@@ -130,7 +130,7 @@ import {
         </View>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('consent', { nickname, birthday, occupation, field })}
+          onPress={() => navigation.navigate('consent', { nickname, birthday, gender, occupation, field })}
         >
           <Text style={styles.buttonText}>다음</Text>
         </TouchableOpacity>

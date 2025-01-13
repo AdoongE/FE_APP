@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import Nickname from '../pages/signup/Nickname';
 import Birthday from '../pages/signup/Birthday';
+import Gender from '../pages/signup/Gender';
 import Field from '../pages/signup/Field';
 import Consent from '../pages/signup/Consent';
 import Success from '../pages/signup/Success';
@@ -39,6 +40,7 @@ function Router() {
       />
       <Stack.Screen name="nickname" component={Nickname} />
       <Stack.Screen name="birthday" component={Birthday} />
+      <Stack.Screen name="gender" component={Gender} />
       <Stack.Screen name="field" component={Field} />
       <Stack.Screen name="consent" component={Consent} />
       <Stack.Screen

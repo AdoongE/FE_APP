@@ -47,7 +47,7 @@ const Birthday = ({ navigation, route }) => {
     const formattedMonth = month.toString().padStart(2, '0');
     const formattedDay = day.toString().padStart(2, '0');
     const birthday = `${year}-${formattedMonth}-${formattedDay}`;
-    navigation.navigate('field', { nickname, birthday });
+    navigation.navigate('gender', { nickname, birthday });
   };
 
   return (

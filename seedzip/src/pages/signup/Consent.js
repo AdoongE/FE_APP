@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 
 const Consent = ({ navigation, route }) => {
-  const { nickname, birthday, occupation, field } = route.params;
+  const { nickname, birthday, gender, occupation, field } = route.params;
   const [checked, setChecked] = useState([false, false, false]);
   const [touched, setTouched] = useState(false);
 
@@ -32,6 +32,7 @@ const Consent = ({ navigation, route }) => {
     navigation.navigate('success', {
       nickname,
       birthday,
+      gender,
       occupation,
       field,
       consentToTermsOfService: checked[0],
