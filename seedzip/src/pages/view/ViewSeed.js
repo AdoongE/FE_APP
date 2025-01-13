@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Text, Image, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-// import Clipboard from '@react-native-clipboard/clipboard';
-// import { Icon } from 'react-native-vector-icons/Ionicons';
 import { axiosInstance } from '../../api/axios-instance';
 import ThumbnailModal from './ThumbnailModal';
 
@@ -33,7 +31,6 @@ function ViewContent() {
   }, []);
 
   useEffect(() => {
-    // handleViewContent();
     if (contentInfo.dday) {
       calRemainingDays(contentInfo.dday);
     }
@@ -46,13 +43,13 @@ function ViewContent() {
     const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     setRemainingDays(dayDiff);
   };
-  // 56 57 59 62
+  // 56 57 59 62 63 64 65 67
   const handleViewContent = async () => {
     try {
       const axios = await axiosInstance();
       const response = await axios.get(
         // `/api/v1/content/all/${route.params.contentId}`,
-        '/api/v1/content/all/62',
+        '/api/v1/content/all/67',
       );
       const results = response.data.results[0];
       setContentInfo({
@@ -65,7 +62,7 @@ function ViewContent() {
         thumbnailImage: results.thumbnailImage,
         boardCategory: results.boardCategory,
         tags: results.tags,
-        dday: results.dday,
+        dday: results.dday || 'yyyy-mm-dd',
         contentDetail: results.contentDetail,
         filename: results.title,
       });
@@ -299,6 +296,8 @@ grayBox: {
   },
   imagesWrapper: {
     flexDirection: 'row',
+    paddingLeft: 5,
+    paddingTop: 3,
   },
   imageContainer: {
     marginRight: 10,
