@@ -30,6 +30,8 @@
 	<key>REACT_NATIVE_APP_KEY</key>
 	<string>$(REACT_NATIVE_APP_KEY)</string>
 
+	<key>UIFileSharingEnabled</key>
+	<true/>
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
