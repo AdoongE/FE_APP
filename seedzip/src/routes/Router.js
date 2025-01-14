@@ -8,8 +8,9 @@ import Consent from '../pages/signup/Consent';
 import Success from '../pages/signup/Success';
 import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
-import Home from '../pages/Home';
+import Main from '../pages/main/Main';
 import View from '../pages/view/ViewSeed';
+import ImageUpload from '../pages/imageUpload/ImageUpload';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,8 +51,19 @@ function Router() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="main" component={Home} />
+      <Stack.Screen
+        name="main"
+        component={Main}
+        options={{
+          headerShown: false, // 메인화면에서 헤더 숨김
+        }}
+      />
       <Stack.Screen name="view" component={View} />
+      <Stack.Screen
+          name="ImageUpload"
+          component={ImageUpload}
+          options={{ headerShown: false, }}
+        />
     </Stack.Navigator>
   );
 }
