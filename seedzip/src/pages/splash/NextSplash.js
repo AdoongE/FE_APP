@@ -44,6 +44,17 @@ const NextSplash = () => {
 
           navigation.navigate('main');
         }
+      } else if (status.code === 401) {
+        console.log('메세지:', status.message);
+
+        const jwtToken = token.refreshToken;
+
+        if (jwtToken) {
+          await AsyncStorage.setItem('jwtToken', jwtToken);
+          console.log('만료 후, 저장된 JWT Token:', jwtToken);
+
+          navigation.navigate('main');
+        }
       } else if (status.code === 404) {
         console.log('회원가입 필요:', status.message);
 

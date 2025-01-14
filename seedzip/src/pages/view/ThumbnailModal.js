@@ -1,14 +1,58 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Image, FlatList, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import RNFS from 'react-native-fs';
 
 const { width, height } = Dimensions.get('window');
 
-const ThumbnailModal = ({ visible, onClose, files, onSaveAll, onSaveSingle }) => {
+const ThumbnailModal = ({ visible, onClose, files }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleSnapToItem = (index) => {
     setCurrentIndex(index);
+  };
+
+  const onSaveSingle = async (fileUrl) => {
+    try {
+      const downloadDest = `${RNFS.DocumentDirectoryPath}/${fileUrl.split('/').pop()}`;
+  
+      const result = await RNFS.downloadFile({
+        fromUrl: fileUrl,
+        toFile: downloadDest,
+      }).promise;
+  
+      if (result.statusCode === 200) {
+        alert('파일이 저장되었습니다: ' + downloadDest);
+      } else {
+        alert('파일 저장에 실패했습니다. 상태 코드: ' + result.statusCode);
+      }
+    } catch (error) {
+      console.error('파일 저장 오류:', error);
+      alert('파일 저장 중 오류가 발생했습니다.');
+    }
+  };
+  const onSaveAll = async (fileUrls) => {
+    try {
+      const savePromises = fileUrls.map(async (fileUrl) => {
+        const downloadDest = `${RNFS.DocumentDirectoryPath}/${fileUrl.split('/').pop()}`;
+        const result = await RNFS.downloadFile({
+          fromUrl: fileUrl,
+          toFile: downloadDest,
+        }).promise;
+  
+        if (result.statusCode !== 200) {
+          throw new Error(`파일 저장 실패: 상태 코드 ${result.statusCode}`);
+        }
+  
+        return downloadDest;
+      });
+  
+      const savedFiles = await Promise.all(savePromises);
+      alert(`모든 파일 저장 완료:\n${savedFiles.join('\n')}`);
+    } catch (error) {
+      console.error('모든 파일 저장 오류:', error);
+      alert('모든 파일 저장 중 오류가 발생했습니다.');
+    }
   };
 
   const renderItem = ({ item }) => (
@@ -27,7 +71,7 @@ const ThumbnailModal = ({ visible, onClose, files, onSaveAll, onSaveSingle }) =>
       <View style={styles.footer}>
         <TouchableOpacity
           style={[styles.saveButton, styles.allSaveButton]}
-          onPress={onSaveAll}
+          onPress={() => onSaveAll(files)}
         >
           <Text style={styles.buttonTextall}>모든 파일 저장</Text>
         </TouchableOpacity>

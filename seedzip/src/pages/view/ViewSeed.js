@@ -62,7 +62,7 @@ function ViewContent() {
         thumbnailImage: results.thumbnailImage,
         boardCategory: results.boardCategory,
         tags: results.tags,
-        dday: results.dday || 'yyyy-mm-dd',
+        dday: results.dday,
         contentDetail: results.contentDetail,
         filename: results.title,
       });
@@ -186,23 +186,25 @@ function ViewContent() {
                 </View>
             </View>
 
-            <View style={styles.contentDiv}>
+            {contentInfo.dday && (
+              <View style={styles.contentDiv}>
                 <Text style={styles.name}>디데이</Text>
                 <View style={styles.ddayDiv}>
-                    {remainingDays !== null && (
+                  {remainingDays !== null && (
                     <View style={[styles.textWrapper, { backgroundColor: '#def3f1' }]}>
-                        <Text style={styles.divText}>
+                      <Text style={styles.divText}>
                         {`D${remainingDays >= 0 ? `-${remainingDays}` : `+${Math.abs(remainingDays)}`}`}
-                        </Text>
+                      </Text>
                     </View>
-                    )}
-                    <View style={styles.textWrapper}>
+                  )}
+                  <View style={styles.textWrapper}>
                     <Text style={styles.divText}>
-                        {remainingDays ? contentInfo.dday : 'yyyy-mm-dd'}
+                      {contentInfo.dday}
                     </Text>
-                    </View>
+                  </View>
                 </View>
-            </View>
+              </View>
+            )}
 
             <View style={styles.memo}>
             <Text style={styles.name}>메모</Text>
@@ -309,9 +311,9 @@ grayBox: {
     borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    marginBottom: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    marginBottom: 3,
   },
   imagePreview: {
     width: 100,
@@ -325,8 +327,8 @@ grayBox: {
   },
   represenDiv: {
     position: 'absolute',
-    top: 0,
-    left: 0,
+    top: 6,
+    left: 6,
     zIndex: 1,
     backgroundColor: 'white',
     borderRadius: 10,
@@ -337,8 +339,8 @@ grayBox: {
 
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   represenLabel: {
     color: '#4f4f4f',
