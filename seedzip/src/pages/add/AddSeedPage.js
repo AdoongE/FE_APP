@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { axiosInstance } from '../../api/axios-instance';
+import { useNavigation } from '@react-navigation/native';
+import DatePicker from 'react-native-date-picker';
 
 const AddSeedPage = ({ route }) => {
+  const navigation = useNavigation();
   // const {
   //   dataType,
   //   contentName,
@@ -19,16 +22,20 @@ const AddSeedPage = ({ route }) => {
 
   const [contentInfo, setContentInfo] = useState({
     dataType: 'LINK',
-    contentName: '제목이라고',
+    contentName: '',
     contentLink: 'http://naver.com',
     contentImage: [],
     contentDoc: [],
     thumbnailImage: 0,
-    boardCategory: ['카테고리1', '카테고리2', '카테고리3'],
+    boardCategory: ['ㅎㅇ'],
+    // boardCategory: ['카테고리1', '카테고리2', '카테고리3'],
     tags: ['태그1', '태그2'],
-    dday: '2025-01-20',
+    dday: '' || 'YYYY/MM/DD',
     contentDetail: '안녕하세요안녕ㅎ아세욯 ㅎㅎ',
   });
+
+  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
 
   const handleTitleChange = (text) => {
     setContentInfo({ ...contentInfo, contentName: text });
@@ -38,13 +45,22 @@ const AddSeedPage = ({ route }) => {
     setContentInfo({ ...contentInfo, contentDetail: text });
   };
 
+  const handleConfirm = (selectedDate) => {
+    const formattedDate = selectedDate.toISOString().split('T')[0];
+    setContentInfo({ ...contentInfo, dday: formattedDate });
+    setOpen(false);
+  };
+
   const SaveSeed = async () => {
     try {
       const axios = await axiosInstance();
       const response = await axios.post(
         '/api/v1/content/', contentInfo
       );
-      console.log('출력물', response);
+      console.log('출력물', response.data);
+      if (response.data.status.code == 200) {
+        navigation.navigate('save');
+      }
       // const results = response.data.results[0];
     } catch (error) {
       console.error('Error fetching content:', error);
@@ -68,6 +84,14 @@ const AddSeedPage = ({ route }) => {
           </View>
           <Text style={styles.linkText}>{contentInfo.contentLink}</Text>
         </View>
+      )}
+      {contentInfo.dataType === 'IMAGE' && (
+        <View></View>
+        //////////////////////////////
+        // 영주님 이미지 추가해주세요!!!!!!!
+        // 영주님 이미지 추가해주세요!!!!!!!
+        // 영주님 이미지 추가해주세요!!!!!!!
+        //////////////////////////////
       )}
       <View>
         <View style={styles.contentDiv}>
@@ -93,16 +117,24 @@ const AddSeedPage = ({ route }) => {
             </View>
         </View>
         {contentInfo.dday && (
-          <>
+          <View>
             <View style={styles.contentDiv}>
-                <Text style={styles.name}>디데이(선택)</Text>
-                <Text style={styles.sectionSubtitle}>저장한 날에 알림을 받을 수 있어요</Text>
-              </View>
-            <View style={styles.ddayContent}>
-              <Ionicons name="calendar-clear-outline" size={12} color="#9f9f9f" marginRight='4'></Ionicons>
-              <Text style={styles.divText}>{contentInfo.dday}</Text>
+              <Text style={styles.name}>디데이(선택)</Text>
+              <Text style={styles.sectionSubtitle}>저장한 날에 알림을 받을 수 있어요</Text>
             </View>
-          </>
+            <TouchableOpacity style={styles.ddayContent} onPress={() => setOpen(true)}>
+              <Ionicons name="calendar-clear-outline" size={12} color="#9f9f9f" style={{ marginRight: 4 }} />
+              <Text style={styles.divText}>{contentInfo.dday}</Text>
+            </TouchableOpacity>
+            <DatePicker
+              modal
+              open={open}
+              date={date}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={() => setOpen(false)}
+            />
+          </View>
         )}
         <View style={styles.memo}>
           <Text style={styles.name}>메모(선택)</Text>
@@ -110,9 +142,11 @@ const AddSeedPage = ({ route }) => {
             <TextInput
                 style={styles.detail}
                 placeholder="여기를 눌러 메모를 입력하세요"
-                maxLength={30}
+                maxLength={1500}
                 value={contentInfo.contentDetail}
                 onChangeText={handleMemoChange}
+                multiline={true}
+                textAlignVertical="top"
             />
           </View>
         </View>
