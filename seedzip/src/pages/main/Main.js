@@ -17,12 +17,8 @@ export default function MainPage() {
         const token = await AsyncStorage.getItem('jwtToken');
         console.log('Authorization Header:', token);
 
-        // axios 요청 보내기
-        const response = await axiosInstance.get('/api/v1/content/', {
-          headers: {
-            Authorization: `Bearer ${token?.replace('Bearer ', '')}`,//Bearer 중복 제거
-          },
-        });
+        const instance = await axiosInstance();
+        const response = await instance.get('/api/v1/content/');
 
         console.log('API Response:', response.data);
 
@@ -30,7 +26,7 @@ export default function MainPage() {
         const contents = response?.data?.results?.[0]?.contentsInfoList || [];
         setSeeds(contents);  // 콘텐츠 데이터를 상태에 저장
       } catch (error) {
-        console.error('Error fetching data: ', error);
+        console.error('Error fetching data: ', error.message || error);
       } finally {
         setLoading(false);
       }
