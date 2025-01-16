@@ -10,6 +10,8 @@ import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
 import Home from '../pages/Home';
 import View from '../pages/view/ViewSeed';
+import Add from '../pages/add/AddSeedPage';
+import Save from '../pages/add/SaveSeedPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -52,6 +54,8 @@ function Router() {
       />
       <Stack.Screen name="main" component={Home} />
       <Stack.Screen name="view" component={View} />
+      <Stack.Screen name="add" component={Add} />
+      <Stack.Screen name="save" component={Save} />
     </Stack.Navigator>
   );
 }
