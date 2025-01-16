@@ -15,6 +15,7 @@ export default function SeedSaveModal({ visible, onClose }) {
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
+          <View style={styles.handleBar} />
           <Text style={styles.modalTitle}>저장형식을 선택해주세요</Text>
 
           <TouchableOpacity style={styles.modalButton}>
@@ -24,7 +25,7 @@ export default function SeedSaveModal({ visible, onClose }) {
 
           {/* 이미지 저장하기 버튼 */}
           <TouchableOpacity
-            style={styles.modalButton}
+            style={[styles.modalButton, styles.imageButton]}
             onPress={() => {
               onClose(); // 모달 닫기
               navigation.navigate('ImageUpload'); // ImageUpload 페이지로 이동
@@ -56,11 +57,20 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
     alignItems: 'center',
   },
+  handleBar: {
+    width: 40,
+    height: 5,
+    backgroundColor: '#ddd',
+    borderRadius: 2.5,
+    alignSelf: 'center',
+    marginBottom: 18,
+  },
   modalTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 12,
     color: '#333',
+    alignSelf: 'flex-start',
   },
   modalButton: {
     flexDirection: 'row',
@@ -70,20 +80,27 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
+  imageButton: {
+    borderBottomWidth: 0, // 아래쪽 줄 제거
+  },
   modalButtonText: {
-    fontSize: 14,
+    fontSize: 16,
     marginLeft: 10,
     color: '#333',
   },
   closeButton: {
-    marginTop: 20,
-    backgroundColor: '#f5f5f5',
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 10,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    width: '100%',
+    alignSelf: 'center',
+    marginBottom: 20,
+    paddingVertical: 15,
+    alignItems: 'center',
   },
   closeButtonText: {
     color: '#333',
-    fontSize: 14,
+    fontSize: 16,
   },
 });

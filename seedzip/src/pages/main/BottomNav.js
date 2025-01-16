@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'white',
-    paddingVertical: 18,
     position: 'absolute',
     bottom: 0,
     width: screenWidth, // 화면 전체 너비 설정
@@ -57,6 +56,7 @@ const styles = StyleSheet.create({
   },
   navButton: {
     alignItems: 'center',
+    marginTop: 20,
   },
   navText: {
     fontSize: 12,
@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#41C3AB',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -50,
-    marginBottom: 14,
+    marginTop: -30,
+    marginBottom: 10,
   },
   addButtonText: {
     fontSize: 12,
