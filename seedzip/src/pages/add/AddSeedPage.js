@@ -28,9 +28,8 @@ const AddSeedPage = ({ route }) => {
     contentDoc: [],
     thumbnailImage: 0,
     boardCategory: ['ㅎㅇ'],
-    // boardCategory: ['카테고리1', '카테고리2', '카테고리3'],
     tags: ['태그1', '태그2'],
-    dday: '' || 'YYYY/MM/DD',
+    dday: '',
     contentDetail: '안녕하세요안녕ㅎ아세욯 ㅎㅎ',
   });
 
@@ -61,7 +60,6 @@ const AddSeedPage = ({ route }) => {
       if (response.data.status.code == 200) {
         navigation.navigate('save');
       }
-      // const results = response.data.results[0];
     } catch (error) {
       console.error('Error fetching content:', error);
     }
@@ -116,26 +114,24 @@ const AddSeedPage = ({ route }) => {
                 ))}
             </View>
         </View>
-        {contentInfo.dday && (
-          <View>
-            <View style={styles.contentDiv}>
-              <Text style={styles.name}>디데이(선택)</Text>
-              <Text style={styles.sectionSubtitle}>저장한 날에 알림을 받을 수 있어요</Text>
-            </View>
-            <TouchableOpacity style={styles.ddayContent} onPress={() => setOpen(true)}>
-              <Ionicons name="calendar-clear-outline" size={12} color="#9f9f9f" style={{ marginRight: 4 }} />
-              <Text style={styles.divText}>{contentInfo.dday}</Text>
-            </TouchableOpacity>
-            <DatePicker
-              modal
-              open={open}
-              date={date}
-              mode="date"
-              onConfirm={handleConfirm}
-              onCancel={() => setOpen(false)}
-            />
+        <View>
+          <View style={styles.contentDiv}>
+            <Text style={styles.name}>디데이(선택)</Text>
+            <Text style={styles.sectionSubtitle}>저장한 날에 알림을 받을 수 있어요</Text>
           </View>
-        )}
+          <TouchableOpacity style={styles.ddayContent} onPress={() => setOpen(true)}>
+            <Ionicons name="calendar-clear-outline" size={12} color="#9f9f9f" style={{ marginRight: 4 }} />
+            <Text style={styles.divText}>{contentInfo.dday || 'YYYY/MM/DD'}</Text>
+          </TouchableOpacity>
+          <DatePicker
+            modal
+            open={open}
+            date={date}
+            mode="date"
+            onConfirm={handleConfirm}
+            onCancel={() => setOpen(false)}
+          />
+        </View>
         <View style={styles.memo}>
           <Text style={styles.name}>메모(선택)</Text>
           <View style={styles.memoDiv}>
