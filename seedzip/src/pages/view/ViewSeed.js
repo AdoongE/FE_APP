@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Text, Image, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-// import Clipboard from '@react-native-clipboard/clipboard';
-// import { Icon } from 'react-native-vector-icons/Ionicons';
-// import { axiosInstance } from './api/axios-instance';
+import { axiosInstance } from '../../api/axios-instance';
 import ThumbnailModal from './ThumbnailModal';
-import axiosInstance from '../../api/axios-instance';
 
 function ViewContent() {
   const navigation = useNavigation();
@@ -30,24 +27,10 @@ function ViewContent() {
   const closeModal = () => setSelectedFile(null);
 
   useEffect(() => {
-    setContentInfo({
-        contentId: 5,
-        contentDataType: 'IMAGE',
-        contentName: '제목입니다~~',
-        contentLink: 'https://www.naver.com',
-        contentImage: ['https://content-img.s3.ap-northeast-2.amazonaws.com/1736524061934_1736101988625_%E1%84%82%E1%85%A9%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B7%E1%84%80%E1%85%A9%E1%86%B71.png', 'https://content-img.s3.ap-northeast-2.amazonaws.com/1736089813040_chiikawa.png'],
-        contentDoc: [''],
-        thumbnailImage: 0,
-        boardCategory: ['네이버', '구글', '곰돌이'],
-        tags: ['태그1', '태그2', '곰곰'],
-        dday: '2025-1-15',
-        contentDetail: '이것은 메모장입니다. 그걸 잘 고려하시기 바랍니다.',
-        filename: ['농담곰.png', '치.png'],
-        });
+    handleViewContent();
   }, []);
 
   useEffect(() => {
-    // handleViewContent();
     if (contentInfo.dday) {
       calRemainingDays(contentInfo.dday);
     }
@@ -60,31 +43,33 @@ function ViewContent() {
     const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     setRemainingDays(dayDiff);
   };
-
-//   const handleViewContent = async () => {
-//     try {
-//       const response = await axiosInstance.get(
-//         `/api/v1/content/all/${route.params.contentId}`,
-//       );
-//       const results = response.data.results[0];
-//       setContentInfo({
-//         contentId: results.contentId,
-//         contentDataType: results.contentDataType,
-//         contentName: results.contentName,
-//         contentLink: results.contentLink,
-//         contentImage: results.contentImage,
-//         contentDoc: results.contentDoc,
-//         thumbnailImage: results.thumbnailImage,
-//         boardCategory: results.boardCategory,
-//         tags: results.tags,
-//         dday: results.dday,
-//         contentDetail: results.contentDetail,
-//         filename: results.title,
-//       });
-//     } catch (error) {
-//       console.error('Error fetching content:', error);
-//     }
-//   };
+  // 56 57 59 62 63 64 65 67
+  const handleViewContent = async () => {
+    try {
+      const axios = await axiosInstance();
+      const response = await axios.get(
+        // `/api/v1/content/all/${route.params.contentId}`,
+        '/api/v1/content/all/67',
+      );
+      const results = response.data.results[0];
+      setContentInfo({
+        contentId: results.contentId,
+        contentDataType: results.contentDataType,
+        contentName: results.contentName,
+        contentLink: results.contentLink,
+        contentImage: results.contentImage,
+        contentDoc: results.contentDoc,
+        thumbnailImage: results.thumbnailImage,
+        boardCategory: results.boardCategory,
+        tags: results.tags,
+        dday: results.dday,
+        contentDetail: results.contentDetail,
+        filename: results.title,
+      });
+    } catch (error) {
+      console.error('Error fetching content:', error);
+    }
+  };
 
   const handleLinkClick = (url) => {
     Linking.openURL(url);
@@ -143,19 +128,23 @@ function ViewContent() {
               ))}
             </ScrollView>
           )}
-
           {contentInfo.contentDataType === 'PDF' && (
-            <View style={styles.filesWrapper}>
+            <ScrollView horizontal style={styles.imagesWrapper}>
               {contentInfo.contentDoc.map((file, index) => (
-                <View key={file} style={styles.fileContainer}>
+                <View key={file} style={styles.imageContainer}>
                   <TouchableOpacity onPress={() => openModal(file)}>
-                    {index === contentInfo.thumbnailImage &0(
-                      <Text style={styles.representativeLabel}>대표</Text>
+                    {index === contentInfo.thumbnailImage && (
+                      <View style={styles.represenDiv}>
+                        <Text style={styles.represenLabel}>대표</Text>
+                      </View>
                     )}
+                    <View style={styles.imageDiv}>
+                      <Image source={{ uri: file }} style={styles.imagePreview} />
+                    </View>
                   </TouchableOpacity>
                 </View>
               ))}
-            </View>
+            </ScrollView>
           )}
 
           {selectedFile && (
@@ -197,23 +186,25 @@ function ViewContent() {
                 </View>
             </View>
 
-            <View style={styles.contentDiv}>
+            {contentInfo.dday && (
+              <View style={styles.contentDiv}>
                 <Text style={styles.name}>디데이</Text>
                 <View style={styles.ddayDiv}>
-                    {remainingDays !== null && (
+                  {remainingDays !== null && (
                     <View style={[styles.textWrapper, { backgroundColor: '#def3f1' }]}>
-                        <Text style={styles.divText}>
+                      <Text style={styles.divText}>
                         {`D${remainingDays >= 0 ? `-${remainingDays}` : `+${Math.abs(remainingDays)}`}`}
-                        </Text>
+                      </Text>
                     </View>
-                    )}
-                    <View style={styles.textWrapper}>
+                  )}
+                  <View style={styles.textWrapper}>
                     <Text style={styles.divText}>
-                        {remainingDays ? contentInfo.dday : 'yyyy-mm-dd'}
+                      {contentInfo.dday}
                     </Text>
-                    </View>
+                  </View>
                 </View>
-            </View>
+              </View>
+            )}
 
             <View style={styles.memo}>
             <Text style={styles.name}>메모</Text>
@@ -307,6 +298,8 @@ grayBox: {
   },
   imagesWrapper: {
     flexDirection: 'row',
+    paddingLeft: 5,
+    paddingTop: 3,
   },
   imageContainer: {
     marginRight: 10,
@@ -318,9 +311,9 @@ grayBox: {
     borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    marginBottom: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    marginBottom: 3,
   },
   imagePreview: {
     width: 100,
@@ -334,16 +327,20 @@ grayBox: {
   },
   represenDiv: {
     position: 'absolute',
-    top: 0,
-    left: 0,
+    top: 6,
+    left: 6,
     zIndex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 5,
+    backgroundColor: 'white',
     borderRadius: 10,
     width: 26,
     height: 14,
     alignItems: 'center',
     justifyContent: 'center',
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   represenLabel: {
     color: '#4f4f4f',
