@@ -11,6 +11,8 @@ import NextSplash from '../pages/splash/NextSplash';
 import Main from '../pages/main/Main';
 import View from '../pages/view/ViewSeed';
 import ImageUpload from '../pages/imageUpload/ImageUpload';
+import Add from '../pages/add/AddSeedPage';
+import Save from '../pages/add/SaveSeedPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -66,6 +68,8 @@ function Router() {
             headerShown: false,
           }}
         />
+      <Stack.Screen name="add" component={Add} />
+      <Stack.Screen name="save" component={Save} />
     </Stack.Navigator>
   );
 }
