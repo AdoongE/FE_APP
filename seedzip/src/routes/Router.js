@@ -62,7 +62,9 @@ function Router() {
       <Stack.Screen
           name="ImageUpload"
           component={ImageUpload}
-          options={{ headerShown: false, }}
+          options={{
+            headerShown: false,
+          }}
         />
     </Stack.Navigator>
   );
