@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   list: {
-    alignItems: 'center',
     paddingBottom: 80, // BottomNav 공간 확보
   },
 });

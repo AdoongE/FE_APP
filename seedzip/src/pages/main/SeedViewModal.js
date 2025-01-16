@@ -1,10 +1,10 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native'; // React Navigation 사용
+import { useNavigation } from '@react-navigation/native';
 
-export default function SeedSaveModal({ visible, onClose }) {
-  const navigation = useNavigation(); // 네비게이션 객체 가져오기
+export default function SeedActionModal({ visible, onClose }) {
+  const navigation = useNavigation();
 
   return (
     <Modal
@@ -16,23 +16,21 @@ export default function SeedSaveModal({ visible, onClose }) {
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <View style={styles.handleBar} />
-          <Text style={styles.modalTitle}>저장형식을 선택해주세요</Text>
 
           <TouchableOpacity style={styles.modalButton}>
-            <Ionicons name="link-outline" size={20} color="black" />
-            <Text style={styles.modalButtonText}>링크 저장하기</Text>
+            <Ionicons name="ios-eye-outline" size={20} color="black" />
+            <Text style={styles.modalButtonText}>세부 정보 보기</Text>
           </TouchableOpacity>
 
-          {/* 이미지 저장하기 버튼 */}
           <TouchableOpacity
-            style={[styles.modalButton, styles.imageButton]}
+            style={[styles.modalButton, styles.deleteButton]}
             onPress={() => {
               onClose(); // 모달 닫기
-              navigation.navigate('imageupload'); // imageupload 페이지로 이동
+              navigation.navigate('view');
             }}
           >
-            <Ionicons name="image-outline" size={20} color="black" />
-            <Text style={styles.modalButtonText}>이미지 저장하기</Text>
+            <Ionicons name="ios-trash-outline" size={20} color="black" /> {/* 아이콘 변경 */}
+            <Text style={styles.modalButtonText}>삭제하기</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -65,13 +63,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 18,
   },
-  modalTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#333',
-    alignSelf: 'flex-start',
-  },
   modalButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -80,7 +71,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
-  imageButton: {
+  deleteButton: {
     borderBottomWidth: 0, // 아래쪽 줄 제거
   },
   modalButtonText: {

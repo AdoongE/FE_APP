@@ -13,8 +13,8 @@ export default function BottomNav() {
     <>
     <View style={styles.bottomNav}>
       <TouchableOpacity style={styles.navButton}>
-        <Ionicons name="home-sharp" size={24} color="gray" />
-        <Text style={styles.navText}>홈</Text>
+        <Ionicons name="home-sharp" size={24} color="#41C3AB" />
+        <Text style={styles.rightText}>홈</Text>
       </TouchableOpacity>
 
       <View style={styles.addButtonContainer}>
@@ -29,7 +29,7 @@ export default function BottomNav() {
 
       <TouchableOpacity style={styles.navButton}>
         <Ionicons name="person-outline" size={24} color="gray" />
-        <Text style={styles.navText}>마이</Text>
+        <Text style={styles.leftText}>마이</Text>
       </TouchableOpacity>
     </View>
 
@@ -54,11 +54,16 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
     paddingHorizontal: 70,
   },
+  rightText: {
+    fontSize: 12,
+    color: '#41C3AB',
+    marginTop: 8,
+  },
   navButton: {
     alignItems: 'center',
     marginTop: 20,
   },
-  navText: {
+  leftText: {
     fontSize: 12,
     color: 'gray',
     marginTop: 8,

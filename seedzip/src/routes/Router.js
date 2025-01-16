@@ -10,7 +10,8 @@ import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
 import Main from '../pages/main/Main';
 import View from '../pages/view/ViewSeed';
-import ImageUpload from '../pages/imageUpload/ImageUpload';
+import ImageUpload from '../pages/add/ImageUpload';
+import ImageSave from '../pages/add/ImageSave';
 import Add from '../pages/add/AddSeedPage';
 import Save from '../pages/add/SaveSeedPage';
 
@@ -62,11 +63,15 @@ function Router() {
       />
       <Stack.Screen name="view" component={View} />
       <Stack.Screen
-          name="ImageUpload"
+          name="imageupload"
           component={ImageUpload}
           options={{
             headerShown: false,
           }}
+        />
+        <Stack.Screen
+          name="imagesave"
+          component={ImageSave}
         />
       <Stack.Screen name="add" component={Add} />
       <Stack.Screen name="save" component={Save} />
