@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { REACT_NATIVE_APP_SERVER_URL } from '@env';
+import {REACT_NATIVE_APP_SERVER_URL} from '@env';
 
 const axiosInstance = async () => {
   const token = await AsyncStorage.getItem('jwtToken');
@@ -13,3 +13,4 @@ const axiosInstance = async () => {
 };
 
 export { axiosInstance };
+

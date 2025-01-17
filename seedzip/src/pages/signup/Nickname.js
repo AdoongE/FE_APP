@@ -5,9 +5,9 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useState} from 'react';
 
-const Nickname = ({ navigation }) => {
+const Nickname = ({navigation}) => {
   const [isFocused, setIsFocused] = useState(false);
   const [nickname, setNickname] = React.useState('');
   const [error, setError] = useState(false);
@@ -15,7 +15,7 @@ const Nickname = ({ navigation }) => {
 
   const nicknameRegex = /^[a-zA-Z0-9가-힣\s]{1,10}$/;
 
-  const handleChange = (text) => {
+  const handleChange = text => {
     setNickname(text);
 
     if (text.trim() === '') {
@@ -43,8 +43,8 @@ const Nickname = ({ navigation }) => {
             borderBottomColor: isFocused
               ? '#41C3AB'
               : error
-                ? '#FF0000'
-                : '#9F9F9F',
+              ? '#FF0000'
+              : '#9F9F9F',
           },
         ]}
         onFocus={() => {
@@ -61,8 +61,7 @@ const Nickname = ({ navigation }) => {
       <TouchableOpacity
         style={styles.button}
         disabled={!touched || error !== false || nickname.trim() === ''}
-        onPress={() => navigation.navigate('birthday', { nickname })}
-      >
+        onPress={() => navigation.navigate('birthday', {nickname})}>
         <Text style={styles.buttonText}>다음</Text>
       </TouchableOpacity>
     </View>
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
-  title: { marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4 },
+  title: {marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4},
   short: {
     color: '#898989',
     fontWeight: 400,
