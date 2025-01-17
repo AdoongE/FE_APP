@@ -1,18 +1,29 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import SeedViewModal from './SeedViewModal';
 
-export default function SeedBox({ name }) {
+export default function SeedBox({ name, contentId }) {
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <View style={styles.container}>
-      <View style={styles.seedCard}>
-        <Ionicons name="ellipsis-vertical" size={16} color="black" style={styles.icon} />
-      </View>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <View style={styles.seedCard}>
+          <Ionicons name="ellipsis-vertical" size={16} color="black" style={styles.icon} />
+        </View>
+      </TouchableOpacity>
 
       <View style={styles.seedBottom}>
         <View style={styles.circle} />
         <Text style={styles.seedName}>{name}</Text>
       </View>
+
+      <SeedViewModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        contentId={contentId}
+      />
     </View>
   );
 }

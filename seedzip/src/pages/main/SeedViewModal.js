@@ -3,8 +3,13 @@ import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-export default function SeedActionModal({ visible, onClose }) {
+export default function SeedActionModal({ visible, onClose, contentId }) {
   const navigation = useNavigation();
+
+  const handleView = () => {
+    onClose();
+    navigation.navigate('view', {contentId});
+  };
 
   return (
     <Modal
@@ -17,7 +22,7 @@ export default function SeedActionModal({ visible, onClose }) {
         <View style={styles.modalContent}>
           <View style={styles.handleBar} />
 
-          <TouchableOpacity style={styles.modalButton}>
+          <TouchableOpacity style={styles.modalButton} onPress={handleView}>
             <Ionicons name="ellipsis-horizontal-sharp" size={20} color="black" />
             <Text style={styles.modalButtonText}>세부 정보 보기</Text>
           </TouchableOpacity>

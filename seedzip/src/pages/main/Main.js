@@ -54,7 +54,7 @@ export default function MainPage() {
         <FlatList
           data={seeds}  // 응답에서 가져온 콘텐츠 목록
           renderItem={({ item }) => (
-            <SeedBox name={item.contentName || '콘텐츠명'} />
+            <SeedBox name={item.contentName || '콘텐츠명'} contentId={item.contentId} />
           )}
           keyExtractor={(item) => item.contentId.toString()}  // contentId를 keyExtractor로 사용
           numColumns={2}

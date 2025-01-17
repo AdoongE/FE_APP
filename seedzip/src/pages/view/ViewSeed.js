@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Text, Image, TouchableOpacity, Linking, StyleSheet } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
 import { axiosInstance } from '../../api/axios-instance';
 import ThumbnailModal from './ThumbnailModal';
 
-function ViewContent() {
-  const navigation = useNavigation();
-  const route = useRoute();
+function ViewContent({ route }) {
   const contentId = route.params;
 
   const [contentInfo, setContentInfo] = useState({
@@ -49,7 +46,7 @@ function ViewContent() {
   const handleViewContent = async () => {
     try {
       const axios = await axiosInstance();
-      const response = await axios.get(`/api/v1/content/all/${contentId}`);
+      const response = await axios.get(`/api/v1/content/all/${contentId.contentId}`);
       const results = response.data.results[0];
       setContentInfo({
         contentId: results.contentId,
