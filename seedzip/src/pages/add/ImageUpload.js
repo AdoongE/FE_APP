@@ -11,6 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
+import { axiosInstance } from '../../api/axios-instance';
 
 export default function App() {
   const [selectedImages, setSelectedImages] = useState([]);
@@ -18,20 +19,55 @@ export default function App() {
   const navigation = useNavigation();
   const [thumbnailIndex, setThumbnailIndex] = useState(0); // 대표 이미지 인덱스
 
-  const handleBackToMain = () => {
-    navigation.navigate('main');
-  };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (selectedImages.length === 0) {
-      // 이미지가 없으면 경고 표시
       setShowWarning(true);
-    } else {
+      return;
+    }
+
+    setShowWarning(false);
+
+    try {
+      const axios = await axiosInstance();
+      const finalRepresentativeIndex = thumbnailIndex !== null ? thumbnailIndex : 0;
+      const imageUri = selectedImages[finalRepresentativeIndex];
+
+      const formData = new FormData();
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+      const fileName = imageUri.split('/').pop();
+
+      formData.append('file', {
+        uri: imageUri,
+        name: fileName,
+        type: blob.type,
+      });
+
+      const apiResponse = await axios.post('/api/v1/simplification/image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('API 응답 성공:', apiResponse.data);
+
+      const simplifiedData = apiResponse.data.results[0];
+
       navigation.navigate('add', {
         selectedImages, // 선택된 이미지 배열 전달
         thumbnailIndex, // 대표 이미지 인덱스 전달
+        title: simplifiedData.title,
+        summary: simplifiedData.summary,
+        tags: simplifiedData.tags,
       });
+    } catch (error) {
+      console.error('API 요청 오류:', error.response?.data || error.message);
+      alert('이미지 업로드 중 문제가 발생했습니다. 다시 시도해주세요.');
     }
+  };
+  const handleBackToMain = () => {
+    navigation.navigate('main');
   };
 
   const pickImage = async () => {
