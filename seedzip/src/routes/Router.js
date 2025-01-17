@@ -13,7 +13,8 @@ import View from '../pages/view/ViewSeed';
 import AddLink from '../pages/contentAdd/AddLink';
 import AddCategory from '../pages/contentAdd/AddCategory';
 import AddTag from '../pages/contentAdd/AddTag';
-import ImageUpload from '../pages/imageUpload/ImageUpload';
+import ImageUpload from '../pages/add/ImageUpload';
+import ImageSave from '../pages/add/ImageSave';
 import Add from '../pages/add/AddSeedPage';
 import Save from '../pages/add/SaveSeedPage';
 
@@ -68,11 +69,15 @@ function Router() {
       <Stack.Screen name="addCategory" component={AddCategory} />
       <Stack.Screen name="addTag" component={AddTag} />
       <Stack.Screen
-          name="ImageUpload"
+          name="imageupload"
           component={ImageUpload}
           options={{
             headerShown: false,
           }}
+        />
+        <Stack.Screen
+          name="imagesave"
+          component={ImageSave}
         />
       <Stack.Screen name="add" component={Add} />
       <Stack.Screen name="save" component={Save} />

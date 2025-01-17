@@ -5,6 +5,7 @@ import { axiosInstance } from '../../api/axios-instance';
 import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import { MyContext } from '../../../App';
+import ImageSave from './ImageSave';
 
 const AddSeedPage = () => {
   const [dataType, setDataType] = useState('');
@@ -27,13 +28,15 @@ const AddSeedPage = () => {
     }));
   }, [dataType]);
 
+  // 전달받은 이미지 및 썸네일 데이터 수신
+  const { selectedImages = [], thumbnailIndex = 0 } = route.params || {};
+
   const [contentInfo, setContentInfo] = useState({
     dataType: '',
     contentName: title || '',
     contentLink: link || '',
-    contentImage: [],
-    contentDoc: [],
-    thumbnailImage: 0,
+    contentImage: selectedImages || [],
+    thumbnailImage: thumbnailIndex || 0,
     boardCategory: category || ['예시 1'],
     tags: tags || ['예시 태그 1'],
     dday: '',
@@ -61,15 +64,58 @@ const AddSeedPage = () => {
   const SaveSeed = async () => {
     try {
       const axios = await axiosInstance();
-      const response = await axios.post(
-        '/api/v1/content/', contentInfo
-      );
-      console.log('출력물', response.data);
-      if (response.data.status.code == 200) {
-        navigation.navigate('save');
+      
+      // 기본 콘텐츠 데이터
+      const contentData = {
+        dataType: contentInfo.dataType,
+        contentName: contentInfo.contentName || null, // 빈 문자열을 null로 변환
+        contentLink: contentInfo.contentLink.length > 0 ? contentInfo.contentLink : null, // 빈 배열을 null로 변환
+        thumbnailImage: contentInfo.thumbnailImage || null,
+        boardCategory: contentInfo.boardCategory,
+        tags: contentInfo.tags,
+        dday: contentInfo.dday || null,
+        contentDetail: contentInfo.contentDetail || null,
+      };
+  
+      // 콘텐츠 저장 API 호출
+      const contentResponse = await axios.post('/api/v1/content/', contentData);
+      console.log('콘텐츠 저장 성공:', contentResponse.data);
+  
+      // 이미지 업로드 처리 (데이터 유형이 IMAGE일 경우)
+      if (contentResponse.data.status.code === 200 && contentInfo.dataType === 'IMAGE' && contentInfo.contentImage.length > 0) {
+        const formData = new FormData();
+  
+        // 이미지 파일을 Blob으로 변환하여 FormData에 추가
+        for (const uri of contentInfo.contentImage) {
+          const response = await fetch(uri); // 이미지 URI를 Blob으로 변환
+          const blob = await response.blob(); // Blob 객체로 변환
+          const fileName = uri.split('/').pop(); // 파일 이름 추출
+          
+          formData.append('file', {
+            uri: uri, 
+            name: fileName,
+            type: blob.type,
+          });
+        }
+  
+        // 이미지 업로드 API 호출 (서버에 이미지 파일을 전송)
+        const imageUploadResponse = await axios.post(
+          `/api/v1/content/upload/${contentResponse.data.results[0].contentId}`, // 콘텐츠 ID를 사용하여 이미지 업로드
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+  
+        console.log('이미지 업로드 성공:', imageUploadResponse.data);
       }
+  
+      // 저장 완료 후 화면 이동
+      navigation.navigate('save');
     } catch (error) {
-      console.error('Error fetching content:', error);
+      console.error('콘텐츠 저장 중 오류 발생:', error.response?.data || error.message);
     }
   };
 
@@ -92,12 +138,16 @@ const AddSeedPage = () => {
         </View>
       )}
       {dataType === 'IMAGE' && (
-        <View></View>
-        //////////////////////////////
-        // 영주님 이미지 추가해주세요!!!!!!!
-        // 영주님 이미지 추가해주세요!!!!!!!
-        // 영주님 이미지 추가해주세요!!!!!!!
-        //////////////////////////////
+        <View>
+          <ImageSave
+            route={{
+              params: {
+                selectedImages: contentInfo.contentImage,
+                thumbnailIndex: contentInfo.thumbnailImage,
+              },
+            }}
+          />
+        </View>
       )}
       <View>
         <View style={styles.contentDiv}>
