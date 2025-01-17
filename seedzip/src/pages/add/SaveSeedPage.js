@@ -1,15 +1,28 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import saveImage from '../../assets/icons/save.png';
+import { MyContext } from '../../../App';
 
 const SaveSeedPage = () => {
+  const {setLink, setTags, setTitle, setSummary, setCategory, setTotalTags} = useContext(MyContext);
   const navigation = useNavigation();
+
+  const handelSave = () => {
+    navigation.navigate('main');
+    setLink('');
+    setTags([]);
+    setTitle('');
+    setSummary('');
+    setCategory([]);
+    setTotalTags([]);
+  };
+
   return (
     <View style={styles.container}>
       <Image source={saveImage} style={[{ width: 120, height: 120, }]}></Image>
       <Text style={[{ fontSize: 24, fontWeight: 600, lineHeight: 30, paddingBottom: 50 }]}>  씨드 저장이{'\n'}완료되었어요!</Text>
-      <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('main')}>
+      <TouchableOpacity style={styles.nextButton} onPress={handelSave}>
         <Text style={styles.nextButtonText}>확인</Text>
       </TouchableOpacity>
     </View>
