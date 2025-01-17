@@ -240,6 +240,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingBottom: 8,
     rowGap: 8,
+    maxWidth: 287,
   },
   textWrapper: {
     backgroundColor: '#f2f2f2',
@@ -258,6 +259,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     maxHeight: 100,
+    maxWidth: 287,
     overflow: 'hidden',
     paddingBottom: 8,
     rowGap: 8,

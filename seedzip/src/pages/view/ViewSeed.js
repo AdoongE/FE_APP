@@ -45,7 +45,7 @@ function ViewContent() {
     const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     setRemainingDays(dayDiff);
   };
-  // 56 57 59 62 63 64 65 67
+
   const handleViewContent = async () => {
     try {
       const axios = await axiosInstance();
@@ -255,6 +255,7 @@ grayBox: {
   categoryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    maxWidth: 287,
   },
   textWrapper: {
     backgroundColor: '#f2f2f2',
@@ -273,6 +274,7 @@ grayBox: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
+    maxWidth: 287,
   },
   tagWrapper: {
     backgroundColor: '#f2f2f2',
