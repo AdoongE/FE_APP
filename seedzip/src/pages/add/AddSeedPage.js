@@ -5,25 +5,11 @@ import { axiosInstance } from '../../api/axios-instance';
 import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import { MyContext } from '../../../App';
-import { ImageUplaod } from '../imageUpload/ImageUpload';
 
-const AddSeedPage = ({ route }) => {
-  const [dataType, setDataType] = useState(null);
+const AddSeedPage = () => {
+  const [dataType, setDataType] = useState('');
   const {tags, link, title, summary, category} = useContext(MyContext);
   const navigation = useNavigation();
-
-  const [contentInfo, setContentInfo] = useState({
-    dataType: dataType,
-    contentName: title || '',
-    contentLink: link || '',
-    contentImage: [],
-    contentDoc: [],
-    thumbnailImage: 0,
-    boardCategory: category || ['예시 1'],
-    tags: tags || ['예시 태그 1'],
-    dday: '',
-    contentDetail: summary || '예시 요약',
-  });
   useEffect(() => {
     if (contentInfo.contentImage.length > 0) {
       setDataType('IMAGE');
@@ -34,11 +20,31 @@ const AddSeedPage = ({ route }) => {
     }
   }, []);
 
+  useEffect(() => {
+    setContentInfo(prevState => ({
+      ...prevState,
+      dataType: dataType,
+    }));
+  }, [dataType]);
+
+  const [contentInfo, setContentInfo] = useState({
+    dataType: '',
+    contentName: title || '',
+    contentLink: link || '',
+    contentImage: [],
+    contentDoc: [],
+    thumbnailImage: 0,
+    boardCategory: category || ['예시 1'],
+    tags: tags || ['예시 태그 1'],
+    dday: '',
+    contentDetail: summary || '',
+  });
+  
+
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
 
   const handleTitleChange = (text) => {
-    console.log('보자', tags);
     setContentInfo({ ...contentInfo, contentName: text });
   };
 

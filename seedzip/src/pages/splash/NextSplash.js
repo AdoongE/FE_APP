@@ -69,7 +69,7 @@ const NextSplash = () => {
         navigation.navigate('nickname'); // 회원가입 페이지 시작
       }
     } catch (error) {
-      // console.error('카카오 로그인 처리 중 에러:', error);
+      console.error('카카오 로그인 처리 중 에러:', error);
       Alert.alert('로그인 처리 중 문제가 발생했습니다.');
     }
   };

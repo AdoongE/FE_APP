@@ -7,8 +7,10 @@ import ThumbnailModal from './ThumbnailModal';
 function ViewContent() {
   const navigation = useNavigation();
   const route = useRoute();
+  const contentId = route.params;
+
   const [contentInfo, setContentInfo] = useState({
-    contentId: '',
+    contentId: contentId || 0,
     contentDataType: '',
     contentName: '',
     contentLink: '',
@@ -47,10 +49,7 @@ function ViewContent() {
   const handleViewContent = async () => {
     try {
       const axios = await axiosInstance();
-      const response = await axios.get(
-        // `/api/v1/content/all/${route.params.contentId}`,
-        '/api/v1/content/all/67',
-      );
+      const response = await axios.get(`/api/v1/content/all/${contentId}`);
       const results = response.data.results[0];
       setContentInfo({
         contentId: results.contentId,
