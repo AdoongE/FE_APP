@@ -1,42 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { axiosInstance } from '../../api/axios-instance';
 import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
+import { MyContext } from '../../../App';
+import { ImageUplaod } from '../imageUpload/ImageUpload';
 
 const AddSeedPage = ({ route }) => {
+  const [dataType, setDataType] = useState(null);
+  const {tags, link, title, summary, category} = useContext(MyContext);
   const navigation = useNavigation();
-  // const {
-  //   dataType,
-  //   contentName,
-  //   contentLink,
-  //   contentImage,
-  //   contentDoc,
-  //   thumbnailImage,
-  //   boardCategory,
-  //   tags,
-  //   dday,
-  //   contentDetail,
-  // } = route.params;
 
   const [contentInfo, setContentInfo] = useState({
-    dataType: 'LINK',
-    contentName: '',
-    contentLink: 'http://naver.com',
+    dataType: dataType,
+    contentName: title || '',
+    contentLink: link || '',
     contentImage: [],
     contentDoc: [],
     thumbnailImage: 0,
-    boardCategory: ['ㅎㅇ'],
-    tags: ['태그1', '태그2'],
+    boardCategory: category || ['예시 1'],
+    tags: tags || ['예시 태그 1'],
     dday: '',
-    contentDetail: '안녕하세요안녕ㅎ아세욯 ㅎㅎ',
+    contentDetail: summary || '예시 요약',
   });
+  useEffect(() => {
+    if (contentInfo.contentImage.length > 0) {
+      setDataType('IMAGE');
+    } else if (contentInfo.contentDoc.length > 0) {
+      setDataType('PDF');
+    } else if (contentInfo.contentLink !== '') {
+      setDataType('LINK');
+    }
+  }, []);
 
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
 
   const handleTitleChange = (text) => {
+    console.log('보자', tags);
     setContentInfo({ ...contentInfo, contentName: text });
   };
 
@@ -75,7 +77,7 @@ const AddSeedPage = ({ route }) => {
         value={contentInfo.contentName}
         onChangeText={handleTitleChange}
       />
-      {contentInfo.dataType === 'LINK' && (
+      {dataType === 'LINK' && (
         <View style={styles.linkBox}>
           <View style={styles.circle}>
             <Ionicons name="link-outline" color="white"></Ionicons>
@@ -83,7 +85,7 @@ const AddSeedPage = ({ route }) => {
           <Text style={styles.linkText}>{contentInfo.contentLink}</Text>
         </View>
       )}
-      {contentInfo.dataType === 'IMAGE' && (
+      {dataType === 'IMAGE' && (
         <View></View>
         //////////////////////////////
         // 영주님 이미지 추가해주세요!!!!!!!

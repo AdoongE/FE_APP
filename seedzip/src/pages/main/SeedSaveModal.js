@@ -18,7 +18,12 @@ export default function SeedSaveModal({ visible, onClose }) {
           <View style={styles.handleBar} />
           <Text style={styles.modalTitle}>저장형식을 선택해주세요</Text>
 
-          <TouchableOpacity style={styles.modalButton}>
+          <TouchableOpacity
+            style={styles.modalButton}
+            onPress={() => {
+              onClose(); // 모달 닫기
+              navigation.navigate('addLink');
+            }}>
             <Ionicons name="link-outline" size={20} color="black" />
             <Text style={styles.modalButtonText}>링크 저장하기</Text>
           </TouchableOpacity>

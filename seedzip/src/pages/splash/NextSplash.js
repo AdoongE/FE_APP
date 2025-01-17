@@ -107,7 +107,8 @@ const NextSplash = () => {
             </TouchableOpacity>
             <TouchableOpacity
               type="google"
-              style={[styles.button, {backgroundColor: 'white'}]}>
+              style={[styles.button, {backgroundColor: 'white'}]}
+              onPress={() => navigation.navigate('main')}>
               <Image source={google} />
               <Text style={{color: '#4F4F4F'}}>구글로 로그인하기</Text>
             </TouchableOpacity>
