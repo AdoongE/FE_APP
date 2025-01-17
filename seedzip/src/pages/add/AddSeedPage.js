@@ -9,7 +9,7 @@ import ImageSave from './ImageSave';
 
 const AddSeedPage = () => {
   const [dataType, setDataType] = useState('');
-  const {tags, link, title, summary, category} = useContext(MyContext);
+  const {tags, link, title, summary, category, selectedImages, thumbnailIndex} = useContext(MyContext);
   const navigation = useNavigation();
   useEffect(() => {
     if (contentInfo.contentImage.length > 0) {
@@ -27,9 +27,6 @@ const AddSeedPage = () => {
       dataType: dataType,
     }));
   }, [dataType]);
-
-  // 전달받은 이미지 및 썸네일 데이터 수신
-  const { selectedImages = [], thumbnailIndex = 0 } = route.params || {};
 
   const [contentInfo, setContentInfo] = useState({
     dataType: '',
@@ -64,21 +61,8 @@ const AddSeedPage = () => {
   const SaveSeed = async () => {
     try {
       const axios = await axiosInstance();
-      
-      // 기본 콘텐츠 데이터
-      const contentData = {
-        dataType: contentInfo.dataType,
-        contentName: contentInfo.contentName || null, // 빈 문자열을 null로 변환
-        contentLink: contentInfo.contentLink.length > 0 ? contentInfo.contentLink : null, // 빈 배열을 null로 변환
-        thumbnailImage: contentInfo.thumbnailImage || null,
-        boardCategory: contentInfo.boardCategory,
-        tags: contentInfo.tags,
-        dday: contentInfo.dday || null,
-        contentDetail: contentInfo.contentDetail || null,
-      };
-  
-      // 콘텐츠 저장 API 호출
-      const contentResponse = await axios.post('/api/v1/content/', contentData);
+
+      const contentResponse = await axios.post('/api/v1/content/', contentInfo);
       console.log('콘텐츠 저장 성공:', contentResponse.data);
   
       // 이미지 업로드 처리 (데이터 유형이 IMAGE일 경우)

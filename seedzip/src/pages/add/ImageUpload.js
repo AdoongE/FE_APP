@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -12,13 +12,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
 import { axiosInstance } from '../../api/axios-instance';
+import { MyContext } from '../../../App';
 
 export default function App() {
-  const [selectedImages, setSelectedImages] = useState([]);
+  const {selectedImages, setSelectedImages, thumbnailIndex, setThumbnailIndex, setTitle, setTags, setSummary} = useContext(MyContext);
   const [showWarning, setShowWarning] = useState(false); // 경고 메시지 표시 여부
   const navigation = useNavigation();
-  const [thumbnailIndex, setThumbnailIndex] = useState(0); // 대표 이미지 인덱스
-
 
   const handleNext = async () => {
     if (selectedImages.length === 0) {
@@ -52,15 +51,16 @@ export default function App() {
 
       console.log('API 응답 성공:', apiResponse.data);
 
-      const simplifiedData = apiResponse.data.results[0];
+      const simplifiedData = apiResponse.data.results[0];;
 
-      navigation.navigate('add', {
-        selectedImages, // 선택된 이미지 배열 전달
-        thumbnailIndex, // 대표 이미지 인덱스 전달
-        title: simplifiedData.title,
-        summary: simplifiedData.summary,
-        tags: simplifiedData.tags,
-      });
+      const tagsString = simplifiedData.tags || '';
+      const tagsArray = tagsString.split(/,\s*/);
+
+      setTitle(simplifiedData.title || '');
+      setSummary(simplifiedData.summary || '');
+      setTags(tagsArray);
+
+      navigation.navigate('addCategory');
     } catch (error) {
       console.error('API 요청 오류:', error.response?.data || error.message);
       alert('이미지 업로드 중 문제가 발생했습니다. 다시 시도해주세요.');

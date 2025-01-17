@@ -5,7 +5,7 @@ import saveImage from '../../assets/icons/save.png';
 import { MyContext } from '../../../App';
 
 const SaveSeedPage = () => {
-  const {setLink, setTags, setTitle, setSummary, setCategory, setTotalTags} = useContext(MyContext);
+  const {setLink, setTags, setTitle, setSummary, setCategory, setTotalTags, setSelectedImages, setThumbnailIndex} = useContext(MyContext);
   const navigation = useNavigation();
 
   const handelSave = () => {
@@ -16,6 +16,8 @@ const SaveSeedPage = () => {
     setSummary('');
     setCategory([]);
     setTotalTags([]);
+    setSelectedImages([]);
+    setThumbnailIndex(0);
   };
 
   return (
