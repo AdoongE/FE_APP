@@ -127,14 +127,15 @@ function MyTagScreen() {
       const myTags = await MyTag();
       if (Array.isArray(myTags)) {
         console.log('가져온 내 태그:', myTags);
-        setTags(myTags.name);
+        const names = myTags.map(tag => tag.name);
+        setTags(names);
       } else {
         console.log('태그 데이터를 가져오지 못했습니다.');
         setTags([]);
       }
     };
     fetchTags();
-  }, [tags]);
+  }, []);
 
   useEffect(() => {
     console.log('업데이트된 태그 상태:', tags);
