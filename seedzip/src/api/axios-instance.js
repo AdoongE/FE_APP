@@ -12,4 +12,5 @@ const axiosInstance = async () => {
   });
 };
 
-export {axiosInstance};
+export { axiosInstance };
+

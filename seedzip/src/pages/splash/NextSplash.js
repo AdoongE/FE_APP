@@ -6,13 +6,13 @@ import newLogo from '../../assets/icons/whiteLogo.png';
 import naver from '../../assets/icons/naver.png';
 import google from '../../assets/icons/google.png';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import {useNavigation} from '@react-navigation/native';
-import {initializeKakaoSDK} from '@react-native-kakao/core';
-import {login} from '@react-native-kakao/user';
-import {Alert} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { initializeKakaoSDK } from '@react-native-kakao/core';
+import { login } from '@react-native-kakao/user';
+import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {axiosInstance} from '../../api/axios-instance';
-import {REACT_NATIVE_APP_KEY} from '@env';
+import { axiosInstance } from '../../api/axios-instance';
+import { REACT_NATIVE_APP_KEY } from '@env';
 
 const NextSplash = () => {
   const navigation = useNavigation();
@@ -28,8 +28,10 @@ const NextSplash = () => {
       const kakaoAccessToken = token.accessToken;
       console.log('로그인 성공, 액세스 토큰:', kakaoAccessToken);
 
-      const response = await axiosInstance.post(
-        `/api/v1/auth/login/kakao/app?accessToken=${kakaoAccessToken}`,
+      const axios = await axiosInstance();
+      const response = await axios.post(
+        `/api/v1/auth/login/kakao/app?accessToken=${kakaoAccessToken}`
+
       );
 
       const {status, results} = response.data;
@@ -41,6 +43,17 @@ const NextSplash = () => {
         if (jwtToken) {
           await AsyncStorage.setItem('jwtToken', jwtToken);
           console.log('저장된 JWT Token:', jwtToken);
+
+          navigation.navigate('main');
+        }
+      } else if (status.code === 401) {
+        console.log('메세지:', status.message);
+
+        const jwtToken = token.refreshToken;
+
+        if (jwtToken) {
+          await AsyncStorage.setItem('jwtToken', jwtToken);
+          console.log('만료 후, 저장된 JWT Token:', jwtToken);
 
           navigation.navigate('main');
         }

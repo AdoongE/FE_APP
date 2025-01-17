@@ -2,6 +2,38 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+	<key>CFBundleTypeRole</key>
+	<string>Editor</string>
+	<key>CFBundleURLSchemes</key>
+	<array>
+	<string>kakao$(REACT_NATIVE_APP_KEY)</string>
+	</array>
+	</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>KAKAO_APP_KEY</key>
+	<string>$(REACT_NATIVE_APP_KEY)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>kakao0123456789</string>
+	<string>kakaokompassauth</string>
+	<string>storykompassauth</string>
+	<string>kakaolink</string>
+	</array>
+
+	<key>REACT_NATIVE_APP_SERVER_URL</key>
+	<string>$(REACT_NATIVE_APP_SERVER_URL)</string>
+	<key>REACT_NATIVE_APP_KEY</key>
+	<string>$(REACT_NATIVE_APP_KEY)</string>
+
+	<key>UIFileSharingEnabled</key>
+	<true/>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>

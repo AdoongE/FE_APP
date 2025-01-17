@@ -8,11 +8,14 @@ import Consent from '../pages/signup/Consent';
 import Success from '../pages/signup/Success';
 import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
-import Home from '../pages/Home';
+import Main from '../pages/main/Main';
 import View from '../pages/view/ViewSeed';
 import AddLink from '../pages/contentAdd/AddLink';
 import AddCategory from '../pages/contentAdd/AddCategory';
 import AddTag from '../pages/contentAdd/AddTag';
+import ImageUpload from '../pages/imageUpload/ImageUpload';
+import Add from '../pages/add/AddSeedPage';
+import Save from '../pages/add/SaveSeedPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -52,12 +55,27 @@ function Router() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="main" component={Home} />
+      <Stack.Screen
+        name="main"
+        component={Main}
+        options={{
+          headerShown: false, // 메인화면에서 헤더 숨김
+        }}
+      />
       <Stack.Screen name="view" component={View} />
 
       <Stack.Screen name="addLink" component={AddLink} />
       <Stack.Screen name="addCategory" component={AddCategory} />
       <Stack.Screen name="addTag" component={AddTag} />
+      <Stack.Screen
+          name="ImageUpload"
+          component={ImageUpload}
+          options={{
+            headerShown: false,
+          }}
+        />
+      <Stack.Screen name="add" component={Add} />
+      <Stack.Screen name="save" component={Save} />
     </Stack.Navigator>
   );
 }
