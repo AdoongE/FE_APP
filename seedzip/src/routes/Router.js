@@ -1,4 +1,4 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import Nickname from '../pages/signup/Nickname';
 import Birthday from '../pages/signup/Birthday';
@@ -10,6 +10,9 @@ import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
 import Main from '../pages/main/Main';
 import View from '../pages/view/ViewSeed';
+import AddLink from '../pages/contentAdd/AddLink';
+import AddCategory from '../pages/contentAdd/AddCategory';
+import AddTag from '../pages/contentAdd/AddTag';
 import ImageUpload from '../pages/imageUpload/ImageUpload';
 import Add from '../pages/add/AddSeedPage';
 import Save from '../pages/add/SaveSeedPage';
@@ -25,8 +28,7 @@ function Router() {
         headerBackVisible: true,
         headerBackTitleVisible: false,
         headerTintColor: '#000',
-      }}
-    >
+      }}>
       <Stack.Screen
         name="splash"
         component={SplashPage}
@@ -61,6 +63,10 @@ function Router() {
         }}
       />
       <Stack.Screen name="view" component={View} />
+
+      <Stack.Screen name="addLink" component={AddLink} />
+      <Stack.Screen name="addCategory" component={AddCategory} />
+      <Stack.Screen name="addTag" component={AddTag} />
       <Stack.Screen
           name="ImageUpload"
           component={ImageUpload}
