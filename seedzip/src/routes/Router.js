@@ -13,7 +13,6 @@ import View from '../pages/view/ViewSeed';
 import AddLink from '../pages/contentAdd/AddLink';
 import AddCategory from '../pages/contentAdd/AddCategory';
 import AddTag from '../pages/contentAdd/AddTag';
-import ImageUpload from '../pages/imageUpload/ImageUpload';
 import ImageUpload from '../pages/add/ImageUpload';
 import ImageSave from '../pages/add/ImageSave';
 import Add from '../pages/add/AddSeedPage';
