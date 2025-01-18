@@ -16,7 +16,7 @@ export default function SeedBox({ name, contentId }) {
 
       <View style={styles.seedBottom}>
         <View style={styles.circle} />
-        <Text style={styles.seedName}>{name}</Text>
+        <Text style={styles.seedName} numberOfLines={1} ellipsizeMode="tail">{name}</Text>
       </View>
 
       <SeedViewModal
@@ -59,5 +59,6 @@ const styles = StyleSheet.create({
   seedName: {
     fontSize: 14,
     color: '#000',
+    maxWidth: 145,
   }
 });
