@@ -31,7 +31,7 @@ export default function SeedBox({ name, contentId }) {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
-    marginHorizontal: 10,
+    marginHorizontal: 8,
   },
   seedCard: {
     width: 167,

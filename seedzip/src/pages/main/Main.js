@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingTop: 8,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     justifyContent: 'flex-start',  // 상단과 하단바를 그대로 두기 위한 설정
   },
   header: {
