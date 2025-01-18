@@ -23,7 +23,9 @@ export default function SeedActionModal({ visible, onClose, contentId }) {
           <View style={styles.handleBar} />
 
           <TouchableOpacity style={styles.modalButton} onPress={handleView}>
-            <Ionicons name="ellipsis-horizontal-sharp" size={20} color="black" />
+            <Text style={styles.modalButtoItem}>
+              <Ionicons name="ellipsis-horizontal-sharp" size={20} color="black" />
+            </Text>
             <Text style={styles.modalButtonText}>세부 정보 보기</Text>
           </TouchableOpacity>
 
@@ -34,7 +36,9 @@ export default function SeedActionModal({ visible, onClose, contentId }) {
               navigation.navigate('view');
             }}
           >
-            <Ionicons name="trash-outline" size={20} color="black" /> {/* 아이콘 변경 */}
+            <Text style={styles.modalButtoItem}>
+              <Ionicons name="trash-outline" size={20} color="black" /> {/* 아이콘 변경 */}
+            </Text>
             <Text style={styles.modalButtonText}>삭제하기</Text>
           </TouchableOpacity>
 
