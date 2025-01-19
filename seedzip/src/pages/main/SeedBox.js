@@ -1,24 +1,39 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import SeedViewModal from './SeedViewModal';
 
-export default function SeedBox({ name, contentId }) {
+export default function SeedBox({ title, contentId, thumbnail, type }) {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => setModalVisible(true)}>
         <View style={styles.seedCard}>
+          {/* 썸네일 이미지 */}
+          {thumbnail ? (
+            <Image source={{ uri: thumbnail }} style={styles.thumbnail} resizeMode="cover" />
+          ) : (
+            <View style={styles.noThumbnail}>
+              <Text style={styles.noThumbnailText}>이미지 없음</Text>
+            </View>
+          )}
+          {/* 옵션 아이콘 */}
           <Ionicons name="ellipsis-vertical" size={16} color="black" style={styles.icon} />
         </View>
       </TouchableOpacity>
 
       <View style={styles.seedBottom}>
-        <View style={styles.circle} />
-        <Text style={styles.seedName} numberOfLines={1} ellipsizeMode="tail">{name}</Text>
+        {/* 데이터 타입 동그라미 + 아이콘 */}
+        <View style={styles.circle}>
+          {getTypeIcon(type)}
+        </View>
+        <Text style={styles.seedName} numberOfLines={1} ellipsizeMode="tail">
+          {title}
+        </Text>
       </View>
 
+      {/* 모달 컴포넌트 */}
       <SeedViewModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
@@ -27,6 +42,20 @@ export default function SeedBox({ name, contentId }) {
     </View>
   );
 }
+
+// 데이터 타입에 따른 아이콘 반환
+const getTypeIcon = (type) => {
+  switch (type) {
+    case 'IMAGE':
+      return <Ionicons name="image" size={12} color="white" />;
+    case 'LINK':
+      return <MaterialIcons name="link" size={12} color="white" />;
+    case 'PDF':
+      return <Ionicons name="document" size={12} color="white" />;
+    default:
+      return <Ionicons name="help" size={12} color="white" />;
+  }
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -38,11 +67,30 @@ const styles = StyleSheet.create({
     height: 151,
     backgroundColor: '#DCDADA',
     borderRadius: 8,
-    alignItems: 'flex-end',
-    padding: 10,
+    overflow: 'hidden', // 이미지가 넘치지 않도록
+    position: 'relative',
+  },
+  thumbnail: {
+    width: '100%',
+    height: '100%',
+  },
+  noThumbnail: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#E0E0E0',
+    width: '100%',
+    height: '100%',
+  },
+  noThumbnailText: {
+    fontSize: 12,
+    color: '#999',
   },
   icon: {
-    marginTop: 5,
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
   },
   seedBottom: {
     flexDirection: 'row',
@@ -50,15 +98,17 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   circle: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     backgroundColor: '#41C3AB',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 5,
   },
   seedName: {
     fontSize: 14,
     color: '#000',
     maxWidth: 145,
-  }
+  },
 });
