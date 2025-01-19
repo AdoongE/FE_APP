@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import SeedViewModal from './SeedViewModal';
+import imageIcon from '../../assets/icons/image.png';
+import linkIcon from '../../assets/icons/link.png';
+import fileIcon from '../../assets/icons/file.png';
 
 export default function SeedBox({ title, contentId, thumbnail, type }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -24,7 +27,7 @@ export default function SeedBox({ title, contentId, thumbnail, type }) {
       </TouchableOpacity>
 
       <View style={styles.seedBottom}>
-        {/* 데이터 타입 동그라미 + 아이콘 */}
+        {/* 데이터 타입 동그라미 + 이미지 */}
         <View style={styles.circle}>
           {getTypeIcon(type)}
         </View>
@@ -43,17 +46,17 @@ export default function SeedBox({ title, contentId, thumbnail, type }) {
   );
 }
 
-// 데이터 타입에 따른 아이콘 반환
+// 데이터 타입에 따른 이미지 반환
 const getTypeIcon = (type) => {
   switch (type) {
     case 'IMAGE':
-      return <Ionicons name="image" size={12} color="white" />;
+      return <Image source={imageIcon} style={styles.iconImage} />;
     case 'LINK':
-      return <MaterialIcons name="link" size={12} color="white" />;
+      return <Image source={linkIcon} style={styles.iconImage} />;
     case 'PDF':
-      return <Ionicons name="document" size={12} color="white" />;
+      return <Image source={fileIcon} style={styles.iconImage} />;
     default:
-      return <Ionicons name="help" size={12} color="white" />;
+      return null;
   }
 };
 
@@ -105,6 +108,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 5,
+  },
+  iconImage: {
+    width: 12,
+    height: 12,
+    resizeMode: 'contain',
   },
   seedName: {
     fontSize: 14,
