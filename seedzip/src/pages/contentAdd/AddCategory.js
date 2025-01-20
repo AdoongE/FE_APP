@@ -88,7 +88,7 @@ const AddCategory = ({navigation}) => {
           placeholder="카테고리 선택하기"
           open={open}
           value={category1}
-          items={categoryItem}
+          items={dropdownCategory}
           setOpen={open => {
             setOpen(open);
           }}

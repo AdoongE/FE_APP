@@ -14,6 +14,8 @@ export default function App() {
   const [summary, setSummary] = useState('');
   const [category, setCategory] = useState([]);
   const [totalTags, setTotalTags] = useState(tags);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [thumbnailIndex, setThumbnailIndex] = useState(0);
 
   return (
     <NavigationContainer>
@@ -31,6 +33,10 @@ export default function App() {
           setCategory,
           totalTags,
           setTotalTags,
+          selectedImages,
+          setSelectedImages,
+          thumbnailIndex,
+          setThumbnailIndex,
         }}>
         <SafeAreaView style={styles.safeArea}>
           <Router />
