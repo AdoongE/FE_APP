@@ -1,51 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { axiosInstance } from '../../api/axios-instance';
 import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
+import { MyContext } from '../../../App';
 import ImageSave from './ImageSave';
 
-const AddSeedPage = ({ route }) => {
+const AddSeedPage = () => {
+  const [dataType, setDataType] = useState('');
+  const {tags, link, title, summary, category, selectedImages, thumbnailIndex} = useContext(MyContext);
   const navigation = useNavigation();
-  // const {
-  //   dataType,
-  //   contentName,
-  //   contentLink,
-  //   contentImage,
-  //   contentDoc,
-  //   thumbnailImage,
-  //   boardCategory,
-  //   tags,
-  //   dday,
-  //   contentDetail,
-  // } = route.params;
+  useEffect(() => {
+    if (contentInfo.contentImage.length > 0) {
+      setDataType('IMAGE');
+    } else if (contentInfo.contentDoc.length > 0) {
+      setDataType('PDF');
+    } else if (contentInfo.contentLink !== '') {
+      setDataType('LINK');
+    }
+  }, []);
 
-  // 전달받은 이미지 및 썸네일 데이터 수신
-  const { selectedImages = [], thumbnailIndex = 0 } = route.params || {};
+  useEffect(() => {
+    setContentInfo(prevState => ({
+      ...prevState,
+      dataType: dataType,
+    }));
+  }, [dataType]);
 
   const [contentInfo, setContentInfo] = useState({
-    // dataType: 'LINK',
-    // contentName: '',
-    // contentLink: 'http://naver.com',
-    // contentImage: [],
-    // contentDoc: [],
-    // thumbnailImage: 0,
-    // boardCategory: ['ㅎㅇ'],
-    // tags: ['태그1', '태그2'],
-    // dday: '',
-    // contentDetail: '안녕하세요안녕ㅎ아세욯 ㅎㅎ',
-    dataType: 'IMAGE',
-    contentName: '',
-    contentLink: [],
-    contentImage: selectedImages,
-    thumbnailImage: thumbnailIndex,
-    contentDoc: [],
-    boardCategory: ['ㅎㅇ'],
-    tags: ['태그1', '태그2'],
+    dataType: '',
+    contentName: title || '',
+    contentLink: link || '',
+    contentImage: selectedImages || [],
+    thumbnailImage: thumbnailIndex || 0,
+    boardCategory: category || ['예시 1'],
+    tags: tags || ['예시 태그 1'],
     dday: '',
-    contentDetail: '안녕하세요안녕ㅎ아세욯 ㅎㅎ',
+    contentDetail: summary || '',
   });
+  
 
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
@@ -67,21 +61,8 @@ const AddSeedPage = ({ route }) => {
   const SaveSeed = async () => {
     try {
       const axios = await axiosInstance();
-      
-      // 기본 콘텐츠 데이터
-      const contentData = {
-        dataType: contentInfo.dataType,
-        contentName: contentInfo.contentName || null, // 빈 문자열을 null로 변환
-        contentLink: contentInfo.contentLink.length > 0 ? contentInfo.contentLink : null, // 빈 배열을 null로 변환
-        thumbnailImage: contentInfo.thumbnailImage || null,
-        boardCategory: contentInfo.boardCategory,
-        tags: contentInfo.tags,
-        dday: contentInfo.dday || null,
-        contentDetail: contentInfo.contentDetail || null,
-      };
-  
-      // 콘텐츠 저장 API 호출
-      const contentResponse = await axios.post('/api/v1/content/', contentData);
+
+      const contentResponse = await axios.post('/api/v1/content/', contentInfo);
       console.log('콘텐츠 저장 성공:', contentResponse.data);
   
       // 이미지 업로드 처리 (데이터 유형이 IMAGE일 경우)
@@ -132,7 +113,7 @@ const AddSeedPage = ({ route }) => {
         value={contentInfo.contentName}
         onChangeText={handleTitleChange}
       />
-      {contentInfo.dataType === 'LINK' && (
+      {dataType === 'LINK' && (
         <View style={styles.linkBox}>
           <View style={styles.circle}>
             <Ionicons name="link-outline" color="white"></Ionicons>
@@ -140,7 +121,7 @@ const AddSeedPage = ({ route }) => {
           <Text style={styles.linkText}>{contentInfo.contentLink}</Text>
         </View>
       )}
-      {contentInfo.dataType === 'IMAGE' && (
+      {dataType === 'IMAGE' && (
         <View>
           <ImageSave
             route={{
@@ -293,6 +274,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingBottom: 8,
     rowGap: 8,
+    maxWidth: 287,
   },
   textWrapper: {
     backgroundColor: '#f2f2f2',
@@ -311,6 +293,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     maxHeight: 100,
+    maxWidth: 287,
     overflow: 'hidden',
     paddingBottom: 8,
     rowGap: 8,

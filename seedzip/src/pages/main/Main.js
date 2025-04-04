@@ -22,9 +22,14 @@ export default function MainPage() {
 
         console.log('API Response:', response.data);
 
-        // API 응답에서 콘텐츠 목록 추출
         const contents = response?.data?.results?.[0]?.contentsInfoList || [];
-        setSeeds(contents);  // 콘텐츠 데이터를 상태에 저장
+        const formattedContents = contents.map((item) => ({
+          contentId: item.contentId,
+          title: item.contentName || '콘텐츠명',
+          thumbnail: item.thumbnailImage || null,
+          type: item.contentDateType || '타입 없음',
+        }));
+        setSeeds(formattedContents); // 필요한 데이터만 상태에 저장
       } catch (error) {
         console.error('Error fetching data: ', error.message || error);
       } finally {
@@ -48,15 +53,20 @@ export default function MainPage() {
       <Text style={styles.header}>seedzip</Text>
       <Text style={styles.title}>나의 씨드</Text>
 
-      {seeds.length === 0 ? (  // 데이터가 없을 경우 SeedBlank 컴포넌트 렌더링
+      {seeds.length === 0 ? ( // 데이터가 없을 경우 SeedBlank 컴포넌트 렌더링
         <SeedBlank />
       ) : (
         <FlatList
-          data={seeds}  // 응답에서 가져온 콘텐츠 목록
+          data={seeds}
           renderItem={({ item }) => (
-            <SeedBox name={item.contentName || '콘텐츠명'} />
+            <SeedBox
+              title={item.title}
+              contentId={item.contentId}
+              thumbnail={item.thumbnail}
+              type={item.type}
+            />
           )}
-          keyExtractor={(item) => item.contentId.toString()}  // contentId를 keyExtractor로 사용
+          keyExtractor={(item) => item.contentId.toString()} // contentId를 keyExtractor로 사용
           numColumns={2}
           contentContainerStyle={styles.list}
         />
@@ -72,8 +82,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingTop: 8,
-    paddingHorizontal: 20,
-    justifyContent: 'flex-start',  // 상단과 하단바를 그대로 두기 위한 설정
+    paddingHorizontal: 15,
+    justifyContent: 'flex-start', // 상단과 하단바를 그대로 두기 위한 설정
   },
   header: {
     fontSize: 20,
