@@ -22,7 +22,7 @@ export default Folder;
 
 const styles = StyleSheet.create({
   imageWrapper: {
-    width: '100',
+    width: '105',
     height: '84',
     position: 'relative',
   },
@@ -30,10 +30,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
-    shadowColor: '#000',
+    shadowColor: '#ddd',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
   },
   moreButton: {
     position: 'absolute',
