@@ -1,17 +1,15 @@
 module.exports = {
   root: true,
-  extends: [
-    '@react-native',
-    'eslint:recommended',
-  ],
+  extends: ['eslint:recommended', 'plugin:react/recommended'],
+  plugins: ['react'],
   parserOptions: {
-    parser: '@babel/eslint-parser',
-    requireConfigFile: false,
-    ecmaFeatures: {
-      jsx: true,
-    },
-    babelOptions: {
-      "presets": ["@babel/preset-react"]
-   },
+    ecmaVersion: 2021,
+    sourceType: 'module',
+    ecmaFeatures: { jsx: true },
+  },
+  env: {
+    es2021: true,
+    node: true,
+    'react-native/react-native': true,
   },
 };
