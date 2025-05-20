@@ -27,10 +27,6 @@ const FolderSection = ({
           <Ionicons name="chevron-forward" size={16} color="#9f9f9f" />
         </TouchableOpacity>
       )}
-      {/* <TouchableOpacity style={styles.viewAllBtn} onPress={onPressMore}>
-        <Text style={styles.viewAllText}>전체보기</Text>
-        <Ionicons name="chevron-forward" size={16} color="#9f9f9f" />
-      </TouchableOpacity> */}
     </View>
 
     <FlatList
@@ -87,7 +83,6 @@ const styles = StyleSheet.create({
   listContent: {
     gap: 20,
   },
-
   item: {
     marginHorizontal: 8,
   },
