@@ -1,17 +1,19 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import AllCategory from './AllCategory';
 import FolderSection from './FolderSection';
 
-const bookmarkData = Array.from({ length: 6 }).map((_, i) => ({
+const bookmarkData = Array.from({ length: 10 }).map((_, i) => ({
   id: `bm${i}`,
-  name: '카테고리명(N)',
+  name: `카테고리명 ${i + 1}`,
 }));
-const myData = Array.from({ length: 5 }).map((_, i) => ({
+const myData = Array.from({ length: 8 }).map((_, i) => ({
   id: `my${i + 1}`,
-  name: '카테고리명(N)',
+  name: `카테고리명 ${i + 1}`,
 }));
 
 const Category = () => {
+  const navigation = useNavigation();
   return (
     <ScrollView
       style={styles.container}
@@ -22,17 +24,25 @@ const Category = () => {
         <FolderSection
           title="북마크"
           iconName="bookmark-outline"
-          data={bookmarkData}
+          data={bookmarkData.slice(0, 6)}
           onPressMore={() => {
-            /* 북마크 전체보기 */
+            navigation.navigate('fullcategory', {
+              title: '북마크 전체보기',
+              iconName: 'bookmark-outline',
+              data: bookmarkData,
+            });
           }}
         />
         <FolderSection
           title="내 카테고리"
           iconName="grid-outline"
-          data={myData}
+          data={myData.slice(0, 6)}
           onPressMore={() => {
-            /* 내 카테고리 전체보기 */
+            navigation.navigate('fullcategory', {
+              title: '내 카테고리 전체보기',
+              iconName: 'grid-outline',
+              data: myData,
+            });
           }}
         />
       </View>

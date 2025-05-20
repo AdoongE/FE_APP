@@ -13,6 +13,7 @@ const FolderSection = ({
   iconName,
   data,
   onPressMore, // 전체보기
+  hideViewAll = false,
 }) => (
   <View style={styles.section}>
     <View style={styles.header}>
@@ -20,10 +21,16 @@ const FolderSection = ({
         <Ionicons name={iconName} size={20} color="#000" />
         <Text style={styles.title}>{title}</Text>
       </View>
-      <TouchableOpacity style={styles.viewAllBtn} onPress={onPressMore}>
+      {!hideViewAll && (
+        <TouchableOpacity style={styles.viewAllBtn} onPress={onPressMore}>
+          <Text style={styles.viewAllText}>전체보기</Text>
+          <Ionicons name="chevron-forward" size={16} color="#9f9f9f" />
+        </TouchableOpacity>
+      )}
+      {/* <TouchableOpacity style={styles.viewAllBtn} onPress={onPressMore}>
         <Text style={styles.viewAllText}>전체보기</Text>
         <Ionicons name="chevron-forward" size={16} color="#9f9f9f" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
 
     <FlatList

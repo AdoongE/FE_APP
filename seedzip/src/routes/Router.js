@@ -1,4 +1,4 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import Nickname from '../pages/signup/Nickname';
 import Birthday from '../pages/signup/Birthday';
@@ -17,6 +17,8 @@ import ImageUpload from '../pages/add/ImageUpload';
 import ImageSave from '../pages/add/ImageSave';
 import Add from '../pages/add/AddSeedPage';
 import Save from '../pages/add/SaveSeedPage';
+import Category from '../features/Category/Category';
+import FullFolderSection from '../features/Category/FullFolderSection';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,7 +31,8 @@ function Router() {
         headerBackVisible: true,
         headerBackTitleVisible: false,
         headerTintColor: '#000',
-      }}>
+      }}
+    >
       <Stack.Screen
         name="splash"
         component={SplashPage}
@@ -63,22 +66,20 @@ function Router() {
           headerShown: false, // 메인화면에서 헤더 숨김
         }}
       />
+      <Stack.Screen name="category" component={Category} />
+      <Stack.Screen name="fullcategory" component={FullFolderSection} />
       <Stack.Screen name="view" component={View} />
-
       <Stack.Screen name="addLink" component={AddLink} />
       <Stack.Screen name="addCategory" component={AddCategory} />
       <Stack.Screen name="addTag" component={AddTag} />
       <Stack.Screen
-          name="imageupload"
-          component={ImageUpload}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="imagesave"
-          component={ImageSave}
-        />
+        name="imageupload"
+        component={ImageUpload}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen name="imagesave" component={ImageSave} />
       <Stack.Screen name="add" component={Add} />
       <Stack.Screen name="save" component={Save} />
     </Stack.Navigator>
