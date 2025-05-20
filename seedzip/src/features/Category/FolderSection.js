@@ -1,6 +1,7 @@
 import {
   View,
   Text,
+  Image,
   TouchableOpacity,
   FlatList,
   StyleSheet,
@@ -12,7 +13,9 @@ const FolderSection = ({
   title,
   iconName,
   data,
+  emptyImg,
   onPressMore, // 전체보기
+  hideViewAll = false,
 }) => (
   <View style={styles.section}>
     <View style={styles.header}>
@@ -20,30 +23,39 @@ const FolderSection = ({
         <Ionicons name={iconName} size={20} color="#000" />
         <Text style={styles.title}>{title}</Text>
       </View>
-      <TouchableOpacity style={styles.viewAllBtn} onPress={onPressMore}>
-        <Text style={styles.viewAllText}>전체보기</Text>
-        <Ionicons name="chevron-forward" size={16} color="#9f9f9f" />
-      </TouchableOpacity>
+      {!hideViewAll && (
+        <TouchableOpacity style={styles.viewAllBtn} onPress={onPressMore}>
+          <Text style={styles.viewAllText}>전체보기</Text>
+          <Ionicons name="chevron-forward" size={16} color="#9f9f9f" />
+        </TouchableOpacity>
+      )}
     </View>
 
-    <FlatList
-      data={data}
-      numColumns={3}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={styles.listContent}
-      columnWrapperStyle={styles.row}
-      renderItem={({ item }) => (
-        <View style={styles.item}>
-          <Folder
-            name={item.name}
-            onPressMore={() => {
-              /* 추가 */
-            }}
-          />
-        </View>
-      )}
-      scrollEnabled={false}
-    />
+    {data.length === 0 ? (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>자주 보는 카테고리를 북마크하세요.</Text>
+        <Image source={emptyImg} style={styles.emptyImage} />
+      </View>
+    ) : (
+      <FlatList
+        data={data}
+        numColumns={3}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContent}
+        columnWrapperStyle={styles.row}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Folder
+              name={item.name}
+              onPressMore={() => {
+                /* 추가 */
+              }}
+            />
+          </View>
+        )}
+        scrollEnabled={false}
+      />
+    )}
   </View>
 );
 
@@ -80,8 +92,19 @@ const styles = StyleSheet.create({
   listContent: {
     gap: 20,
   },
-
   item: {
     marginHorizontal: 8,
+  },
+  emptyContainer: {
+    marginTop: -5,
+    gap: 16,
+  },
+  emptyText: {
+    fontSize: 12,
+    color: '#9f9f9f',
+  },
+  emptyImage: {
+    width: 100,
+    height: 84,
   },
 });
