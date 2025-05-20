@@ -1,6 +1,7 @@
 import {
   View,
   Text,
+  Image,
   TouchableOpacity,
   FlatList,
   StyleSheet,
@@ -12,6 +13,7 @@ const FolderSection = ({
   title,
   iconName,
   data,
+  emptyImg,
   onPressMore, // 전체보기
   hideViewAll = false,
 }) => (
@@ -29,24 +31,31 @@ const FolderSection = ({
       )}
     </View>
 
-    <FlatList
-      data={data}
-      numColumns={3}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={styles.listContent}
-      columnWrapperStyle={styles.row}
-      renderItem={({ item }) => (
-        <View style={styles.item}>
-          <Folder
-            name={item.name}
-            onPressMore={() => {
-              /* 추가 */
-            }}
-          />
-        </View>
-      )}
-      scrollEnabled={false}
-    />
+    {data.length === 0 ? (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>자주 보는 카테고리를 북마크하세요.</Text>
+        <Image source={emptyImg} style={styles.emptyImage} />
+      </View>
+    ) : (
+      <FlatList
+        data={data}
+        numColumns={3}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContent}
+        columnWrapperStyle={styles.row}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Folder
+              name={item.name}
+              onPressMore={() => {
+                /* 추가 */
+              }}
+            />
+          </View>
+        )}
+        scrollEnabled={false}
+      />
+    )}
   </View>
 );
 
@@ -85,5 +94,17 @@ const styles = StyleSheet.create({
   },
   item: {
     marginHorizontal: 8,
+  },
+  emptyContainer: {
+    marginTop: -5,
+    gap: 16,
+  },
+  emptyText: {
+    fontSize: 12,
+    color: '#9f9f9f',
+  },
+  emptyImage: {
+    width: 100,
+    height: 84,
   },
 });

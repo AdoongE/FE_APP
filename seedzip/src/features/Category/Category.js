@@ -2,6 +2,8 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AllCategory from './AllCategory';
 import FolderSection from './FolderSection';
+import EmptyBookmark from '../../assets/icons/emptyBookmark.png';
+import EmptyMyCategory from '../../assets/icons/emptyMyCategory.png';
 
 const bookmarkData = Array.from({ length: 10 }).map((_, i) => ({
   id: `bm${i}`,
@@ -25,6 +27,7 @@ const Category = () => {
           title="북마크"
           iconName="bookmark-outline"
           data={bookmarkData.slice(0, 6)}
+          emptyImg={EmptyBookmark}
           onPressMore={() => {
             navigation.navigate('fullcategory', {
               title: '북마크 전체보기',
@@ -39,6 +42,7 @@ const Category = () => {
           title="내 카테고리"
           iconName="grid-outline"
           data={myData.slice(0, 6)}
+          emptyImg={EmptyMyCategory}
           onPressMore={() => {
             navigation.navigate('fullcategory', {
               title: '내 카테고리 전체보기',
