@@ -16,6 +16,7 @@ const myData = Array.from({ length: 8 }).map((_, i) => ({
 
 const Category = () => {
   const navigation = useNavigation();
+
   return (
     <ScrollView
       style={styles.container}
