@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,56 +9,79 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Folder from '../../components/Folder';
+import ActionModal from '../../components/ActionModal';
 
 const FolderSection = ({
   title,
   iconName,
   data,
   emptyImg,
-  onPressMore, // 전체보기
+  actionBtns,
+  onPressAll, // 전체보기
   hideViewAll = false,
-}) => (
-  <View style={styles.section}>
-    <View style={styles.header}>
-      <View style={styles.titleRow}>
-        <Ionicons name={iconName} size={20} color="#000" />
-        <Text style={styles.title}>{title}</Text>
-      </View>
-      {!hideViewAll && (
-        <TouchableOpacity style={styles.viewAllBtn} onPress={onPressMore}>
-          <Text style={styles.viewAllText}>전체보기</Text>
-          <Ionicons name="chevron-forward" size={16} color="#9f9f9f" />
-        </TouchableOpacity>
-      )}
-    </View>
+}) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
-    {data.length === 0 ? (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>자주 보는 카테고리를 북마크하세요.</Text>
-        <Image source={emptyImg} style={styles.emptyImage} />
-      </View>
-    ) : (
-      <FlatList
-        data={data}
-        numColumns={3}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        columnWrapperStyle={styles.row}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Folder
-              name={item.name}
-              onPressMore={() => {
-                /* 추가 */
-              }}
-            />
-          </View>
+  const handleFolderPress = (item) => {
+    setModalVisible(true);
+    setSelectedItem(item);
+  };
+
+  return (
+    <View style={styles.section}>
+      <View style={styles.header}>
+        <View style={styles.titleRow}>
+          <Ionicons name={iconName} size={20} color="#000" />
+          <Text style={styles.title}>{title}</Text>
+        </View>
+        {!hideViewAll && (
+          <TouchableOpacity style={styles.viewAllBtn} onPress={onPressAll}>
+            <Text style={styles.viewAllText}>전체보기</Text>
+            <Ionicons name="chevron-forward" size={16} color="#9f9f9f" />
+          </TouchableOpacity>
         )}
-        scrollEnabled={false}
+      </View>
+
+      {data.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            자주 보는 카테고리를 북마크하세요.
+          </Text>
+          <Image source={emptyImg} style={styles.emptyImage} />
+        </View>
+      ) : (
+        <>
+          <FlatList
+            data={data}
+            numColumns={3}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContent}
+            columnWrapperStyle={styles.row}
+            renderItem={({ item }) => (
+              <View style={styles.item}>
+                <Folder
+                  name={item.name}
+                  onPressMorevert={() => handleFolderPress(item)}
+                />
+              </View>
+            )}
+            scrollEnabled={false}
+          />
+        </>
+      )}
+      <ActionModal
+        visible={modalVisible}
+        onClose={() => {
+          setModalVisible(false);
+          setSelectedItem(null);
+        }}
+        title={selectedItem?.name}
+        actionBtns={actionBtns}
       />
-    )}
-  </View>
-);
+    </View>
+  );
+};
 
 export default FolderSection;
 

@@ -1,9 +1,13 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AllCategory from './AllCategory';
 import FolderSection from './FolderSection';
 import EmptyBookmark from '../../assets/icons/emptyBookmark.png';
 import EmptyMyCategory from '../../assets/icons/emptyMyCategory.png';
+import BookmarkMinusIcon from '../../assets/icons/bookmarkMinus.png';
+import BookmarkPlusIcon from '../../assets/icons/bookmarkPlus.png';
+import EditIcon from '../../assets/icons/edit.png';
+import TrashIcon from '../../assets/icons/trash.png';
 
 const bookmarkData = Array.from({ length: 10 }).map((_, i) => ({
   id: `bm${i}`,
@@ -17,6 +21,42 @@ const myData = Array.from({ length: 8 }).map((_, i) => ({
 const Category = () => {
   const navigation = useNavigation();
 
+  const actionBtnsBookmark = [
+    {
+      icon: <Image source={BookmarkMinusIcon} style={styles.iconSize} />,
+      label: '북마크에서 제거',
+      onPress: () => {},
+    },
+    {
+      icon: <Image source={EditIcon} style={styles.iconSize} />,
+      label: '이름 변경',
+      onPress: () => {},
+    },
+    {
+      icon: <Image source={TrashIcon} style={styles.iconSize} />,
+      label: '카테고리 삭제',
+      onPress: () => {},
+    },
+  ];
+
+  const actionBtnsMyCategory = [
+    {
+      icon: <Image source={BookmarkPlusIcon} style={styles.iconSize} />,
+      label: '북마크에 추가',
+      onPress: () => {},
+    },
+    {
+      icon: <Image source={EditIcon} style={styles.iconSize} />,
+      label: '이름 변경',
+      onPress: () => {},
+    },
+    {
+      icon: <Image source={TrashIcon} style={styles.iconSize} />,
+      label: '카테고리 삭제',
+      onPress: () => {},
+    },
+  ];
+
   return (
     <ScrollView
       style={styles.container}
@@ -29,7 +69,8 @@ const Category = () => {
           iconName="bookmark-outline"
           data={bookmarkData.slice(0, 6)}
           emptyImg={EmptyBookmark}
-          onPressMore={() => {
+          actionBtns={actionBtnsBookmark}
+          onPressAll={() => {
             navigation.navigate('fullcategory', {
               title: '북마크 전체보기',
               iconName: 'bookmark-outline',
@@ -44,7 +85,8 @@ const Category = () => {
           iconName="grid-outline"
           data={myData.slice(0, 6)}
           emptyImg={EmptyMyCategory}
-          onPressMore={() => {
+          actionBtns={actionBtnsMyCategory}
+          onPressAll={() => {
             navigation.navigate('fullcategory', {
               title: '내 카테고리 전체보기',
               iconName: 'grid-outline',
@@ -68,5 +110,9 @@ const styles = StyleSheet.create({
   },
   categoryWrapper: {
     marginHorizontal: 20,
+  },
+  iconSize: {
+    width: 20,
+    height: 20,
   },
 });
