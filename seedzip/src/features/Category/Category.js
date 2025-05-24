@@ -70,6 +70,7 @@ const Category = () => {
           data={bookmarkData.slice(0, 6)}
           emptyImg={EmptyBookmark}
           actionBtns={actionBtnsBookmark}
+          emptySubtitle='자주 보는 카테고리를 북마크하세요.'
           onPressAll={() => {
             navigation.navigate('fullcategory', {
               title: '북마크 전체보기',
@@ -86,6 +87,7 @@ const Category = () => {
           data={myData.slice(0, 6)}
           emptyImg={EmptyMyCategory}
           actionBtns={actionBtnsMyCategory}
+          emptySubtitle='새로운 카테고리를 생성해보세요'
           onPressAll={() => {
             navigation.navigate('fullcategory', {
               title: '내 카테고리 전체보기',

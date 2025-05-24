@@ -17,6 +17,7 @@ const FolderSection = ({
   data,
   emptyImg,
   actionBtns,
+  emptySubtitle,
   onPressAll, // 전체보기
   hideViewAll = false,
 }) => {
@@ -46,7 +47,7 @@ const FolderSection = ({
       {data.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>
-            자주 보는 카테고리를 북마크하세요.
+            {emptySubtitle}
           </Text>
           <Image source={emptyImg} style={styles.emptyImage} />
         </View>
