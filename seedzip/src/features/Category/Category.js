@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AllCategory from './AllCategory';
@@ -9,6 +9,7 @@ import BookmarkMinusIcon from '../../assets/icons/bookmarkMinus.png';
 import BookmarkPlusIcon from '../../assets/icons/bookmarkPlus.png';
 import EditIcon from '../../assets/icons/edit.png';
 import TrashIcon from '../../assets/icons/trash.png';
+import { postCategory, getCategory } from '../../api/CategoryApi';
 
 const bookmarkData = Array.from({ length: 10 }).map((_, i) => ({
   id: `bm${i}`,
@@ -54,19 +55,34 @@ const Category = () => {
     },
   ];
 
-  const [myCategories, setMyCategories] = useState(
-    Array.from({ length: 8 }).map((_, i) => ({
-      id: `my${i + 1}`,
-      name: `카테고리명 ${i + 1}`,
-    })),
-  );
 
-  const handleAddCategory = (newName) => {
+  const [myCategories, setMyCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const results = await getCategory();
+      const categoryData = results.map((cat) => ({
+        id: cat.categoryId,
+        name: cat.name,
+      }));
+      setMyCategories(categoryData);
+    };
+    fetchCategories();
+  }, []);
+
+  const handleAddCategory = async (inputName) => {
+    const count = myCategories.filter((cat) =>
+      cat.name.startsWith('새 카테고리'),
+    ).length;
+    const newName = inputName.trim() || `새 카테고리${count + 1}`;
+
     const newCategory = {
       id: `my${Date.now()}`,
       name: newName,
     };
     setMyCategories([newCategory, ...myCategories]);
+
+    await postCategory(newCategory.name, true);
   };
 
   return (
