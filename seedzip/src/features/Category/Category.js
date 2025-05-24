@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AllCategory from './AllCategory';
@@ -11,10 +12,6 @@ import TrashIcon from '../../assets/icons/trash.png';
 
 const bookmarkData = Array.from({ length: 10 }).map((_, i) => ({
   id: `bm${i}`,
-  name: `카테고리명 ${i + 1}`,
-}));
-const myData = Array.from({ length: 8 }).map((_, i) => ({
-  id: `my${i + 1}`,
   name: `카테고리명 ${i + 1}`,
 }));
 
@@ -57,12 +54,27 @@ const Category = () => {
     },
   ];
 
+  const [myCategories, setMyCategories] = useState(
+    Array.from({ length: 8 }).map((_, i) => ({
+      id: `my${i + 1}`,
+      name: `카테고리명 ${i + 1}`,
+    })),
+  );
+
+  const handleAddCategory = (newName) => {
+    const newCategory = {
+      id: `my${Date.now()}`,
+      name: newName,
+    };
+    setMyCategories([newCategory, ...myCategories]);
+  };
+
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
     >
-      <AllCategory />
+      <AllCategory onAddCategory={handleAddCategory} />
       <View style={styles.categoryWrapper}>
         <FolderSection
           title="북마크"
@@ -70,7 +82,7 @@ const Category = () => {
           data={bookmarkData.slice(0, 6)}
           emptyImg={EmptyBookmark}
           actionBtns={actionBtnsBookmark}
-          emptySubtitle='자주 보는 카테고리를 북마크하세요.'
+          emptySubtitle="자주 보는 카테고리를 북마크하세요."
           onPressAll={() => {
             navigation.navigate('fullcategory', {
               title: '북마크 전체보기',
@@ -84,15 +96,15 @@ const Category = () => {
         <FolderSection
           title="내 카테고리"
           iconName="grid-outline"
-          data={myData.slice(0, 6)}
+          data={myCategories.slice(0, 6)}
           emptyImg={EmptyMyCategory}
           actionBtns={actionBtnsMyCategory}
-          emptySubtitle='새로운 카테고리를 생성해보세요'
+          emptySubtitle="새로운 카테고리를 생성해보세요"
           onPressAll={() => {
             navigation.navigate('fullcategory', {
               title: '내 카테고리 전체보기',
               iconName: 'grid-outline',
-              data: myData,
+              data: myCategories,
               emptyTitle: '아직 내 카테고리가 없어요',
               emptySubtitle: '필요한 씨드로 카테고리를 생성해보세요!',
             });

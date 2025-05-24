@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,46 +7,62 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AddCategoryModal from './AddCategoryModal';
 
-const AllCategory = () => {
+const AllCategory = ({ onAddCategory }) => {
   const totalCategory = 30;
   const totalSeed = 250;
   const popular = 25;
   const unread = 25;
 
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>모든 카테고리({totalCategory})</Text>
-        <TouchableOpacity>
-          <Ionicons name="add-outline" size={20} />
-        </TouchableOpacity>
-      </View>
+  const [openAddModal, setOpenAddModal] = useState(false);
 
-      <View style={styles.cardsRow}>
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>전체 씨드</Text>
-          <Text>
-            <Text style={styles.cardNumber}>{totalSeed}</Text>
-            <Text style={styles.cardCount}>개</Text>
-          </Text>
+  const handleAdd = (name) => {
+    onAddCategory(name);
+    setOpenAddModal(false);
+  };
+
+  return (
+    <>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.headerRow}>
+          <Text style={styles.headerTitle}>모든 카테고리({totalCategory})</Text>
+          <TouchableOpacity onPress={() => setOpenAddModal(true)}>
+            <Ionicons name="add-outline" size={20} />
+          </TouchableOpacity>
         </View>
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>많이 찾는 씨드</Text>
-          <Text>
-            <Text style={styles.cardNumber}>{popular}</Text>
-            <Text style={styles.cardCount}>개</Text>
-          </Text>
+
+        <View style={styles.cardsRow}>
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>전체 씨드</Text>
+            <Text>
+              <Text style={styles.cardNumber}>{totalSeed}</Text>
+              <Text style={styles.cardCount}>개</Text>
+            </Text>
+          </View>
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>많이 찾는 씨드</Text>
+            <Text>
+              <Text style={styles.cardNumber}>{popular}</Text>
+              <Text style={styles.cardCount}>개</Text>
+            </Text>
+          </View>
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>읽지 않은 씨드</Text>
+            <Text>
+              <Text style={styles.cardNumber}>{unread}</Text>
+              <Text style={styles.cardCount}>개</Text>
+            </Text>
+          </View>
         </View>
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>읽지 않은 씨드</Text>
-          <Text>
-            <Text style={styles.cardNumber}>{unread}</Text>
-            <Text style={styles.cardCount}>개</Text>
-          </Text>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+
+      <AddCategoryModal
+        visible={openAddModal}
+        onCancel={() => setOpenAddModal(false)}
+        onAdd={handleAdd}
+      />
+    </>
   );
 };
 
