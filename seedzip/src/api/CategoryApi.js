@@ -23,3 +23,14 @@ export const getCategory = async () => {
     console.error('카테고리 조회 error:', error);
   }
 };
+
+export const getBookmark = async () => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.get('/api/v1/bookmark');
+    console.log('북마크 조회 data', response.data.results);
+    return response.data.results;
+  } catch (error) {
+    console.error('북마크 조회 error:', error);
+  }
+};

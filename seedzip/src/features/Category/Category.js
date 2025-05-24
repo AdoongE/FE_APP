@@ -9,12 +9,7 @@ import BookmarkMinusIcon from '../../assets/icons/bookmarkMinus.png';
 import BookmarkPlusIcon from '../../assets/icons/bookmarkPlus.png';
 import EditIcon from '../../assets/icons/edit.png';
 import TrashIcon from '../../assets/icons/trash.png';
-import { postCategory, getCategory } from '../../api/CategoryApi';
-
-const bookmarkData = Array.from({ length: 10 }).map((_, i) => ({
-  id: `bm${i}`,
-  name: `카테고리명 ${i + 1}`,
-}));
+import { postCategory, getCategory, getBookmark } from '../../api/CategoryApi';
 
 const Category = () => {
   const navigation = useNavigation();
@@ -55,34 +50,37 @@ const Category = () => {
     },
   ];
 
-
+  const [bookmarks, setBookmarks] = useState([]);
   const [myCategories, setMyCategories] = useState([]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      const results = await getCategory();
-      const categoryData = results.map((cat) => ({
+    const fetchData = async () => {
+      const resCategory = await getCategory();
+      const categoryData = resCategory.map((cat) => ({
         id: cat.categoryId,
         name: cat.name,
       }));
       setMyCategories(categoryData);
+
+      const resBookmark = await getBookmark();
+      const bookmarkData = resBookmark.map((cat) => ({
+        id: cat.bookmarkId,
+        categoryId: cat.categoryId,
+        name: cat.name,
+      }));
+      setBookmarks(bookmarkData);
     };
-    fetchCategories();
+    fetchData();
   }, []);
 
   const handleAddCategory = async (inputName) => {
     const count = myCategories.filter((cat) =>
       cat.name.startsWith('새 카테고리'),
     ).length;
-    const newName = inputName.trim() || `새 카테고리${count + 1}`;
-
-    const newCategory = {
-      id: `my${Date.now()}`,
-      name: newName,
-    };
+    const newCategory = inputName.trim() || `새 카테고리${count + 1}`;
     setMyCategories([newCategory, ...myCategories]);
 
-    await postCategory(newCategory.name, true);
+    await postCategory(newCategory, true);
   };
 
   return (
@@ -95,7 +93,7 @@ const Category = () => {
         <FolderSection
           title="북마크"
           iconName="bookmark-outline"
-          data={bookmarkData.slice(0, 6)}
+          data={bookmarks.slice(0, 6)}
           emptyImg={EmptyBookmark}
           actionBtns={actionBtnsBookmark}
           emptySubtitle="자주 보는 카테고리를 북마크하세요."
@@ -103,7 +101,7 @@ const Category = () => {
             navigation.navigate('fullcategory', {
               title: '북마크 전체보기',
               iconName: 'bookmark-outline',
-              data: bookmarkData,
+              data: bookmarks,
               emptyTitle: '아직 북마크한 카테고리가 없어요',
               emptySubtitle: '자주 보는 카테고리를 북마크 해보세요!',
             });
