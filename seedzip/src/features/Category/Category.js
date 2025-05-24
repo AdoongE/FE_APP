@@ -9,12 +9,20 @@ import BookmarkMinusIcon from '../../assets/icons/bookmarkMinus.png';
 import BookmarkPlusIcon from '../../assets/icons/bookmarkPlus.png';
 import EditIcon from '../../assets/icons/edit.png';
 import TrashIcon from '../../assets/icons/trash.png';
-import { postCategory, getCategory, getBookmark } from '../../api/CategoryApi';
+import {
+  postCategory,
+  getCategory,
+  postBookmark,
+  getBookmark,
+} from '../../api/CategoryApi';
 
 const Category = () => {
+  const [bookmarks, setBookmarks] = useState([]);
+  const [myCategories, setMyCategories] = useState([]);
+
   const navigation = useNavigation();
 
-  const actionBtnsBookmark = [
+  const actionBtnsBookmark = (item) => [
     {
       icon: <Image source={BookmarkMinusIcon} style={styles.iconSize} />,
       label: '북마크에서 제거',
@@ -32,26 +40,30 @@ const Category = () => {
     },
   ];
 
-  const actionBtnsMyCategory = [
+  const actionBtnsMyCategory = (item) => [
     {
       icon: <Image source={BookmarkPlusIcon} style={styles.iconSize} />,
       label: '북마크에 추가',
-      onPress: () => {},
+      onPress: async () => {
+        setBookmarks((prev) => [{ id: item.id, name: item.name }, ...prev]);
+        await postBookmark(item.id);
+      },
     },
     {
       icon: <Image source={EditIcon} style={styles.iconSize} />,
       label: '이름 변경',
-      onPress: () => {},
+      onPress: () => {
+        /* 수정 로직 */
+      },
     },
     {
       icon: <Image source={TrashIcon} style={styles.iconSize} />,
       label: '카테고리 삭제',
-      onPress: () => {},
+      onPress: () => {
+        /* 삭제 로직 */
+      },
     },
   ];
-
-  const [bookmarks, setBookmarks] = useState([]);
-  const [myCategories, setMyCategories] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {

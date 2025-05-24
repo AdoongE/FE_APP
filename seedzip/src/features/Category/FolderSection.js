@@ -29,6 +29,8 @@ const FolderSection = ({
     setSelectedItem(item);
   };
 
+  const actions = selectedItem && actionBtns ? actionBtns(selectedItem) : [];
+
   return (
     <View style={styles.section}>
       <View style={styles.header}>
@@ -46,9 +48,7 @@ const FolderSection = ({
 
       {data.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>
-            {emptySubtitle}
-          </Text>
+          <Text style={styles.emptyText}>{emptySubtitle}</Text>
           <Image source={emptyImg} style={styles.emptyImage} />
         </View>
       ) : (
@@ -78,7 +78,7 @@ const FolderSection = ({
           setSelectedItem(null);
         }}
         title={selectedItem?.name}
-        actionBtns={actionBtns}
+        actions={actions}
       />
     </View>
   );

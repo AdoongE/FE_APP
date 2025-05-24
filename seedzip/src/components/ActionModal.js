@@ -5,7 +5,7 @@ export default function ActionModal({
   visible,
   onClose,
   title,
-  actionBtns = [],
+  actions = [],
   modalStyle,
   contentStyle,
 }) {
@@ -20,12 +20,12 @@ export default function ActionModal({
         <View style={[styles.container, contentStyle]}>
           <View style={styles.handleBar} />
           <Text style={styles.title}>{title}</Text>
-          {actionBtns.map((act, idx) => (
+          {actions.map((act, idx) => (
             <TouchableOpacity
               key={idx}
               style={[
                 styles.button,
-                idx === actionBtns.length - 1 && { borderBottomWidth: 0 },
+                idx === actions.length - 1 && { borderBottomWidth: 0 },
               ]}
               activeOpacity={0.7}
               onPress={() => {

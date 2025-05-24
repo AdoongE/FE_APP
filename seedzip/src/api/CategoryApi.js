@@ -24,6 +24,18 @@ export const getCategory = async () => {
   }
 };
 
+export const postBookmark = async (categoryId) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.post(
+      `/api/v1/category/${categoryId}/bookmark`,
+    );
+    console.log('북마크 추가 data', response.data.results);
+  } catch (error) {
+    console.error('북마크 추가 error:', error);
+  }
+};
+
 export const getBookmark = async () => {
   try {
     const axios = await axiosInstance();
