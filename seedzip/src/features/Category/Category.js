@@ -114,6 +114,7 @@ const Category = () => {
               title: '북마크 전체보기',
               iconName: 'bookmark-outline',
               data: bookmarks,
+              actionBtns: actionBtnsBookmark,
               emptyTitle: '아직 북마크한 카테고리가 없어요',
               emptySubtitle: '자주 보는 카테고리를 북마크 해보세요!',
             });
@@ -131,6 +132,7 @@ const Category = () => {
               title: '내 카테고리 전체보기',
               iconName: 'grid-outline',
               data: myCategories,
+              actionBtns: actionBtnsMyCategory,
               emptyTitle: '아직 내 카테고리가 없어요',
               emptySubtitle: '필요한 씨드로 카테고리를 생성해보세요!',
             });

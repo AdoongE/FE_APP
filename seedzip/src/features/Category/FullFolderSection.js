@@ -5,7 +5,7 @@ import { useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 const FullFolderSection = () => {
-  const { title, iconName, data, emptyTitle, emptySubtitle } =
+  const { title, iconName, data, actionBtns, emptyTitle, emptySubtitle } =
     useRoute().params;
 
   return (
@@ -28,6 +28,7 @@ const FullFolderSection = () => {
             iconName={iconName}
             data={data}
             hideViewAll={true}
+            actionBtns={actionBtns}
           />
         )}
       </View>
