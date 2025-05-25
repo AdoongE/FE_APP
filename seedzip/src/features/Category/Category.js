@@ -19,8 +19,46 @@ import {
 const Category = () => {
   const [bookmarks, setBookmarks] = useState([]);
   const [myCategories, setMyCategories] = useState([]);
-
   const navigation = useNavigation();
+
+  const fetchMyCategory = async () => {
+    const resCategory = await getCategory();
+    const categoryData = resCategory.map((cat) => ({
+      id: cat.categoryId.toString(),
+      name: cat.name,
+    }));
+    setMyCategories(categoryData);
+  };
+
+  const fetchBookmark = async () => {
+    const resBookmark = await getBookmark();
+    const bookmarkData = resBookmark.map((cat) => ({
+      id: cat.bookmarkId.toString(),
+      categoryId: cat.categoryId.toString(),
+      name: cat.name,
+    }));
+    setBookmarks(bookmarkData);
+  };
+
+  useEffect(() => {
+    fetchMyCategory();
+    fetchBookmark();
+  }, []);
+
+  const handleAddCategory = async (inputName) => {
+    const count = myCategories.filter((cat) =>
+      cat.name.startsWith('새 카테고리'),
+    ).length;
+    const newCategory = inputName.trim() || `새 카테고리${count + 1}`;
+
+    setMyCategories((prev) => {
+      const [first, ...rest] = prev; // first: 미분류
+      return [first, newCategory, ...rest];
+    });
+
+    await postCategory(newCategory, true);
+    await fetchMyCategory(); // 카테고리 생성 후, 바로 조회
+  };
 
   const actionBtnsBookmark = (item) => [
     {
@@ -64,36 +102,6 @@ const Category = () => {
       },
     },
   ];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const resCategory = await getCategory();
-      const categoryData = resCategory.map((cat) => ({
-        id: cat.categoryId,
-        name: cat.name,
-      }));
-      setMyCategories(categoryData);
-
-      const resBookmark = await getBookmark();
-      const bookmarkData = resBookmark.map((cat) => ({
-        id: cat.bookmarkId,
-        categoryId: cat.categoryId,
-        name: cat.name,
-      }));
-      setBookmarks(bookmarkData);
-    };
-    fetchData();
-  }, []);
-
-  const handleAddCategory = async (inputName) => {
-    const count = myCategories.filter((cat) =>
-      cat.name.startsWith('새 카테고리'),
-    ).length;
-    const newCategory = inputName.trim() || `새 카테고리${count + 1}`;
-    setMyCategories([newCategory, ...myCategories]);
-
-    await postCategory(newCategory, true);
-  };
 
   return (
     <ScrollView
