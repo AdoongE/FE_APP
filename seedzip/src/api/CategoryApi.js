@@ -46,3 +46,16 @@ export const getBookmark = async () => {
     console.error('북마크 조회 error:', error);
   }
 };
+
+export const patchCategory = async (newCategoryName, categoryId) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.patch(`/api/v1/category`, {
+      name: newCategoryName,
+      categoryId: categoryId,
+    });
+    console.log('카테고리 수정 data', response.data.results);
+  } catch (error) {
+    console.error('카테고리 수정 error:', error);
+  }
+};
