@@ -11,6 +11,7 @@ import {
 import AllCategory from './AllCategory';
 import FolderSection from './FolderSection';
 import EditCategoryModal from './EditCategoryModal';
+import AlertToast from '../../components/AlertToast';
 import EmptyBookmark from '../../assets/icons/emptyBookmark.png';
 import EmptyMyCategory from '../../assets/icons/emptyMyCategory.png';
 import BookmarkMinusIcon from '../../assets/icons/bookmarkMinus.png';
@@ -77,11 +78,6 @@ const Category = () => {
     ).length;
     const newCategory = inputName.trim() || `새 카테고리${count + 1}`;
 
-    // setMyCategories((prev) => {
-    //   const [first, ...rest] = prev; // first: 미분류
-    //   return [first, newCategory, ...rest];
-    // });
-
     await postCategory(newCategory, true);
     await fetchMyCategory(); // 카테고리 생성 후, 바로 조회
   };
@@ -96,11 +92,19 @@ const Category = () => {
     await fetchBookmark();
   };
 
+  const [toast, setToast] = useState({
+    visible: false,
+    message: '',
+    icon: null,
+    actionText: null,
+    onActionPress: null,
+  });
+
   const actionBtnsBookmark = (item) => [
     {
       icon: <Image source={BookmarkMinusIcon} style={styles.iconSize} />,
       label: '북마크에서 제거',
-      onPress: () => {},
+      onPress: async () => {},
     },
     {
       icon: <Image source={EditIcon} style={styles.iconSize} />,
@@ -124,6 +128,15 @@ const Category = () => {
       onPress: async () => {
         await postBookmark(item.id);
         await fetchBookmark();
+        setToast({
+          visible: true,
+          message: '북마크에 추가되었어요',
+          icon: null,
+          actionText: '보러가기',
+          onActionPress: () => {
+            navigation.navigate('BookmarkScreen');
+          },
+        });
       },
     },
     {
@@ -211,6 +224,13 @@ const Category = () => {
           </SafeAreaView>
         </View>
       )}
+
+      <AlertToast
+        {...toast}
+        onHide={() => {
+          setToast((t) => ({ ...t, visible: false }));
+        }}
+      />
 
       <EditCategoryModal
         visible={openEditModal}
