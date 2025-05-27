@@ -1,3 +1,4 @@
+// 사용하지 않는 코드, 이후 카테고리 파트 완료 시 삭제 예정
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import FolderSection from './FolderSection';
@@ -5,7 +6,7 @@ import { useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 const FullFolderSection = () => {
-  const { title, iconName, data, emptyTitle, emptySubtitle } =
+  const { title, iconName, data, actionBtns, emptyTitle, emptySubtitle } =
     useRoute().params;
 
   return (
@@ -28,6 +29,7 @@ const FullFolderSection = () => {
             iconName={iconName}
             data={data}
             hideViewAll={true}
+            actionBtns={actionBtns}
           />
         )}
       </View>
