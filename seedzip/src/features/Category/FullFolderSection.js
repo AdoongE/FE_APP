@@ -1,3 +1,4 @@
+// 사용하지 않는 코드, 이후 카테고리 파트 완료 시 삭제 예정
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import FolderSection from './FolderSection';

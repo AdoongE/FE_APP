@@ -89,16 +89,6 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     color: '#333',
   },
-  // closeBtn: {
-  //   borderBottomWidth: 0,
-  //   marginTop: 8,
-  //   justifyContent: 'center',
-  // },
-  // closeText: {
-  //   alignSelf: 'center',
-  //   width: '100%',
-  //   textAlign: 'center',
-  // },
   closeButton: {
     backgroundColor: 'white',
     borderWidth: 1,

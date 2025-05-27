@@ -10,7 +10,7 @@ export default function EditCategoryModal({
 }) {
   const [name, setName] = useState(initialName);
 
-  // 모달 열 때 초기값 설정
+  // 모달 open 시 카테고리 이름 입력칸에 초기 설정
   useEffect(() => {
     setName(initialName);
   }, [initialName, visible]);
