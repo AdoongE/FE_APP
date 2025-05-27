@@ -13,7 +13,6 @@ export default function AlertToast({
   icon,
   actionText,
   onActionPress,
-  duration = 3000,
   onHide,
 }) {
   const translateY = useRef(new Animated.Value(100)).current;
@@ -49,7 +48,7 @@ export default function AlertToast({
         ]).start(() => {
           onHide && onHide();
         });
-      }, duration);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }

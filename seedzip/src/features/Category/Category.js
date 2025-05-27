@@ -21,8 +21,10 @@ import TrashIcon from '../../assets/icons/trash.png';
 import { Ionicons } from '@expo/vector-icons';
 import {
   postCategory,
+  deleteCategory,
   getCategory,
   postBookmark,
+  deleteBookmark,
   getBookmark,
   patchCategory,
 } from '../../api/CategoryApi';
@@ -104,7 +106,30 @@ const Category = () => {
     {
       icon: <Image source={BookmarkMinusIcon} style={styles.iconSize} />,
       label: '북마크에서 제거',
-      onPress: async () => {},
+      onPress: async () => {
+        setBookmarks((prev) =>
+          prev.filter((b) => b.bookmarkId !== item.bookmarkId),
+        );
+        setToast({
+          visible: true,
+          message: '북마크에서 제거되었어요',
+          icon: (
+            <View
+              style={{
+                backgroundColor: '#41C3AB',
+                borderRadius: 20,
+                padding: 2,
+              }}
+            >
+              <Ionicons name="checkmark" size={18} color="#fff" />
+            </View>
+          ),
+          actionText: null,
+          onActionPress: null,
+        });
+        await deleteBookmark(item.bookmarkId);
+        await fetchBookmark();
+      },
     },
     {
       icon: <Image source={EditIcon} style={styles.iconSize} />,
@@ -117,7 +142,30 @@ const Category = () => {
     {
       icon: <Image source={TrashIcon} style={styles.iconSize} />,
       label: '카테고리 삭제',
-      onPress: () => {},
+      onPress: async () => {
+        setBookmarks((prev) =>
+          prev.filter((b) => b.bookmarkId !== item.bookmarkId),
+        );
+        setToast({
+          visible: true,
+          message: '카테고리가 제거되었어요',
+          icon: (
+            <View
+              style={{
+                backgroundColor: '#41C3AB',
+                borderRadius: 20,
+                padding: 2,
+              }}
+            >
+              <Ionicons name="checkmark" size={18} color="#fff" />
+            </View>
+          ),
+          actionText: null,
+          onActionPress: null,
+        });
+        await deleteCategory(item.id);
+        await fetchMyCategory();
+      },
     },
   ];
 
@@ -150,8 +198,26 @@ const Category = () => {
     {
       icon: <Image source={TrashIcon} style={styles.iconSize} />,
       label: '카테고리 삭제',
-      onPress: () => {
-        /* 삭제 로직 */
+      onPress: async () => {
+        setToast({
+          visible: true,
+          message: '카테고리가 제거되었어요',
+          icon: (
+            <View
+              style={{
+                backgroundColor: '#41C3AB',
+                borderRadius: 20,
+                padding: 2,
+              }}
+            >
+              <Ionicons name="checkmark" size={18} color="#fff" />
+            </View>
+          ),
+          actionText: null,
+          onActionPress: null,
+        });
+        await deleteCategory(item.id);
+        await fetchMyCategory();
       },
     },
   ];
@@ -209,9 +275,11 @@ const Category = () => {
             {/* 뒤로가기 */}
             <View style={styles.fullHeader}>
               <TouchableOpacity onPress={handleCloseFull}>
-                <Ionicons name="arrow-back" size={24} color="#000" />
+                <Ionicons name="chevron-back-outline" size={20}></Ionicons>
               </TouchableOpacity>
-              <Text style={styles.fullTitle}>{fullParams.title}</Text>
+              <Text style={styles.fullTitle}>
+                {fullParams.title.replace(' 전체보기', '')}
+              </Text>
             </View>
             <FolderSection
               {...fullParams}
@@ -267,10 +335,12 @@ const styles = StyleSheet.create({
   fullContainer: { flex: 1 },
   fullHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderColor: '#eee',
+    padding: 20,
   },
-  fullTitle: { marginLeft: 12, fontSize: 18, fontWeight: '600' },
+  fullTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+    flex: 1,
+  },
 });

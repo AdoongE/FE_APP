@@ -13,6 +13,16 @@ export const postCategory = async (newCategoryName, isPublic) => {
   }
 };
 
+export const deleteCategory = async (categoryId) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.delete(`/api/v1/category/${categoryId}`);
+    console.log('카테고리 삭제 data', response.data.results);
+  } catch (error) {
+    console.error('카테고리 삭제 error:', error);
+  }
+};
+
 export const getCategory = async () => {
   try {
     const axios = await axiosInstance();
@@ -33,6 +43,16 @@ export const postBookmark = async (categoryId) => {
     console.log('북마크 추가 data', response.data.results);
   } catch (error) {
     console.error('북마크 추가 error:', error);
+  }
+};
+
+export const deleteBookmark = async (bookmarkId) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.delete(`/api/v1/bookmark/${bookmarkId}`);
+    console.log('북마크 삭제 data', response.data.results);
+  } catch (error) {
+    console.error('북마크 삭제 error:', error);
   }
 };
 
