@@ -17,9 +17,11 @@ const FolderSection = ({
   data,
   emptyImg,
   actionBtns,
+  emptyTitle,
   emptySubtitle,
   onPressAll, // 전체보기
   hideViewAll = false,
+  isFullView = false,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -47,10 +49,17 @@ const FolderSection = ({
       </View>
 
       {data.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>{emptySubtitle}</Text>
-          <Image source={emptyImg} style={styles.emptyImage} />
-        </View>
+        isFullView ? (
+          <View style={styles.emptyContainerFull}>
+            <Text style={styles.emptyTitleFull}>{emptyTitle}</Text>
+            <Text style={styles.emptySubtitleFull}>{emptySubtitle}</Text>
+          </View>
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>{emptySubtitle}</Text>
+            <Image source={emptyImg} style={styles.emptyImage} />
+          </View>
+        )
       ) : (
         <>
           <FlatList
@@ -89,6 +98,7 @@ export default FolderSection;
 const styles = StyleSheet.create({
   section: {
     marginTop: 40,
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
@@ -131,5 +141,22 @@ const styles = StyleSheet.create({
   emptyImage: {
     width: 100,
     height: 84,
+  },
+  emptyContainerFull: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitleFull: {
+    fontSize: 16,
+    color: '#4f4f4f',
+    fontWeight: 500,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptySubtitleFull: {
+    fontSize: 12,
+    color: '#4f4f4f',
+    textAlign: 'center',
   },
 });

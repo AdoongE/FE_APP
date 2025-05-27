@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+  Text,
+} from 'react-native';
 import AllCategory from './AllCategory';
 import FolderSection from './FolderSection';
 import EditCategoryModal from './EditCategoryModal';
@@ -10,6 +17,7 @@ import BookmarkMinusIcon from '../../assets/icons/bookmarkMinus.png';
 import BookmarkPlusIcon from '../../assets/icons/bookmarkPlus.png';
 import EditIcon from '../../assets/icons/edit.png';
 import TrashIcon from '../../assets/icons/trash.png';
+import { Ionicons } from '@expo/vector-icons';
 import {
   postCategory,
   getCategory,
@@ -25,7 +33,19 @@ const Category = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [renameTarget, setRenameTarget] = useState(null);
 
-  const navigation = useNavigation();
+  const [fullParams, setFullParams] = useState(null);
+
+  const handleShowFull = (params) => {
+    setFullParams({
+      ...params,
+      isFullView: true,
+      hideViewAll: true,
+    });
+  };
+
+  const handleCloseFull = () => {
+    setFullParams(null);
+  };
 
   const fetchMyCategory = async () => {
     const resCategory = await getCategory();
@@ -102,7 +122,6 @@ const Category = () => {
       icon: <Image source={BookmarkPlusIcon} style={styles.iconSize} />,
       label: '북마크에 추가',
       onPress: async () => {
-        // setBookmarks((prev) => [{ id: item.id, name: item.name }, ...prev]);
         await postBookmark(item.id);
         await fetchBookmark();
       },
@@ -136,11 +155,11 @@ const Category = () => {
             title="북마크"
             iconName="bookmark-outline"
             data={bookmarks.slice(0, 6)}
-            emptyImg={EmptyBookmark}
             actionBtns={actionBtnsBookmark}
-            emptySubtitle="자주 보는 카테고리를 북마크하세요."
+            emptySubtitle="자주 보는 카테고리를 북마크하세요"
+            emptyImg={EmptyBookmark}
             onPressAll={() => {
-              navigation.navigate('fullcategory', {
+              handleShowFull({
                 title: '북마크 전체보기',
                 iconName: 'bookmark-outline',
                 data: bookmarks,
@@ -154,11 +173,11 @@ const Category = () => {
             title="내 카테고리"
             iconName="grid-outline"
             data={myCategories.slice(0, 6)}
-            emptyImg={EmptyMyCategory}
             actionBtns={actionBtnsMyCategory}
             emptySubtitle="새로운 카테고리를 생성해보세요"
+            emptyImg={EmptyMyCategory}
             onPressAll={() => {
-              navigation.navigate('fullcategory', {
+              handleShowFull({
                 title: '내 카테고리 전체보기',
                 iconName: 'grid-outline',
                 data: myCategories,
@@ -170,6 +189,28 @@ const Category = () => {
           />
         </View>
       </ScrollView>
+
+      {fullParams && (
+        <View style={styles.fullOverlay}>
+          <SafeAreaView style={styles.fullContainer}>
+            {/* 뒤로가기 */}
+            <View style={styles.fullHeader}>
+              <TouchableOpacity onPress={handleCloseFull}>
+                <Ionicons name="arrow-back" size={24} color="#000" />
+              </TouchableOpacity>
+              <Text style={styles.fullTitle}>{fullParams.title}</Text>
+            </View>
+            <FolderSection
+              {...fullParams}
+              data={
+                fullParams.title === '북마크 전체보기'
+                  ? bookmarks
+                  : myCategories
+              }
+            />
+          </SafeAreaView>
+        </View>
+      )}
 
       <EditCategoryModal
         visible={openEditModal}
@@ -198,4 +239,18 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+  fullOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#fff',
+    zIndex: 100,
+  },
+  fullContainer: { flex: 1 },
+  fullHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+  fullTitle: { marginLeft: 12, fontSize: 18, fontWeight: '600' },
 });
