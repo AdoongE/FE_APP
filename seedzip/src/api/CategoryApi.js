@@ -37,7 +37,7 @@ export const getCategory = async () => {
 export const postBookmark = async (categoryId) => {
   try {
     const axios = await axiosInstance();
-    const response = await axios.post(`/api/v1/bookmark/seed/${categoryId}`);
+    const response = await axios.post(`/api/v1/bookmark/category/${categoryId}`);
     console.log('북마크 추가 data', response.data);
   } catch (error) {
     console.error('북마크 추가 error:', error);
@@ -47,7 +47,7 @@ export const postBookmark = async (categoryId) => {
 export const deleteBookmark = async (bookmarkId) => {
   try {
     const axios = await axiosInstance();
-    const response = await axios.delete(`/api/v1/bookmark/seed/${bookmarkId}`);
+    const response = await axios.delete(`/api/v1/bookmark/category/${bookmarkId}`);
     console.log('북마크 삭제 data', response.data.results);
   } catch (error) {
     console.error('북마크 삭제 error:', error);
@@ -57,7 +57,7 @@ export const deleteBookmark = async (bookmarkId) => {
 export const getBookmark = async () => {
   try {
     const axios = await axiosInstance();
-    const response = await axios.get('/api/v1/bookmark/seed');
+    const response = await axios.get('/api/v1/bookmark/category/bookmark');
     console.log('북마크 조회 data', response.data.results);
     return response.data.results;
   } catch (error) {

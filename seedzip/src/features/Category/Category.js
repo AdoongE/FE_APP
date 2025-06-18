@@ -182,7 +182,14 @@ const Category = () => {
           icon: null,
           actionText: '보러가기',
           onActionPress: () => {
-            navigation.navigate('BookmarkScreen');
+            handleShowFull({
+              title: '북마크 전체보기',
+              iconName: 'bookmark-outline',
+              data: bookmarks,
+              actionBtns: actionBtnsBookmark,
+              emptyTitle: '아직 북마크한 카테고리가 없어요',
+              emptySubtitle: '자주 보는 카테고리를 북마크 해보세요!',
+            });
           },
         });
       },
