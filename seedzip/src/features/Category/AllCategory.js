@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,19 +8,32 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AddCategoryModal from './AddCategoryModal';
+import { getUserSeedInfo } from '../../api/CategoryApi';
 
 const AllCategory = ({ onAddCategory }) => {
   const totalCategory = 30;
-  const totalSeed = 250;
-  const popular = 25;
-  const unread = 25;
 
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [userSeedInfo, setUserSeedInfo] = useState([]);
 
   const handleAdd = (name) => {
     onAddCategory(name);
     setOpenAddModal(false);
   };
+
+  const fetchUserSeedInfo = async () => {
+    const resSeedInfo = await getUserSeedInfo();
+    setUserSeedInfo({
+      totalSeed: resSeedInfo[0].totalSeedCount,
+      popular: resSeedInfo[0].mostReadSeedCount,
+      unread: resSeedInfo[0].neverReadSeedCount
+    });
+    setUserSeedInfo(seedInfoData);
+  };
+
+  useEffect(() => {
+    fetchUserSeedInfo();
+  }, []);
 
   return (
     <>
@@ -36,21 +49,21 @@ const AllCategory = ({ onAddCategory }) => {
           <View style={styles.card}>
             <Text style={styles.cardLabel}>전체 씨드</Text>
             <Text>
-              <Text style={styles.cardNumber}>{totalSeed}</Text>
+              <Text style={styles.cardNumber}>{userSeedInfo.totalSeed}</Text>
               <Text style={styles.cardCount}>개</Text>
             </Text>
           </View>
           <View style={styles.card}>
             <Text style={styles.cardLabel}>많이 찾는 씨드</Text>
             <Text>
-              <Text style={styles.cardNumber}>{popular}</Text>
+              <Text style={styles.cardNumber}>{userSeedInfo.popular}</Text>
               <Text style={styles.cardCount}>개</Text>
             </Text>
           </View>
           <View style={styles.card}>
             <Text style={styles.cardLabel}>읽지 않은 씨드</Text>
             <Text>
-              <Text style={styles.cardNumber}>{unread}</Text>
+              <Text style={styles.cardNumber}>{userSeedInfo.unread}</Text>
               <Text style={styles.cardCount}>개</Text>
             </Text>
           </View>
