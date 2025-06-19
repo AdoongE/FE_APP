@@ -339,10 +339,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     zIndex: 100,
   },
-  fullContainer: { flex: 1 },
+  fullContainer: { flex: 1, margin: 20 },
   fullHeader: {
     flexDirection: 'row',
-    padding: 20,
   },
   fullTitle: {
     fontSize: 16,
