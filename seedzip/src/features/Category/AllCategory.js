@@ -11,7 +11,7 @@ import AddCategoryModal from './AddCategoryModal';
 import { getUserSeedInfo } from '../../api/CategoryApi';
 
 const AllCategory = ({ onAddCategory }) => {
-  const totalCategory = 30;
+  // const totalCategory = 30;
 
   const [openAddModal, setOpenAddModal] = useState(false);
   const [userSeedInfo, setUserSeedInfo] = useState([]);
@@ -24,6 +24,7 @@ const AllCategory = ({ onAddCategory }) => {
   const fetchUserSeedInfo = async () => {
     const resSeedInfo = await getUserSeedInfo();
     setUserSeedInfo({
+      totalCategory: resSeedInfo[0].totalCategoryCount,
       totalSeed: resSeedInfo[0].totalSeedCount,
       popular: resSeedInfo[0].mostReadSeedCount,
       unread: resSeedInfo[0].neverReadSeedCount
@@ -33,13 +34,13 @@ const AllCategory = ({ onAddCategory }) => {
 
   useEffect(() => {
     fetchUserSeedInfo();
-  }, []);
+  }, [openAddModal]);
 
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerRow}>
-          <Text style={styles.headerTitle}>모든 카테고리({totalCategory})</Text>
+          <Text style={styles.headerTitle}>모든 카테고리({userSeedInfo.totalCategory})</Text>
           <TouchableOpacity onPress={() => setOpenAddModal(true)}>
             <Ionicons name="add-outline" size={20} />
           </TouchableOpacity>
