@@ -5,6 +5,7 @@ import seedzip from '../../assets/icons/seedzip.png';
 import newLogo from '../../assets/icons/whiteLogo.png';
 import naver from '../../assets/icons/naver.png';
 import google from '../../assets/icons/google.png';
+import apple from '../../assets/icons/apple.png';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
@@ -96,7 +97,7 @@ const NextSplash = () => {
               style={[styles.button, { backgroundColor: '#FEE500' }]}
               onPress={handleKakaoLogin}
             >
-              <MaterialCommunityIcons name="chat" size={12} color="black" />
+              <MaterialCommunityIcons name="chat" size={14} color="black" />
               <Text style={{ color: 'black' }}>카카오톡으로 로그인하기</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -104,7 +105,12 @@ const NextSplash = () => {
               style={[styles.button, { backgroundColor: '#03C75A' }]}
             >
               <Image source={naver} />
-              <Text style={{ color: 'white' }}>네이버로 로그인하기</Text>
+              <Text
+                style={{ color: 'white' }}
+                onPress={() => navigation.navigate('category')}
+              >
+                네이버로 로그인하기
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               type="google"
@@ -113,6 +119,14 @@ const NextSplash = () => {
             >
               <Image source={google} />
               <Text style={{ color: '#4F4F4F' }}>구글로 로그인하기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              type="apple"
+              style={[styles.button, { backgroundColor: 'black' }]}
+              onPress={() => navigation.navigate('main')}
+            >
+              <Image source={apple} />
+              <Text style={{ color: '#fff' }}>애플로 로그인하기</Text>
             </TouchableOpacity>
           </View>
         </LinearGradient>
