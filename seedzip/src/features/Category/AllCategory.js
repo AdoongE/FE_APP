@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,25 +8,39 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AddCategoryModal from './AddCategoryModal';
+import { getUserSeedInfo } from '../../api/CategoryApi';
 
 const AllCategory = ({ onAddCategory }) => {
-  const totalCategory = 30;
-  const totalSeed = 250;
-  const popular = 25;
-  const unread = 25;
-
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [userSeedInfo, setUserSeedInfo] = useState([]);
 
-  const handleAdd = (name) => {
-    onAddCategory(name);
+  const handleAdd = (name, isPublic) => {
+    onAddCategory(name, isPublic);
     setOpenAddModal(false);
   };
+
+  const fetchUserSeedInfo = async () => {
+    const resSeedInfo = await getUserSeedInfo();
+    setUserSeedInfo({
+      totalCategory: resSeedInfo[0].totalCategoryCount,
+      totalSeed: resSeedInfo[0].totalSeedCount,
+      popular: resSeedInfo[0].mostReadSeedCount,
+      unread: resSeedInfo[0].neverReadSeedCount,
+    });
+    setUserSeedInfo(seedInfoData);
+  };
+
+  useEffect(() => {
+    fetchUserSeedInfo();
+  }, [openAddModal]);
 
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerRow}>
-          <Text style={styles.headerTitle}>모든 카테고리({totalCategory})</Text>
+          <Text style={styles.headerTitle}>
+            모든 카테고리({userSeedInfo.totalCategory})
+          </Text>
           <TouchableOpacity onPress={() => setOpenAddModal(true)}>
             <Ionicons name="add-outline" size={20} />
           </TouchableOpacity>
@@ -36,22 +50,29 @@ const AllCategory = ({ onAddCategory }) => {
           <View style={styles.card}>
             <Text style={styles.cardLabel}>전체 씨드</Text>
             <Text>
-              <Text style={styles.cardNumber}>{totalSeed}</Text>
+              <Text style={styles.cardNumber}>{userSeedInfo.totalSeed}</Text>
               <Text style={styles.cardCount}>개</Text>
             </Text>
           </View>
           <View style={styles.card}>
             <Text style={styles.cardLabel}>많이 찾는 씨드</Text>
             <Text>
-              <Text style={styles.cardNumber}>{popular}</Text>
+              <Text style={styles.cardNumber}>{userSeedInfo.popular}</Text>
               <Text style={styles.cardCount}>개</Text>
             </Text>
           </View>
           <View style={styles.card}>
             <Text style={styles.cardLabel}>읽지 않은 씨드</Text>
             <Text>
-              <Text style={styles.cardNumber}>{unread}</Text>
-              <Text style={styles.cardCount}>개</Text>
+              <Text style={styles.cardNumber}>{userSeedInfo.unread}</Text>
+              <Text
+                style={[
+                  styles.cardCount,
+                  { color: userSeedInfo.unread >= 30 ? '#41C3AB' : '#4f4f4f' },
+                ]}
+              >
+                {userSeedInfo.unread < 30 ? '개' : '+'}
+              </Text>
             </Text>
           </View>
         </View>
@@ -108,7 +129,6 @@ const styles = StyleSheet.create({
   cardCount: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#4f4f4f',
   },
   cardLabel: {
     marginTop: 4,

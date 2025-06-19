@@ -1,5 +1,13 @@
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+} from 'react-native';
+import { useDragClose } from '../utils/useDragClose';
 
 export default function ActionModal({
   visible,
@@ -9,6 +17,8 @@ export default function ActionModal({
   modalStyle,
   contentStyle,
 }) {
+  const { panHandlers, translateY } = useDragClose({ onCancel: onClose, visible });
+
   return (
     <Modal
       animationType="slide"
@@ -17,7 +27,14 @@ export default function ActionModal({
       onRequestClose={onClose}
     >
       <View style={[styles.backdrop, modalStyle]}>
-        <View style={[styles.container, contentStyle]}>
+        <Animated.View
+          {...panHandlers}
+          style={[
+            styles.container,
+            contentStyle,
+            { transform: [{ translateY }] },
+          ]}
+        >
           <View style={styles.handleBar} />
           <Text style={styles.title}>{title}</Text>
           {actions.map((act, idx) => (
@@ -41,7 +58,7 @@ export default function ActionModal({
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeButtonText}>닫기</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -63,10 +80,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   handleBar: {
-    width: 40,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: '#ddd',
+    width: 29,
+    height: 4,
+    backgroundColor: '#dcdada',
+    borderRadius: 100,
     alignSelf: 'center',
     marginBottom: 16,
   },

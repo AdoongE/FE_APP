@@ -48,7 +48,8 @@ const FolderSection = ({
         )}
       </View>
 
-      {data.length === 0 ? (
+      {(data.length === 0 && title.split(' ')[0] === '북마크') ||
+      (data.length === 1 && title.split(' ')[0] === '내') ? (
         isFullView ? (
           <View style={styles.emptyContainerFull}>
             <Text style={styles.emptyTitleFull}>{emptyTitle}</Text>
@@ -57,7 +58,17 @@ const FolderSection = ({
         ) : (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>{emptySubtitle}</Text>
-            <Image source={emptyImg} style={styles.emptyImage} />
+            <View style={styles.rowContainer}>
+              {title.split(' ')[0] === '내' && (
+                <View style={styles.item}>
+                  <Folder
+                    name={data[0].name}
+                    onPressMorevert={() => handleFolderPress(data[0])}
+                  />
+                </View>
+              )}
+              <Image source={emptyImg} style={styles.emptyImage} />
+            </View>
           </View>
         )
       ) : (
@@ -67,14 +78,12 @@ const FolderSection = ({
             numColumns={3}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
-            columnWrapperStyle={styles.row}
+            columnWrapperStyle={styles.folderRow}
             renderItem={({ item }) => (
-              <View style={styles.item}>
-                <Folder
-                  name={item.name}
-                  onPressMorevert={() => handleFolderPress(item)}
-                />
-              </View>
+              <Folder
+                name={item.name}
+                onPressMorevert={() => handleFolderPress(item)}
+              />
             )}
             scrollEnabled={false}
           />
@@ -127,8 +136,8 @@ const styles = StyleSheet.create({
   listContent: {
     gap: 20,
   },
-  item: {
-    marginHorizontal: 8,
+  folderRow: {
+    gap: 20,
   },
   emptyContainer: {
     marginTop: -5,
@@ -158,5 +167,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#4f4f4f',
     textAlign: 'center',
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    gap: 16,
   },
 });

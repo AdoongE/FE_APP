@@ -18,7 +18,6 @@ import ImageSave from '../pages/add/ImageSave';
 import Add from '../pages/add/AddSeedPage';
 import Save from '../pages/add/SaveSeedPage';
 import Category from '../features/Category/Category';
-import FullFolderSection from '../features/Category/FullFolderSection';
 
 const Stack = createNativeStackNavigator();
 
@@ -67,7 +66,6 @@ function Router() {
         }}
       />
       <Stack.Screen name="category" component={Category} />
-      <Stack.Screen name="fullcategory" component={FullFolderSection} />
       <Stack.Screen name="view" component={View} />
       <Stack.Screen name="addLink" component={AddLink} />
       <Stack.Screen name="addCategory" component={AddCategory} />

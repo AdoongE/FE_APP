@@ -74,13 +74,13 @@ const Category = () => {
     fetchBookmark();
   }, []);
 
-  const handleAddCategory = async (inputName) => {
+  const handleAddCategory = async (inputName, isPublic) => {
     const count = myCategories.filter((cat) =>
       cat.name.startsWith('새 카테고리'),
     ).length;
     const newCategory = inputName.trim() || `새 카테고리${count + 1}`;
 
-    await postCategory(newCategory, true);
+    await postCategory(newCategory, isPublic);
     await fetchMyCategory(); // 카테고리 생성 후, 바로 조회
   };
 
@@ -182,7 +182,14 @@ const Category = () => {
           icon: null,
           actionText: '보러가기',
           onActionPress: () => {
-            navigation.navigate('BookmarkScreen');
+            handleShowFull({
+              title: '북마크 전체보기',
+              iconName: 'bookmark-outline',
+              data: bookmarks,
+              actionBtns: actionBtnsBookmark,
+              emptyTitle: '아직 북마크한 카테고리가 없어요',
+              emptySubtitle: '자주 보는 카테고리를 북마크 해보세요!',
+            });
           },
         });
       },
@@ -332,10 +339,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     zIndex: 100,
   },
-  fullContainer: { flex: 1 },
+  fullContainer: { flex: 1, margin: 20 },
   fullHeader: {
     flexDirection: 'row',
-    padding: 20,
   },
   fullTitle: {
     fontSize: 16,
