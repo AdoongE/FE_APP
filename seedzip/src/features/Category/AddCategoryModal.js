@@ -6,11 +6,15 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Animated,
 } from 'react-native';
+import { useDragClose } from '../../utils/useDragClose';
 
 export default function AddCategoryModal({ visible, onCancel, onAdd }) {
   const [name, setName] = useState('');
   const [isPublic, setIsPublic] = useState(true);
+
+  const { panHandlers, translateY } = useDragClose({ onCancel, visible });
 
   useEffect(() => {
     if (visible) {
@@ -28,9 +32,11 @@ export default function AddCategoryModal({ visible, onCancel, onAdd }) {
       onRequestClose={onCancel}
     >
       <View style={styles.backdrop}>
-        <View style={styles.container}>
+        <Animated.View
+          style={[styles.container, { transform: [{ translateY }] }]}
+          {...panHandlers}
+        >
           <View style={styles.handle} />
-
           <Text style={styles.title}>새 카테고리 만들기</Text>
           <Text style={styles.subtitle}>
             카테고리를 공개해 웹에서 다른 사용자와{'\n'}인사이트를 나눠보세요!
@@ -84,7 +90,7 @@ export default function AddCategoryModal({ visible, onCancel, onAdd }) {
           >
             <Text style={styles.addButtonText}>카테고리 생성하기</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
