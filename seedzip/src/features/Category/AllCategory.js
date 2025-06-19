@@ -11,8 +11,6 @@ import AddCategoryModal from './AddCategoryModal';
 import { getUserSeedInfo } from '../../api/CategoryApi';
 
 const AllCategory = ({ onAddCategory }) => {
-  // const totalCategory = 30;
-
   const [openAddModal, setOpenAddModal] = useState(false);
   const [userSeedInfo, setUserSeedInfo] = useState([]);
 
@@ -27,7 +25,7 @@ const AllCategory = ({ onAddCategory }) => {
       totalCategory: resSeedInfo[0].totalCategoryCount,
       totalSeed: resSeedInfo[0].totalSeedCount,
       popular: resSeedInfo[0].mostReadSeedCount,
-      unread: resSeedInfo[0].neverReadSeedCount
+      unread: resSeedInfo[0].neverReadSeedCount,
     });
     setUserSeedInfo(seedInfoData);
   };
@@ -40,7 +38,9 @@ const AllCategory = ({ onAddCategory }) => {
     <>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerRow}>
-          <Text style={styles.headerTitle}>모든 카테고리({userSeedInfo.totalCategory})</Text>
+          <Text style={styles.headerTitle}>
+            모든 카테고리({userSeedInfo.totalCategory})
+          </Text>
           <TouchableOpacity onPress={() => setOpenAddModal(true)}>
             <Ionicons name="add-outline" size={20} />
           </TouchableOpacity>
@@ -65,7 +65,14 @@ const AllCategory = ({ onAddCategory }) => {
             <Text style={styles.cardLabel}>읽지 않은 씨드</Text>
             <Text>
               <Text style={styles.cardNumber}>{userSeedInfo.unread}</Text>
-              <Text style={styles.cardCount}>개</Text>
+              <Text
+                style={[
+                  styles.cardCount,
+                  { color: userSeedInfo.unread >= 30 ? '#41C3AB' : '#4f4f4f' },
+                ]}
+              >
+                {userSeedInfo.unread < 30 ? '개' : '+'}
+              </Text>
             </Text>
           </View>
         </View>
@@ -122,7 +129,6 @@ const styles = StyleSheet.create({
   cardCount: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#4f4f4f',
   },
   cardLabel: {
     marginTop: 4,

@@ -18,7 +18,6 @@ const NextSplash = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    console.log('REACT_NATIVE_APP_KEY:', REACT_NATIVE_APP_KEY);
     initializeKakaoSDK(`${REACT_NATIVE_APP_KEY}`);
   }, []);
 
@@ -77,7 +76,7 @@ const NextSplash = () => {
     <View style={styles.container}>
       <View style={StyleSheet.absoluteFill}>
         <LinearGradient
-          colors={['#41C3AB', '#82E9D6']}
+          colors={['#41c3ab', '#82E9D6']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
