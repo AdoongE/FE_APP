@@ -77,6 +77,6 @@ export const getUserSeedInfo = async () => {
     const response = await axios.get(`/api/v1/member/statistics`);
     return response.data.results;
   } catch (error) {
-    console.error('카테고리 수정 error:', error);
+    console.error('유저 씨드 정보 조회 error:', error);
   }
 };

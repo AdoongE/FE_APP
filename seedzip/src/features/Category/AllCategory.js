@@ -14,8 +14,8 @@ const AllCategory = ({ onAddCategory }) => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [userSeedInfo, setUserSeedInfo] = useState([]);
 
-  const handleAdd = (name) => {
-    onAddCategory(name);
+  const handleAdd = (name, isPublic) => {
+    onAddCategory(name, isPublic);
     setOpenAddModal(false);
   };
 

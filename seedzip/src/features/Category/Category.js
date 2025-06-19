@@ -74,13 +74,13 @@ const Category = () => {
     fetchBookmark();
   }, []);
 
-  const handleAddCategory = async (inputName) => {
+  const handleAddCategory = async (inputName, isPublic) => {
     const count = myCategories.filter((cat) =>
       cat.name.startsWith('새 카테고리'),
     ).length;
     const newCategory = inputName.trim() || `새 카테고리${count + 1}`;
 
-    await postCategory(newCategory, true);
+    await postCategory(newCategory, isPublic);
     await fetchMyCategory(); // 카테고리 생성 후, 바로 조회
   };
 
