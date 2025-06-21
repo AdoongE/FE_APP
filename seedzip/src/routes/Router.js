@@ -9,7 +9,7 @@ import Success from '../pages/signup/Success';
 import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
 import Main from '../pages/main/Main';
-import View from '../pages/view/ViewSeed';
+import View from '../features/View/ViewSeed';
 import AddLink from '../pages/contentAdd/AddLink';
 import AddCategory from '../pages/contentAdd/AddCategory';
 import AddTag from '../pages/contentAdd/AddTag';
