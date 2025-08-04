@@ -9,15 +9,11 @@ import {
 } from 'react-native';
 import { useDragClose } from '../utils/useDragClose';
 
-export default function ActionModal({
-  visible,
-  onClose,
-  title,
-  actions = [],
-  modalStyle,
-  contentStyle,
-}) {
-  const { panHandlers, translateY } = useDragClose({ onCancel: onClose, visible });
+export default function ActionModal({ visible, onClose, title, actions = [] }) {
+  const { panHandlers, translateY } = useDragClose({
+    onCancel: onClose,
+    visible,
+  });
 
   return (
     <Modal
@@ -26,17 +22,13 @@ export default function ActionModal({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={[styles.backdrop, modalStyle]}>
+      <View style={styles.backdrop}>
         <Animated.View
           {...panHandlers}
-          style={[
-            styles.container,
-            contentStyle,
-            { transform: [{ translateY }] },
-          ]}
+          style={[styles.container, { transform: [{ translateY }] }]}
         >
           <View style={styles.handleBar} />
-          <Text style={styles.title}>{title}</Text>
+          {title && <Text style={styles.title}>{title}</Text>}
           {actions.map((act, idx) => (
             <TouchableOpacity
               key={idx}

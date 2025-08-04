@@ -9,7 +9,7 @@ import Success from '../pages/signup/Success';
 import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
 import Main from '../pages/main/Main';
-import View from '../pages/view/ViewSeed';
+import View from '../features/View/ViewSeed';
 import AddLink from '../pages/contentAdd/AddLink';
 import AddCategory from '../pages/contentAdd/AddCategory';
 import AddTag from '../pages/contentAdd/AddTag';
@@ -18,18 +18,26 @@ import ImageSave from '../pages/add/ImageSave';
 import Add from '../pages/add/AddSeedPage';
 import Save from '../pages/add/SaveSeedPage';
 import Category from '../features/Category/Category';
-
+import { Ionicons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 const Stack = createNativeStackNavigator();
 
 function Router() {
+  const navigation = useNavigation();
+
   return (
     <Stack.Navigator
       screenOptions={{
         headerTitle: '',
-        headerBackTitle: '',
-        headerBackVisible: true,
+        headerBackVisible: false,
         headerBackTitleVisible: false,
         headerTintColor: '#000',
+        headerLeft: () => (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={24} color="#000" />
+          </TouchableOpacity>
+        ),
       }}
     >
       <Stack.Screen
@@ -62,7 +70,7 @@ function Router() {
         name="main"
         component={Main}
         options={{
-          headerShown: false, // 메인화면에서 헤더 숨김
+          headerShown: false,
         }}
       />
       <Stack.Screen name="category" component={Category} />
