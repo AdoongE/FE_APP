@@ -10,7 +10,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import ActionModal from '../../components/ActionModal';
 
-// 화면 너비
 const screenWidth = Dimensions.get('window').width;
 
 export default function BottomNav() {
@@ -58,7 +57,7 @@ export default function BottomNav() {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         title="저장 형식을 선택해주세요"
-        actionBtns={actionBtns}
+        actions={actionBtns}
       />
     </>
   );
@@ -72,7 +71,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     position: 'absolute',
     bottom: 0,
-    width: screenWidth, // 화면 전체 너비 설정
+    width: screenWidth,
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     paddingHorizontal: 70,
