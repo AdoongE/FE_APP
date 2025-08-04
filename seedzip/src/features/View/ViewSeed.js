@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   ScrollView,
@@ -9,6 +10,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Menu, Provider } from 'react-native-paper';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { axiosInstance } from '../../api/axios-instance';
 import { MaterialIcons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
@@ -57,7 +59,9 @@ function ViewContent({ route }) {
   const handleViewContent = async () => {
     try {
       const axios = await axiosInstance();
-      const response = await axios.get(`/api/v1/content/all/${contentId.contentId}`);
+      const response = await axios.get(
+        `/api/v1/content/all/${contentId.contentId}`,
+      );
       const results = response.data.results[0];
       setContentInfo({
         contentId: results.contentId,
@@ -92,59 +96,72 @@ function ViewContent({ route }) {
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
 
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Menu
+          contentStyle={{
+            backgroundColor: '#fff',
+            borderRadius: 8,
+            paddingVertical: 3,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 0.01,
+            shadowRadius: 8,
+          }}
+          visible={menuVisible}
+          onDismiss={closeMenu}
+          anchor={
+            <TouchableOpacity
+              onPress={openMenu}
+              style={{ position: 'relative' }}
+            >
+              <MaterialIcons name="more-vert" size={20} color="#000" />
+            </TouchableOpacity>
+          }
+          style={{
+            position: 'absolute',
+            top: 105,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              closeMenu();
+              alert('씨드 수정하기');
+            }}
+          >
+            <View style={styles.menuItem}>
+              <Text style={styles.menuText}>씨드 수정하기</Text>
+              <Feather name="edit-3" size={16} color="#000" />
+            </View>
+          </TouchableOpacity>
+          <View style={styles.menuDivider} />
+          <TouchableOpacity
+            onPress={() => {
+              closeMenu();
+              alert('씨드 삭제하기');
+            }}
+          >
+            <View style={styles.menuItem}>
+              <Text style={styles.menuText}>씨드 삭제하기</Text>
+              <Feather name="trash-2" size={16} color="black" />
+            </View>
+          </TouchableOpacity>
+        </Menu>
+      ),
+    });
+  }, [navigation, menuVisible]);
+
   return (
     <Provider>
       <View style={styles.contentPage}>
-        <View style={styles.header}>
-          <Menu
-            contentStyle={{
-              backgroundColor: '#fff',
-              borderRadius: 8,
-              paddingVertical: 3,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.02,
-              shadowRadius: 12,
-            }}
-            visible={menuVisible}
-            onDismiss={closeMenu}
-            anchor={
-              <TouchableOpacity onPress={openMenu}>
-                <MaterialIcons name="more-vert" size={16} color="#4f4f4f" />
-              </TouchableOpacity>
-            }
-          >
-            <TouchableOpacity
-              onPress={() => {
-                closeMenu();
-                alert('씨드 수정하기');
-              }}
-            >
-              <View style={styles.menuItem}>
-                <Text style={styles.menuText}>씨드 수정하기</Text>
-                <Feather name="edit-3" size={16} color="#000" />
-              </View>
-            </TouchableOpacity>
-            <View style={styles.menuDivider} />
-            <TouchableOpacity
-              onPress={() => {
-                closeMenu();
-                alert('씨드 삭제하기');
-              }}
-            >
-              <View style={styles.menuItem}>
-                <Text style={styles.menuText}>씨드 삭제하기</Text>
-                <Feather name="trash-2" size={16} color="black" />
-              </View>
-            </TouchableOpacity>
-          </Menu>
-        </View>
-
         <View style={styles.contents}>
           <Text style={styles.titleDiv}>{contentInfo.contentName}</Text>
           <View
             style={[
-              styles.contentDiv,
+              styles.upperDiv,
               {
                 flexDirection:
                   contentInfo.contentDataType === 'PDF' ||
@@ -333,6 +350,9 @@ const styles = StyleSheet.create({
   infoDiv: {
     marginTop: 20,
   },
+  upperDiv: {
+    marginTop: 20,
+  },
   contentDiv: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -455,11 +475,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 8,
     height: 174,
-  },
-  header: {
-    right: -350,
-    marginTop: 24,
-    marginBottom: 10,
   },
   menuItem: {
     flexDirection: 'row',

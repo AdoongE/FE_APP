@@ -74,7 +74,13 @@ function Router() {
         }}
       />
       <Stack.Screen name="category" component={Category} />
-      <Stack.Screen name="view" component={View} />
+      <Stack.Screen
+        name="view"
+        component={View}
+        options={{
+          headerTitle: '씨드 상세보기',
+        }}
+      />
       <Stack.Screen name="addLink" component={AddLink} />
       <Stack.Screen name="addCategory" component={AddCategory} />
       <Stack.Screen name="addTag" component={AddTag} />
