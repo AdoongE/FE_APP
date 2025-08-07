@@ -123,6 +123,13 @@ const NextSplash = () => {
               <Image source={apple} />
               <Text style={{color: 'white'}}>애플로 로그인하기</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              type="apple"
+              style={[styles.button, {backgroundColor: 'black'}]}
+              onPress={() => navigation.navigate('main')}>
+              <Image source={apple} />
+              <Text style={{color: 'white'}}>애플로 로그인하기</Text>
+            </TouchableOpacity>
           </View>
         </LinearGradient>
       </View>
