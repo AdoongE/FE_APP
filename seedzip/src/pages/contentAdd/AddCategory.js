@@ -81,7 +81,10 @@ const AddCategory = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>카테고리를 선택하세요</Text>
-      <Text style={styles.short}>카테고리는 5개까지 선택할 수 있어요.</Text>
+      <Text style={styles.short}>
+        카테고리는 5개까지 선택할 수 있어요. 선택하지 않으면 '미분류' 카테고리로
+        이동해요.
+      </Text>
 
       <View style={{rowGap: 20}}>
         <DropDownPicker
@@ -212,12 +215,16 @@ const AddCategory = ({navigation}) => {
         </TouchableOpacity>
       )}
 
-      <TouchableOpacity
-        style={styles.button}
-        // disabled={category.length === 0}
-        onPress={() => handleSubmit()}>
-        <Text style={styles.buttonText}>다음</Text>
-      </TouchableOpacity>
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>다음</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.skipButton}
+          onPress={() => navigation.navigate('addTag')}>
+          <Text style={styles.skipButtonText}>건너뛰기</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -234,17 +241,31 @@ const styles = StyleSheet.create({
   },
   addContainer: {display: 'flex', alignItems: 'center', marginTop: 20},
   title: {marginTop: 29.96, fontSize: 24, fontWeight: 600},
+  footer: {
+    marginTop: 'auto',
+    gap: 12,
+    paddingTop: 20,
+  },
   button: {
-    width: 350,
+    width: '100%',
     height: 51,
-    border: 0,
     borderRadius: 10,
     backgroundColor: '#41C3AB',
-    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 15,
-    marginTop: 'auto',
+  },
+  skipButton: {
+    width: '100%',
+    height: 51,
+    borderRadius: 10,
+    backgroundColor: '#F2F2F2',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  skipButtonText: {
+    color: '#9F9F9F',
+    fontWeight: '600',
+    fontSize: 16,
   },
   buttonText: {
     color: 'white',
@@ -266,6 +287,7 @@ const styles = StyleSheet.create({
     fontWeight: 400,
     fontSize: 14,
     marginBottom: 28,
+    marginTop: 10,
   },
 });
 

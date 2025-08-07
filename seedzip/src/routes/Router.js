@@ -39,10 +39,10 @@ function Router() {
       />
       <Stack.Screen
         name="nextSplash"
-        component={NextSplash}
-        options={{
-          headerShown: false,
-        }}
+        component={AddLink}
+        // options={{
+        //   headerShown: false,
+        // }}
       />
       <Stack.Screen name="nickname" component={Nickname} />
       <Stack.Screen name="birthday" component={Birthday} />
@@ -69,16 +69,13 @@ function Router() {
       <Stack.Screen name="addCategory" component={AddCategory} />
       <Stack.Screen name="addTag" component={AddTag} />
       <Stack.Screen
-          name="imageupload"
-          component={ImageUpload}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="imagesave"
-          component={ImageSave}
-        />
+        name="imageupload"
+        component={ImageUpload}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen name="imagesave" component={ImageSave} />
       <Stack.Screen name="add" component={Add} />
       <Stack.Screen name="save" component={Save} />
     </Stack.Navigator>
