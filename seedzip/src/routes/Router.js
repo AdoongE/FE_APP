@@ -39,10 +39,10 @@ function Router() {
       />
       <Stack.Screen
         name="nextSplash"
-        component={AddLink}
-        // options={{
-        //   headerShown: false,
-        // }}
+        component={NextSplash}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen name="nickname" component={Nickname} />
       <Stack.Screen name="birthday" component={Birthday} />
