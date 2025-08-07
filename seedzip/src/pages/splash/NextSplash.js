@@ -5,7 +5,6 @@ import seedzip from '../../assets/icons/seedzip.png';
 import newLogo from '../../assets/icons/whiteLogo.png';
 import naver from '../../assets/icons/naver.png';
 import google from '../../assets/icons/google.png';
-import apple from '../../assets/icons/apple.png';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
@@ -14,6 +13,7 @@ import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { axiosInstance } from '../../api/axios-instance';
 import { REACT_NATIVE_APP_KEY } from '@env';
+import apple from '../../assets/icons/apple.png';
 
 const NextSplash = () => {
   const navigation = useNavigation();
@@ -30,10 +30,11 @@ const NextSplash = () => {
 
       const axios = await axiosInstance();
       const response = await axios.post(
-        `/api/v1/auth/login/kakao/app?accessToken=${kakaoAccessToken}`,
+        `/api/v1/auth/login/kakao/app?accessToken=${kakaoAccessToken}`
+
       );
 
-      const { status, results } = response.data;
+      const {status, results} = response.data;
 
       if (status.code === 200) {
         console.log('로그인 성공:', status.message);

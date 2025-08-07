@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
-  title: {marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4},
+  title: {marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 10},
   short: {
     color: '#898989',
     fontWeight: 400,
