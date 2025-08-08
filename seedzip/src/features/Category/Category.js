@@ -113,17 +113,7 @@ const Category = () => {
         setToast({
           visible: true,
           message: '북마크에서 제거되었어요',
-          icon: (
-            <View
-              style={{
-                backgroundColor: '#41C3AB',
-                borderRadius: 20,
-                padding: 2,
-              }}
-            >
-              <Ionicons name="checkmark" size={18} color="#fff" />
-            </View>
-          ),
+          icon: true,
           actionText: null,
           onActionPress: null,
         });
