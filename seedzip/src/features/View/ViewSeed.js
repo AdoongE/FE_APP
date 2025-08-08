@@ -15,6 +15,8 @@ import { axiosInstance } from '../../api/axios-instance';
 import { MaterialIcons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import ThumbnailModal from './ThumbnailModal';
+import DeleteCategoryModal from '../Seed/DeleteSeedModal';
+import AlertToast from '../../components/AlertToast';
 
 function ViewContent({ route }) {
   const contentId = route.params;
@@ -141,7 +143,7 @@ function ViewContent({ route }) {
           <TouchableOpacity
             onPress={() => {
               closeMenu();
-              alert('씨드 삭제하기');
+              setOpenDeleteModal(true);
             }}
           >
             <View style={styles.menuItem}>
@@ -153,6 +155,28 @@ function ViewContent({ route }) {
       ),
     });
   }, [navigation, menuVisible]);
+
+  // 씨드 삭제하기, API 아직 연동 X
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [toast, setToast] = useState({
+    visible: false,
+    message: '',
+    icon: null,
+    actionText: null,
+    onActionPress: null,
+  });
+
+  const handleDeleteSeed = async () => {
+    setOpenDeleteModal(false);
+
+    setToast({
+      visible: true,
+      message: '씨드가 삭제되었어요.',
+      icon: true,
+      actionText: null,
+      onActionPress: null,
+    });
+  };
 
   return (
     <Provider>
@@ -322,6 +346,21 @@ function ViewContent({ route }) {
           </View>
         </View>
       </View>
+
+      <AlertToast
+        {...toast}
+        onHide={() => {
+          setToast((t) => ({ ...t, visible: false }));
+        }}
+      />
+
+      <DeleteCategoryModal
+        visible={openDeleteModal}
+        onCancel={() => {
+          setOpenDeleteModal(false);
+        }}
+        onDelete={handleDeleteSeed}
+      />
     </Provider>
   );
 }
