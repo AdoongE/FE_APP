@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   ScrollView,
   StyleSheet,
@@ -29,7 +30,7 @@ import {
   patchCategory,
 } from '../../api/CategoryApi';
 
-const Category = () => {
+const Category = ({ route }) => {
   const [bookmarks, setBookmarks] = useState([]);
   const [myCategories, setMyCategories] = useState([]);
 
@@ -37,6 +38,32 @@ const Category = () => {
   const [renameTarget, setRenameTarget] = useState(null);
 
   const [fullParams, setFullParams] = useState(null);
+  const navigation = useNavigation();
+  useLayoutEffect(() => {
+    if (fullParams) {
+      navigation.setOptions({
+        headerShown: false,
+      });
+    } else {
+      navigation.setOptions({
+        headerShown: true,
+      });
+    }
+  }, [navigation, fullParams]);
+
+  useEffect(() => {
+    // 홈 화면에서 '카테고리 더보기' 타고 들어옴
+    if (route?.params?.showBookmarkFull) {
+      handleShowFull({
+        title: '북마크 전체보기',
+        iconName: 'bookmark-outline',
+        data: bookmarks,
+        actionBtns: actionBtnsBookmark,
+        emptyTitle: '아직 북마크한 카테고리가 없어요',
+        emptySubtitle: '자주 보는 카테고리를 북마크 해보세요!',
+      });
+    }
+  }, [route?.params?.showBookmarkFull]);
 
   const handleShowFull = (params) => {
     setFullParams({
@@ -47,7 +74,11 @@ const Category = () => {
   };
 
   const handleCloseFull = () => {
-    setFullParams(null);
+    if (route?.params?.showBookmarkFull) {
+      navigation.goBack();
+    } else {
+      setFullParams(null);
+    }
   };
 
   const fetchMyCategory = async () => {

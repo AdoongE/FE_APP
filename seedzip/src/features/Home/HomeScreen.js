@@ -39,8 +39,6 @@ export default function MainPage({ navigation }) {
   useEffect(() => {
     const fetchSeeds = async () => {
       const resAllSeeds = await getAllSeeds();
-      console.log('API Response:', resAllSeeds[0].seedInfoList);
-
       const seedData = resAllSeeds.map((item) => ({
         contentId: item.contentId,
         title: item.contentName || '콘텐츠명',
@@ -129,7 +127,9 @@ export default function MainPage({ navigation }) {
             <Text style={styles.sectionTitle}>북마크한 카테고리</Text>
             <Pressable
               hitSlop={8}
-              onPress={() => navigation?.navigate?.('category')}
+              onPress={() =>
+                navigation?.navigate?.('category', { showBookmarkFull: true })
+              }
             >
               <Text style={styles.moreCategory}>카테고리 더보기 &gt;</Text>
             </Pressable>
