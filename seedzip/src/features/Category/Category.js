@@ -39,6 +39,7 @@ const Category = ({ route }) => {
 
   const [fullParams, setFullParams] = useState(null);
   const navigation = useNavigation();
+
   useLayoutEffect(() => {
     if (fullParams) {
       navigation.setOptions({

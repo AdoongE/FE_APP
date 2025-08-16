@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
   Image,
   Pressable,
   ScrollView,
@@ -12,20 +11,15 @@ import {
 import homeImg from '../../assets/icons/home-img.png';
 import { Ionicons } from '@expo/vector-icons';
 import BottomNav from './BottomNav';
+import FolderSection from '../Category/FolderSection';
 import { getAllSeeds } from '../../api/HomeApi';
-import { getUserSeedInfo } from '../../api/CategoryApi';
+import { getUserSeedInfo, getBookmark } from '../../api/CategoryApi';
 
-export default function MainPage({ navigation }) {
+export default function HomeScreen({ navigation }) {
   const [seeds, setSeeds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userSeedInfo, setUserSeedInfo] = useState([]);
-
-  const [bookmarkedCats] = useState([
-    { id: '1', name: '카테고리 이름' },
-    { id: '2', name: '카테고리 이름' },
-    { id: '3', name: '카테고리 이름' },
-    { id: '4', name: '카테고리 이름' },
-  ]);
+  const [bookmarks, setBookmarks] = useState([]);
 
   const stats = useMemo(
     () => [
@@ -63,8 +57,19 @@ export default function MainPage({ navigation }) {
       setUserSeedInfo(seedInfoData);
     };
 
+    const fetchBookmark = async () => {
+      const resBookmark = await getBookmark();
+      const bookmarkData = resBookmark.map((cat) => ({
+        bookmarkId: cat.bookmarkId,
+        id: cat.categoryId,
+        name: cat.name,
+      }));
+      setBookmarks(bookmarkData);
+    };
+
     fetchSeeds();
     fetchUserSeedInfo();
+    fetchBookmark();
   }, []);
 
   if (loading) {
@@ -136,29 +141,29 @@ export default function MainPage({ navigation }) {
           </View>
         </View>
 
-        <FlatList
-          data={bookmarkedCats}
-          keyExtractor={(it) => it.id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16 }}
-          renderItem={({ item }) => (
-            <Pressable style={styles.catCard}>
-              <View style={styles.catThumb}>
-                <Ionicons name="link-outline" size={22} color="#9ADFCC" />
-              </View>
-              <Text style={styles.catName} numberOfLines={1}>
-                {item.name}
-              </Text>
-            </Pressable>
-          )}
-        />
+        {bookmarks.length > 0 ? (
+          <FolderSection
+            title="북마크한 카테고리"
+            iconName="bookmark-outline"
+            data={bookmarks}
+            onPressAll={() =>
+              navigation.navigate('category', { showBookmarkFull: true })
+            }
+            isHome={true}
+          />
+        ) : (
+          <View style={styles.emptyBookmarkContainer}>
+            <Text style={styles.emptyBookmarkText}>
+              자주 보는 카테고리를 북마크하세요!
+            </Text>
+          </View>
+        )}
 
         {/* 최근 추가한 씨드 */}
         <Text
           style={[
             styles.sectionTitle,
-            { marginTop: 18, paddingHorizontal: 16 },
+            { marginTop: 36, paddingHorizontal: 20 },
           ]}
         >
           최근 추가한 씨드
@@ -241,7 +246,7 @@ const styles = StyleSheet.create({
   topBar: {
     height: 56,
     backgroundColor: '#41C3AB',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -258,11 +263,10 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   headerCard: {
-    paddingBottom: 67,
+    paddingBottom: 65,
     backgroundColor: '#41C3AB',
-    paddingVertical: 18,
+    paddingVertical: 5,
     paddingHorizontal: 20,
-    ...CARD.shadow,
   },
   headerRow: {
     flexDirection: 'row',
@@ -280,7 +284,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    top: '160',
+    top: '140',
     zIndex: 10,
     paddingHorizontal: 20,
   },
@@ -307,7 +311,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     paddingHorizontal: 16,
     marginTop: 75,
-    marginBottom: 8,
+    marginBottom: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -334,6 +338,21 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     color: '#444',
+  },
+
+  emptyBookmarkContainer: {
+    backgroundColor: '#f8fbfb',
+    marginHorizontal: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 111,
+  },
+  emptyBookmarkText: {
+    color: '#4f4f4f',
+    fontSize: 12,
+    fontWeight: '400',
+    textAlign: 'center',
   },
 
   // 최근 씨드 행
