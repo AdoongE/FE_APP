@@ -17,6 +17,7 @@ import { getAllSeeds } from '../../api/HomeApi';
 import { getUserSeedInfo, getBookmark } from '../../api/CategoryApi';
 import useCategoryActions from '../../hooks/useCategoryActions';
 import ActionModal from '../../components/ActionModal';
+import SeedItem from './components/SeedItem';
 
 export default function HomeScreen({ navigation }) {
   const [seeds, setSeeds] = useState([]);
@@ -71,11 +72,14 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     const fetchSeeds = async () => {
       const resAllSeeds = await getAllSeeds();
-      const seedData = resAllSeeds.map((item) => ({
-        contentId: item.contentId,
-        title: item.contentName || '콘텐츠명',
-        thumbnail: item.thumbnailImage || null,
-        type: item.contentDateType || '타입 없음',
+      const seedData = resAllSeeds[0].seedInfoList.map((item) => ({
+        seedId: item.seedId,
+        seedName: item.seedName,
+        categoryName: item.categoryName,
+        seedType: item.seedType,
+        thumbnailImage: item.thumbnailImage,
+
+        tagName: item.tagName,
       }));
       setSeeds(seedData);
       setLoading(false);
@@ -198,7 +202,7 @@ export default function HomeScreen({ navigation }) {
         </Text>
 
         <View style={{ paddingHorizontal: 16 }}>
-          {true ? (
+          {seeds.length === 0 ? (
             <View style={styles.emptyBox}>
               <Text style={styles.emptyText}>
                 아직 저장한 씨드가 없어요{'\n'}나중에 다시 볼 링크와 사진을
@@ -212,43 +216,17 @@ export default function HomeScreen({ navigation }) {
               </TouchableOpacity>
             </View>
           ) : (
-            seeds.slice(0, 10).map((seed) => (
-              <Pressable
-                key={seed.contentId}
-                style={styles.seedRow}
-                onPress={() =>
-                  navigation?.navigate?.('view', { id: seed.contentId })
-                }
-              >
-                <View style={styles.seedThumb}>
-                  {seed.thumbnail ? (
-                    <Image
-                      source={{ uri: seed.thumbnail }}
-                      style={styles.seedImage}
-                    />
-                  ) : (
-                    <Ionicons name="link-outline" size={24} color="#41C3AB" />
-                  )}
-                </View>
-
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.seedTitle} numberOfLines={1}>
-                    {seed.title}
-                  </Text>
-                  <Text style={styles.seedSubtitle} numberOfLines={1}>
-                    카테고리명
-                  </Text>
-                  <View style={styles.tagRow}>
-                    <Text style={styles.tag}>태그1</Text>
-                    <Text style={styles.tag}>태그2</Text>
-                    <Text style={styles.tag}>태그3</Text>
-                    <Text style={styles.tag}>태그4</Text>
-                  </View>
-                </View>
-
-                <Ionicons name="ellipsis-vertical" size={16} color="#BDBDBD" />
-              </Pressable>
-            ))
+            seeds
+              .slice(0, 10)
+              .map((seed) => (
+                <SeedItem
+                  key={seed.seedId}
+                  seed={seed}
+                  onPress={() =>
+                    navigation?.navigate?.('view', { id: seed.seedId })
+                  }
+                />
+              ))
           )}
         </View>
       </ScrollView>
@@ -261,22 +239,11 @@ export default function HomeScreen({ navigation }) {
         title="저장 형식을 선택해주세요"
         actions={addSeedActions}
       />
-      {/* 북마크한 카테고리를 위한 */}
+      {/* 북마를 한 카테고리를 위한 */}
       <ActionModalAlert />
     </View>
   );
 }
-
-const CARD = {
-  radius: 16,
-  shadow: {
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 10,
-    elevation: 3,
-  },
-};
 
 const styles = StyleSheet.create({
   screen: {
@@ -365,27 +332,6 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 16, fontWeight: '600' },
   moreCategory: { fontSize: 12, color: '#9f9f9f' },
 
-  // 카테고리 카드
-  catCard: {
-    width: 120,
-    marginRight: 12,
-  },
-  catThumb: {
-    height: 90,
-    borderRadius: 14,
-    backgroundColor: '#F0FAF7',
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: '#D5F2EA',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  catName: {
-    marginTop: 8,
-    fontSize: 12,
-    color: '#444',
-  },
-
   emptyBookmarkContainer: {
     backgroundColor: '#f8fbfb',
     marginHorizontal: 20,
@@ -428,40 +374,5 @@ const styles = StyleSheet.create({
     color: '#41C3AB',
     fontSize: 14,
     fontWeight: '500',
-  },
-
-  // 최근 씨드 행
-  seedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 12,
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-    ...CARD.shadow,
-  },
-  seedThumb: {
-    width: 64,
-    height: 64,
-    borderRadius: 12,
-    backgroundColor: '#F6FFFC',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-    overflow: 'hidden',
-  },
-  seedImage: { width: '100%', height: '100%' },
-  seedTitle: { fontSize: 14, fontWeight: '700', color: '#222' },
-  seedSubtitle: { fontSize: 12, color: '#9E9E9E', marginTop: 2 },
-  tagRow: { flexDirection: 'row', gap: 6, marginTop: 6, flexWrap: 'wrap' },
-  tag: {
-    fontSize: 10,
-    color: '#7A7A7A',
-    backgroundColor: '#F4F7F6',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
   },
 });
