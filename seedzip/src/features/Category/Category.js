@@ -4,41 +4,32 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  Image,
   TouchableOpacity,
   SafeAreaView,
   Text,
 } from 'react-native';
 import AllCategory from './AllCategory';
 import FolderSection from './FolderSection';
-import EditCategoryModal from './EditCategoryModal';
-import AlertToast from '../../components/AlertToast';
 import EmptyBookmark from '../../assets/icons/emptyBookmark.png';
 import EmptyMyCategory from '../../assets/icons/emptyMyCategory.png';
-import BookmarkMinusIcon from '../../assets/icons/bookmarkMinus.png';
-import BookmarkPlusIcon from '../../assets/icons/bookmarkPlus.png';
-import EditIcon from '../../assets/icons/edit.png';
-import TrashIcon from '../../assets/icons/trash.png';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  postCategory,
-  deleteCategory,
-  getCategory,
-  postBookmark,
-  deleteBookmark,
-  getBookmark,
-  patchCategory,
-} from '../../api/CategoryApi';
+import { postCategory, getCategory, getBookmark } from '../../api/CategoryApi';
+import useCategoryActions from '../../hooks/useCategoryActions';
 
 const Category = ({ route }) => {
   const [bookmarks, setBookmarks] = useState([]);
   const [myCategories, setMyCategories] = useState([]);
-
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [renameTarget, setRenameTarget] = useState(null);
-
   const [fullParams, setFullParams] = useState(null);
   const navigation = useNavigation();
+
+  const { actionBtnsBookmark, actionBtnsMyCategory, ActionModalAlert } =
+    useCategoryActions({
+      fetchBookmark,
+      fetchMyCategory,
+      setBookmarks,
+      handleShowFull,
+      bookmarks,
+    });
 
   useLayoutEffect(() => {
     if (fullParams) {
@@ -64,15 +55,15 @@ const Category = ({ route }) => {
         emptySubtitle: '자주 보는 카테고리를 북마크 해보세요!',
       });
     }
-  }, [route?.params?.showBookmarkFull]);
+  }, [route?.params?.showBookmarkFull, bookmarks]);
 
-  const handleShowFull = (params) => {
+  function handleShowFull(params) {
     setFullParams({
       ...params,
       isFullView: true,
       hideViewAll: true,
     });
-  };
+  }
 
   const handleCloseFull = () => {
     if (route?.params?.showBookmarkFull) {
@@ -82,16 +73,16 @@ const Category = ({ route }) => {
     }
   };
 
-  const fetchMyCategory = async () => {
+  async function fetchMyCategory() {
     const resCategory = await getCategory();
     const categoryData = resCategory.map((cat) => ({
       id: cat.categoryId,
       name: cat.name,
     }));
     setMyCategories(categoryData);
-  };
+  }
 
-  const fetchBookmark = async () => {
+  async function fetchBookmark() {
     const resBookmark = await getBookmark();
     const bookmarkData = resBookmark.map((cat) => ({
       bookmarkId: cat.bookmarkId,
@@ -99,7 +90,7 @@ const Category = ({ route }) => {
       name: cat.name,
     }));
     setBookmarks(bookmarkData);
-  };
+  }
 
   useEffect(() => {
     fetchMyCategory();
@@ -113,143 +104,8 @@ const Category = ({ route }) => {
     const newCategory = inputName.trim() || `새 카테고리${count + 1}`;
 
     await postCategory(newCategory, isPublic);
-    await fetchMyCategory(); // 카테고리 생성 후, 바로 조회
-  };
-
-  const handleEditCategory = async (newName) => {
-    if (!renameTarget) return;
-    await patchCategory(newName, renameTarget.id);
-    setOpenEditModal(false);
-    setRenameTarget(null);
-
     await fetchMyCategory();
-    await fetchBookmark();
   };
-
-  const [toast, setToast] = useState({
-    visible: false,
-    message: '',
-    icon: null,
-    actionText: null,
-    onActionPress: null,
-  });
-
-  const actionBtnsBookmark = (item) => [
-    {
-      icon: <Image source={BookmarkMinusIcon} style={styles.iconSize} />,
-      label: '북마크에서 제거',
-      onPress: async () => {
-        setBookmarks((prev) =>
-          prev.filter((b) => b.bookmarkId !== item.bookmarkId),
-        );
-        setToast({
-          visible: true,
-          message: '북마크에서 제거되었어요',
-          icon: true,
-          actionText: null,
-          onActionPress: null,
-        });
-        await deleteBookmark(item.bookmarkId);
-        await fetchBookmark();
-      },
-    },
-    {
-      icon: <Image source={EditIcon} style={styles.iconSize} />,
-      label: '이름 변경',
-      onPress: () => {
-        setRenameTarget(item);
-        setOpenEditModal(true);
-      },
-    },
-    {
-      icon: <Image source={TrashIcon} style={styles.iconSize} />,
-      label: '카테고리 삭제',
-      onPress: async () => {
-        setBookmarks((prev) =>
-          prev.filter((b) => b.bookmarkId !== item.bookmarkId),
-        );
-        setToast({
-          visible: true,
-          message: '카테고리가 제거되었어요',
-          icon: (
-            <View
-              style={{
-                backgroundColor: '#41C3AB',
-                borderRadius: 20,
-                padding: 2,
-              }}
-            >
-              <Ionicons name="checkmark" size={18} color="#fff" />
-            </View>
-          ),
-          actionText: null,
-          onActionPress: null,
-        });
-        await deleteCategory(item.id);
-        await fetchMyCategory();
-      },
-    },
-  ];
-
-  const actionBtnsMyCategory = (item) => [
-    {
-      icon: <Image source={BookmarkPlusIcon} style={styles.iconSize} />,
-      label: '북마크에 추가',
-      onPress: async () => {
-        await postBookmark(item.id);
-        await fetchBookmark();
-        setToast({
-          visible: true,
-          message: '북마크에 추가되었어요',
-          icon: null,
-          actionText: '보러가기',
-          onActionPress: () => {
-            handleShowFull({
-              title: '북마크 전체보기',
-              iconName: 'bookmark-outline',
-              data: bookmarks,
-              actionBtns: actionBtnsBookmark,
-              emptyTitle: '아직 북마크한 카테고리가 없어요',
-              emptySubtitle: '자주 보는 카테고리를 북마크 해보세요!',
-            });
-          },
-        });
-      },
-    },
-    {
-      icon: <Image source={EditIcon} style={styles.iconSize} />,
-      label: '이름 변경',
-      onPress: () => {
-        setRenameTarget(item);
-        setOpenEditModal(true);
-      },
-    },
-    {
-      icon: <Image source={TrashIcon} style={styles.iconSize} />,
-      label: '카테고리 삭제',
-      onPress: async () => {
-        setToast({
-          visible: true,
-          message: '카테고리가 제거되었어요',
-          icon: (
-            <View
-              style={{
-                backgroundColor: '#41C3AB',
-                borderRadius: 20,
-                padding: 2,
-              }}
-            >
-              <Ionicons name="checkmark" size={18} color="#fff" />
-            </View>
-          ),
-          actionText: null,
-          onActionPress: null,
-        });
-        await deleteCategory(item.id);
-        await fetchMyCategory();
-      },
-    },
-  ];
 
   return (
     <>
@@ -322,22 +178,7 @@ const Category = ({ route }) => {
         </View>
       )}
 
-      <AlertToast
-        {...toast}
-        onHide={() => {
-          setToast((t) => ({ ...t, visible: false }));
-        }}
-      />
-
-      <EditCategoryModal
-        visible={openEditModal}
-        initialName={renameTarget?.name || ''}
-        onCancel={() => {
-          setOpenEditModal(false);
-          setRenameTarget(null);
-        }}
-        onEdit={handleEditCategory}
-      />
+      <ActionModalAlert />
     </>
   );
 };

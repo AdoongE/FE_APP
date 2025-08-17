@@ -12,6 +12,7 @@ import homeImg from '../../assets/icons/home-img.png';
 import { Ionicons } from '@expo/vector-icons';
 import BottomNav from './BottomNav';
 import FolderSection from '../Category/FolderSection';
+import useCategoryActions from '../../hooks/useCategoryActions';
 import { getAllSeeds } from '../../api/HomeApi';
 import { getUserSeedInfo, getBookmark } from '../../api/CategoryApi';
 
@@ -21,13 +22,28 @@ export default function HomeScreen({ navigation }) {
   const [userSeedInfo, setUserSeedInfo] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
 
+  const fetchBookmark = async () => {
+    const resBookmark = await getBookmark();
+    const bookmarkData = resBookmark.map((cat) => ({
+      bookmarkId: cat.bookmarkId,
+      id: cat.categoryId,
+      name: cat.name,
+    }));
+    setBookmarks(bookmarkData);
+  };
+
+  const { actionBtnsBookmark, ActionModalAlert } = useCategoryActions({
+    fetchBookmark,
+    setBookmarks,
+  });
+
   const stats = useMemo(
     () => [
       { key: 'total', label: '전체 씨드', value: userSeedInfo.totalSeed },
       { key: 'most', label: '많이 찾는 씨드', value: userSeedInfo.popular },
       { key: 'unread', label: '읽지 않은 씨드', value: userSeedInfo.unread },
     ],
-    [seeds.length],
+    [seeds.length, userSeedInfo],
   );
 
   useEffect(() => {
@@ -54,17 +70,6 @@ export default function HomeScreen({ navigation }) {
         popular: resSeedInfo[0].mostReadSeedCount,
         unread: resSeedInfo[0].neverReadSeedCount,
       });
-      setUserSeedInfo(seedInfoData);
-    };
-
-    const fetchBookmark = async () => {
-      const resBookmark = await getBookmark();
-      const bookmarkData = resBookmark.map((cat) => ({
-        bookmarkId: cat.bookmarkId,
-        id: cat.categoryId,
-        name: cat.name,
-      }));
-      setBookmarks(bookmarkData);
     };
 
     fetchSeeds();
@@ -146,6 +151,7 @@ export default function HomeScreen({ navigation }) {
             title="북마크한 카테고리"
             iconName="bookmark-outline"
             data={bookmarks}
+            actionBtns={actionBtnsBookmark}
             onPressAll={() =>
               navigation.navigate('category', { showBookmarkFull: true })
             }
@@ -215,8 +221,8 @@ export default function HomeScreen({ navigation }) {
           )}
         </View>
       </ScrollView>
-
       <BottomNav />
+      <ActionModalAlert />
     </View>
   );
 }
