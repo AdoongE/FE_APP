@@ -7,20 +7,23 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import homeImg from '../../assets/icons/home-img.png';
 import { Ionicons } from '@expo/vector-icons';
 import BottomNav from './BottomNav';
 import FolderSection from '../Category/FolderSection';
-import useCategoryActions from '../../hooks/useCategoryActions';
 import { getAllSeeds } from '../../api/HomeApi';
 import { getUserSeedInfo, getBookmark } from '../../api/CategoryApi';
+import useCategoryActions from '../../hooks/useCategoryActions';
+import ActionModal from '../../components/ActionModal';
 
 export default function HomeScreen({ navigation }) {
   const [seeds, setSeeds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userSeedInfo, setUserSeedInfo] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
+  const [addSeedModalVisible, setAddSeedModalVisible] = useState(false);
 
   const fetchBookmark = async () => {
     const resBookmark = await getBookmark();
@@ -36,6 +39,25 @@ export default function HomeScreen({ navigation }) {
     fetchBookmark,
     setBookmarks,
   });
+
+  const addSeedActions = [
+    {
+      icon: <Ionicons name="link-outline" size={20} />,
+      label: '링크 저장하기',
+      onPress: () => {
+        setAddSeedModalVisible(false);
+        navigation.navigate('addLink');
+      },
+    },
+    {
+      icon: <Ionicons name="image-outline" size={20} />,
+      label: '이미지 저장하기',
+      onPress: () => {
+        setAddSeedModalVisible(false);
+        navigation.navigate('imageupload');
+      },
+    },
+  ];
 
   const stats = useMemo(
     () => [
@@ -176,9 +198,18 @@ export default function HomeScreen({ navigation }) {
         </Text>
 
         <View style={{ paddingHorizontal: 16 }}>
-          {seeds.length === 0 ? (
+          {true ? (
             <View style={styles.emptyBox}>
-              <Text style={styles.emptyText}>아직 저장한 씨드가 없어요</Text>
+              <Text style={styles.emptyText}>
+                아직 저장한 씨드가 없어요{'\n'}나중에 다시 볼 링크와 사진을
+                저장해보세요!
+              </Text>
+              <TouchableOpacity
+                onPress={() => setAddSeedModalVisible(true)}
+                style={styles.addSeedBtn}
+              >
+                <Text style={styles.addSeedText}>씨드 추가하러 가기</Text>
+              </TouchableOpacity>
             </View>
           ) : (
             seeds.slice(0, 10).map((seed) => (
@@ -221,7 +252,16 @@ export default function HomeScreen({ navigation }) {
           )}
         </View>
       </ScrollView>
-      <BottomNav />
+
+      <BottomNav onAddPress={() => setAddSeedModalVisible(true)} />
+      {/* 씨드 추가를 위한 */}
+      <ActionModal
+        visible={addSeedModalVisible}
+        onClose={() => setAddSeedModalVisible(false)}
+        title="저장 형식을 선택해주세요"
+        actions={addSeedActions}
+      />
+      {/* 북마크한 카테고리를 위한 */}
       <ActionModalAlert />
     </View>
   );
@@ -359,6 +399,35 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '400',
     textAlign: 'center',
+  },
+
+  emptyBox: {
+    backgroundColor: '#f8fbfb',
+    marginHorizontal: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 111,
+  },
+  emptyText: {
+    color: '#4f4f4f',
+    fontSize: 12,
+    fontWeight: '400',
+    textAlign: 'center',
+    lineHeight: 17,
+  },
+  addSeedBtn: {
+    marginTop: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#41C3AB',
+  },
+  addSeedText: {
+    color: '#41C3AB',
+    fontSize: 14,
+    fontWeight: '500',
   },
 
   // 최근 씨드 행
