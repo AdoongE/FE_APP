@@ -47,7 +47,10 @@ export default function BottomNav() {
           <Text style={styles.addButtonText}>씨드 추가</Text>
         </View>
 
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => navigation.navigate('mypage')}
+        >
           <Ionicons name="person-outline" size={24} color="gray" />
           <Text style={styles.leftText}>마이</Text>
         </TouchableOpacity>

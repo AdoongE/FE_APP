@@ -1,29 +1,30 @@
-import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
-import React, {useState} from 'react';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { Pressable, Linking } from 'react-native';
+import React, { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import ProgressBar from '../../components/signup/ProgressBar';
 
-const Consent = ({navigation, route}) => {
-  const {nickname, birthday, gender, occupation, field} = route.params;
+const Consent = ({ navigation, route }) => {
+  const { nickname, birthday, gender, occupation, field } = route.params;
   const [checked, setChecked] = useState([false, false, false]);
   const [touched, setTouched] = useState(false);
 
-  const handleChange1 = value => {
+  const handleChange1 = (value) => {
     setChecked([value, value, value]);
     setTouched(true);
   };
 
-  const handleChange2 = value => {
+  const handleChange2 = (value) => {
     setChecked([value, checked[1], checked[2]]);
     setTouched(true);
   };
 
-  const handleChange3 = value => {
+  const handleChange3 = (value) => {
     setChecked([checked[0], value, checked[2]]);
     setTouched(true);
   };
 
-  const handleChange4 = value => {
+  const handleChange4 = (value) => {
     setChecked([checked[0], checked[1], value]);
   };
 
@@ -53,7 +54,7 @@ const Consent = ({navigation, route}) => {
           여기저기 흩어진 링크와 사진을 seedzip에 모아요!
         </Text>
       ) : (
-        <Text style={[styles.short, {color: 'red'}]}>
+        <Text style={[styles.short, { color: 'red' }]}>
           필수 약관에 모두 동의해주세요
         </Text>
       )}
@@ -67,10 +68,21 @@ const Consent = ({navigation, route}) => {
         />
       </View>
       <View style={styles.line} />
+
       <View style={styles.check}>
-        <Text style={styles.option}>
-          <Text style={{color: 'red'}}>(필수)</Text> 서비스 이용 약관 {'>'}
-        </Text>
+        <Pressable
+          style={{ flex: 1 }}
+          onPress={() =>
+            Linking.openURL(
+              'https://jychloe-92.notion.site/254378ee2b4e80119647d2061c07ab81?source=copy_link',
+            )
+          }
+        >
+          <Text style={styles.option}>
+            <Text style={{ color: 'red' }}>(필수)</Text> 서비스 이용 약관 {'>'}
+          </Text>
+        </Pressable>
+
         <Checkbox
           style={styles.checkbox}
           value={checked[0]}
@@ -79,10 +91,20 @@ const Consent = ({navigation, route}) => {
         />
       </View>
       <View style={styles.check}>
-        <Text style={styles.option}>
-          <Text style={{color: 'red'}}>(필수)</Text> 개인정보 수집 및 이용동의{' '}
-          {'>'}
-        </Text>
+        <Pressable
+          style={{ flex: 1 }}
+          onPress={() =>
+            Linking.openURL(
+              'https://jychloe-92.notion.site/254378ee2b4e8045beade184ab416d2e?source=copy_link',
+            )
+          }
+        >
+          <Text style={styles.option}>
+            <Text style={{ color: 'red' }}>(필수)</Text> 개인정보 수집 및
+            이용동의 {'>'}
+          </Text>
+        </Pressable>
+
         <Checkbox
           style={styles.checkbox}
           value={checked[1]}
@@ -90,10 +112,21 @@ const Consent = ({navigation, route}) => {
           color={checked[1] ? '#41C3AB' : '#9F9F9F'}
         />
       </View>
+
       <View style={styles.check}>
-        <Text style={styles.option}>
-          (선택) 마케팅 활용 및 광고성 정보 수신 동의 {'>'}
-        </Text>
+        <Pressable
+          style={{ flex: 1 }}
+          onPress={() =>
+            Linking.openURL(
+              'https://jychloe-92.notion.site/254378ee2b4e80ed9cfdcbdf8c0581cd?source=copy_link',
+            )
+          }
+        >
+          <Text style={styles.option}>
+            (선택) 마케팅 활용 및 광고성 정보 수신 동의 {'>'}
+          </Text>
+        </Pressable>
+
         <Checkbox
           style={styles.checkbox}
           value={checked[2]}
@@ -104,7 +137,8 @@ const Consent = ({navigation, route}) => {
       <TouchableOpacity
         style={styles.button}
         disabled={error || !touched}
-        onPress={handleNext}>
+        onPress={handleNext}
+      >
         <Text style={styles.buttonText}>다음</Text>
       </TouchableOpacity>
     </View>
@@ -118,7 +152,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
-  title: {marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4},
+  title: { marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4 },
   short: {
     color: '#898989',
     fontWeight: 400,
