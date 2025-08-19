@@ -1,10 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import React, { useState, useMemo } from 'react';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useState, useMemo} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ProgressBar from '../../components/signup/ProgressBar';
 
-const Birthday = ({ navigation, route }) => {
-  const { nickname } = route.params;
+const Birthday = ({navigation, route}) => {
+  const {nickname} = route.params;
   const [open, setOpen] = useState(false);
   const [monthOpen, setMonthOpen] = useState(false);
   const [dayOpen, setDayOpen] = useState(false);
@@ -15,7 +15,7 @@ const Birthday = ({ navigation, route }) => {
 
   const years = useMemo(() => {
     const currentYear = new Date().getFullYear();
-    return Array.from({ length: currentYear - 1970 + 1 }, (_, i) => ({
+    return Array.from({length: currentYear - 1970 + 1}, (_, i) => ({
       label: `${currentYear - i}`,
       value: currentYear - i,
     }));
@@ -23,7 +23,7 @@ const Birthday = ({ navigation, route }) => {
 
   const months = useMemo(
     () =>
-      Array.from({ length: 12 }, (_, i) => ({
+      Array.from({length: 12}, (_, i) => ({
         label: `${(i + 1).toString().padStart(2, '0')}`, // 한 자리수일 경우 0 추가
         value: i + 1,
       })),
@@ -32,7 +32,7 @@ const Birthday = ({ navigation, route }) => {
 
   const days = useMemo(
     () =>
-      Array.from({ length: 31 }, (_, i) => ({
+      Array.from({length: 31}, (_, i) => ({
         label: `${(i + 1).toString().padStart(2, '0')}`, // 한 자리수일 경우 0 추가
         value: i + 1,
       })),
@@ -48,7 +48,7 @@ const Birthday = ({ navigation, route }) => {
     const formattedMonth = month.toString().padStart(2, '0');
     const formattedDay = day.toString().padStart(2, '0');
     const birthday = `${year}-${formattedMonth}-${formattedDay}`;
-    navigation.navigate('gender', { nickname, birthday });
+    navigation.navigate('gender', {nickname, birthday});
   };
 
   return (
@@ -56,20 +56,20 @@ const Birthday = ({ navigation, route }) => {
       <ProgressBar step={2} />
       <Text style={styles.title}>생년월일을 입력해주세요</Text>
       <View style={styles.picker}>
-        <View style={{ zIndex: 3 }}>
+        <View style={{zIndex: 3}}>
           <DropDownPicker
             placeholder="YYYY"
             open={open}
             value={year}
             items={items}
-            setOpen={(open) => {
+            setOpen={open => {
               setOpen(open);
               if (!touched) setTouched(true);
             }}
             setValue={setYear}
             setItems={setItems}
-            style={{ width: 145, borderColor: '#DCDADA' }}
-            dropDownContainerStyle={{ width: 145, borderColor: '#DCDADA' }}
+            style={{width: 145, borderColor: '#DCDADA'}}
+            dropDownContainerStyle={{width: 145, borderColor: '#DCDADA'}}
             zIndex={3000}
             zIndexInverse={1000}
             textStyle={{
@@ -81,20 +81,20 @@ const Birthday = ({ navigation, route }) => {
             }}
           />
         </View>
-        <View style={{ zIndex: 2 }}>
+        <View style={{zIndex: 2}}>
           <DropDownPicker
             placeholder="MM"
             open={monthOpen}
             value={month}
             items={monthItem}
-            setOpen={(open) => {
+            setOpen={open => {
               setMonthOpen(open);
               if (!touched) setTouched(true);
             }}
             setValue={setMonth}
             setItems={setMonthItem}
-            style={{ width: 93, borderColor: '#DCDADA' }}
-            dropDownContainerStyle={{ width: 93, borderColor: '#DCDADA' }}
+            style={{width: 93, borderColor: '#DCDADA'}}
+            dropDownContainerStyle={{width: 93, borderColor: '#DCDADA'}}
             zIndex={2000}
             zIndexInverse={2000}
             textStyle={{
@@ -106,20 +106,20 @@ const Birthday = ({ navigation, route }) => {
             }}
           />
         </View>
-        <View style={{ zIndex: 1 }}>
+        <View style={{zIndex: 1}}>
           <DropDownPicker
             placeholder="DD"
             open={dayOpen}
             value={day}
             items={dayItem}
-            setOpen={(open) => {
+            setOpen={open => {
               setDayOpen(open);
               if (!touched) setTouched(true);
             }}
             setValue={setDay}
             setItems={setDayItem}
-            style={{ width: 93, borderColor: '#DCDADA' }}
-            dropDownContainerStyle={{ width: 93, borderColor: '#DCDADA' }}
+            style={{width: 93, borderColor: '#DCDADA'}}
+            dropDownContainerStyle={{width: 93, borderColor: '#DCDADA'}}
             zIndex={1000}
             zIndexInverse={3000}
             textStyle={{
@@ -138,8 +138,7 @@ const Birthday = ({ navigation, route }) => {
       <TouchableOpacity
         style={styles.button}
         disabled={error || !touched}
-        onPress={handleNext}
-      >
+        onPress={handleNext}>
         <Text style={styles.buttonText}>다음</Text>
       </TouchableOpacity>
     </View>
@@ -154,7 +153,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
-  title: { marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 20 },
+  title: {marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 20},
   input: {
     borderBottomWidth: 1,
     fontSize: 20,

@@ -4,27 +4,27 @@ import React, { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import ProgressBar from '../../components/signup/ProgressBar';
 
-const Consent = ({ navigation, route }) => {
-  const { nickname, birthday, gender, occupation, field } = route.params;
+const Consent = ({navigation, route}) => {
+  const {nickname, birthday, gender, occupation, field} = route.params;
   const [checked, setChecked] = useState([false, false, false]);
   const [touched, setTouched] = useState(false);
 
-  const handleChange1 = (value) => {
+  const handleChange1 = value => {
     setChecked([value, value, value]);
     setTouched(true);
   };
 
-  const handleChange2 = (value) => {
+  const handleChange2 = value => {
     setChecked([value, checked[1], checked[2]]);
     setTouched(true);
   };
 
-  const handleChange3 = (value) => {
+  const handleChange3 = value => {
     setChecked([checked[0], value, checked[2]]);
     setTouched(true);
   };
 
-  const handleChange4 = (value) => {
+  const handleChange4 = value => {
     setChecked([checked[0], checked[1], value]);
   };
 
@@ -54,7 +54,7 @@ const Consent = ({ navigation, route }) => {
           여기저기 흩어진 링크와 사진을 seedzip에 모아요!
         </Text>
       ) : (
-        <Text style={[styles.short, { color: 'red' }]}>
+        <Text style={[styles.short, {color: 'red'}]}>
           필수 약관에 모두 동의해주세요
         </Text>
       )}
@@ -82,7 +82,6 @@ const Consent = ({ navigation, route }) => {
             <Text style={{ color: 'red' }}>(필수)</Text> 서비스 이용 약관 {'>'}
           </Text>
         </Pressable>
-
         <Checkbox
           style={styles.checkbox}
           value={checked[0]}
@@ -104,7 +103,6 @@ const Consent = ({ navigation, route }) => {
             이용동의 {'>'}
           </Text>
         </Pressable>
-
         <Checkbox
           style={styles.checkbox}
           value={checked[1]}
@@ -137,8 +135,7 @@ const Consent = ({ navigation, route }) => {
       <TouchableOpacity
         style={styles.button}
         disabled={error || !touched}
-        onPress={handleNext}
-      >
+        onPress={handleNext}>
         <Text style={styles.buttonText}>다음</Text>
       </TouchableOpacity>
     </View>
@@ -152,7 +149,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
-  title: { marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4 },
+  title: {marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4},
   short: {
     color: '#898989',
     fontWeight: 400,

@@ -5,40 +5,44 @@ import seedzip from '../../assets/icons/seedzip.png';
 import newLogo from '../../assets/icons/whiteLogo.png';
 import naver from '../../assets/icons/naver.png';
 import google from '../../assets/icons/google.png';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useNavigation } from '@react-navigation/native';
-import { initializeKakaoSDK } from '@react-native-kakao/core';
-import { login } from '@react-native-kakao/user';
-import { Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { axiosInstance } from '../../api/axios-instance';
-import { REACT_NATIVE_APP_KEY } from '@env';
 import apple from '../../assets/icons/apple.png';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {useNavigation} from '@react-navigation/native';
+import {initializeKakaoSDK} from '@react-native-kakao/core';
+import {login} from '@react-native-kakao/user';
+import {Alert} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {axiosInstance} from '../../api/axios-instance';
+// import { REACT_NATIVE_APP_KEY } from '@env';
 
 const NextSplash = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    initializeKakaoSDK(`${REACT_NATIVE_APP_KEY}`);
+    console.log('REACT_NATIVE_APP_KEY:', '77696a11bd880d4a5495aa65a27aa752');
+    initializeKakaoSDK('77696a11bd880d4a5495aa65a27aa752');
   }, []);
 
   const handleKakaoLogin = async () => {
     try {
-      const token = await login();
-      const kakaoAccessToken = token.accessToken;
-      console.log('로그인 성공, 액세스 토큰:', kakaoAccessToken);
+      // const token = await login();
+      // const kakaoAccessToken = token.accessToken;
+      // console.log('로그인 성공, 액세스 토큰:', kakaoAccessToken);
 
-      const axios = await axiosInstance();
-      const response = await axios.post(
-        `/api/v1/auth/login/kakao/app?accessToken=${kakaoAccessToken}`
+      // const axios = await axiosInstance();
+      // const response = await axios.post(
+      //   `/api/v1/auth/login/kakao/app?accessToken=${kakaoAccessToken}`
 
-      );
+      // );
 
-      const {status, results} = response.data;
+      // const {status, results} = response.data;
 
-      if (status.code === 200) {
-        console.log('로그인 성공:', status.message);
-        const jwtToken = response.headers['authorization'];
+      const test = 200;
+
+      if (test === 200) {
+        // console.log('로그인 성공:', status.message);
+        // const jwtToken = response.headers['authorization'];
+        const jwtToken = `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNzgzODAyMDg1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3NDU1OTEyMDB9.FbY2U4CDe9M4UKYYreHk-CCWJOmbuiQzunqDQy7EKa4`;
 
         if (jwtToken) {
           await AsyncStorage.setItem('jwtToken', jwtToken);
@@ -128,6 +132,20 @@ const NextSplash = () => {
             >
               <Image source={apple} />
               <Text style={{ color: '#fff' }}>애플로 로그인하기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              type="apple"
+              style={[styles.button, {backgroundColor: 'black'}]}
+              onPress={() => navigation.navigate('main')}>
+              <Image source={apple} />
+              <Text style={{color: 'white'}}>애플로 로그인하기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              type="apple"
+              style={[styles.button, {backgroundColor: 'black'}]}
+              onPress={() => navigation.navigate('main')}>
+              <Image source={apple} />
+              <Text style={{color: 'white'}}>애플로 로그인하기</Text>
             </TouchableOpacity>
           </View>
         </LinearGradient>
