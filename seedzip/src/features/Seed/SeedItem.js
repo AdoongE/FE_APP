@@ -8,36 +8,12 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Feather from '@expo/vector-icons/Feather';
 import ActionModal from '../../components/ActionModal';
-import DeleteSeedModal from '../Seed/DeleteSeedModal';
-import { deleteSeed } from '../../api/SeedApi';
+import useSeedActions from '../../hooks/useSeedActions';
 
 const SeedItem = ({ seed, onPress }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-
-  const seedActions = [
-    {
-      icon: <Feather name="more-horizontal" size={20} />,
-      label: '세부 정보 보기',
-      onPress: () => {
-        onPress();
-      },
-    },
-    {
-      icon: <Feather name="trash-2" size={20} />,
-      label: '씨드 삭제하기',
-      onPress: () => {
-        setDeleteModalVisible(true);
-      },
-    },
-  ];
-
-  const handleDeleteSeed = async () => {
-    await deleteSeed(seed.seedId);
-    setDeleteModalVisible(false);
-  };
+  const { seedActions, SeedActionModals } = useSeedActions({});
 
   return (
     <>
@@ -82,13 +58,9 @@ const SeedItem = ({ seed, onPress }) => {
       <ActionModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        actions={seedActions}
+        actions={seedActions(seed)}
       />
-      <DeleteSeedModal
-        visible={deleteModalVisible}
-        onCancel={() => setDeleteModalVisible(false)}
-        onDelete={handleDeleteSeed}
-      />
+      <SeedActionModals />
     </>
   );
 };

@@ -14,12 +14,16 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { MaterialIcons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import ThumbnailModal from './ThumbnailModal';
-import DeleteCategoryModal from '../Seed/DeleteSeedModal';
-import AlertToast from '../../components/AlertToast';
-import { getSeed, deleteSeed } from '../../api/SeedApi';
+import { getSeed } from '../../api/SeedApi';
+import useSeedActions from '../../hooks/useSeedActions';
 
 function ViewContent({ route }) {
+  const navigation = useNavigation();
   const seedId = route.params;
+
+  const { openDeleteModal, SeedActionModals } = useSeedActions({
+    navigation,
+  });
 
   const [seedInfo, setSeedInfo] = useState({
     seedId: seedId || 0,
@@ -93,8 +97,6 @@ function ViewContent({ route }) {
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
 
-  const navigation = useNavigation();
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -140,7 +142,7 @@ function ViewContent({ route }) {
           <TouchableOpacity
             onPress={() => {
               closeMenu();
-              setOpenDeleteModal(true);
+              openDeleteModal(seedInfo);
             }}
           >
             <View style={styles.menuItem}>
@@ -152,33 +154,6 @@ function ViewContent({ route }) {
       ),
     });
   }, [navigation, menuVisible]);
-
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [toast, setToast] = useState({
-    visible: false,
-    message: '',
-    icon: null,
-    actionText: null,
-    onActionPress: null,
-  });
-
-  const handleDeleteSeed = async () => {
-    await deleteSeed(seedId.seedId);
-
-    setOpenDeleteModal(false);
-
-    setToast({
-      visible: true,
-      message: '씨드가 삭제되었어요.',
-      icon: true,
-      actionText: null,
-      onActionPress: null,
-    });
-
-    setTimeout(() => {
-      navigation.goBack();
-    }, 1500);
-  };
 
   return (
     <Provider>
@@ -251,27 +226,6 @@ function ViewContent({ route }) {
                 ))}
               </ScrollView>
             )}
-            {/* {seedInfo.seedType === 'PDF' && (
-              <ScrollView horizontal style={styles.imagesWrapper}>
-                {seedInfo.fileLinks.map((file, index) => (
-                  <View key={file} style={styles.imageContainer}>
-                    <TouchableOpacity onPress={() => openModal(file)}>
-                      {index === seedInfo.thumbnailImage && (
-                        <View style={styles.represenDiv}>
-                          <Text style={styles.represenLabel}>대표</Text>
-                        </View>
-                      )}
-                      <View style={styles.imageDiv}>
-                        <Image
-                          source={{ uri: file }}
-                          style={styles.imagePreview}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </ScrollView>
-            )} */}
 
             {selectedFile && (
               <ThumbnailModal
@@ -348,20 +302,7 @@ function ViewContent({ route }) {
         </View>
       </View>
 
-      <AlertToast
-        {...toast}
-        onHide={() => {
-          setToast((t) => ({ ...t, visible: false }));
-        }}
-      />
-
-      <DeleteCategoryModal
-        visible={openDeleteModal}
-        onCancel={() => {
-          setOpenDeleteModal(false);
-        }}
-        onDelete={handleDeleteSeed}
-      />
+      <SeedActionModals />
     </Provider>
   );
 }
