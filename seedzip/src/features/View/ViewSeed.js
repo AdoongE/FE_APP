@@ -21,9 +21,7 @@ function ViewContent({ route }) {
   const navigation = useNavigation();
   const seedId = route.params;
 
-  const { openDeleteModal, SeedActionModals } = useSeedActions({
-    navigation,
-  });
+  const { openDeleteModal, SeedActionModals } = useSeedActions({ navigation });
 
   const [seedInfo, setSeedInfo] = useState({
     seedId: seedId || 0,

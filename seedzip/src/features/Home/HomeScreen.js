@@ -62,11 +62,32 @@ export default function HomeScreen({ navigation }) {
 
   const stats = useMemo(
     () => [
-      { key: 'total', label: '전체 씨드', value: userSeedInfo.totalSeed },
-      { key: 'most', label: '많이 찾는 씨드', value: userSeedInfo.popular },
-      { key: 'unread', label: '읽지 않은 씨드', value: userSeedInfo.unread },
+      {
+        key: 'total',
+        label: '전체 씨드',
+        value: userSeedInfo.totalSeed,
+        onPress: () => navigation.navigate('seedList'),
+      },
+      {
+        key: 'most',
+        label: '많이 찾는 씨드',
+        value: userSeedInfo.popular,
+        onPress: () => {
+          // 많이 찾는 씨드 화면으로 이동하는 로직
+          // navigation.navigate('popularSeeds')
+        },
+      },
+      {
+        key: 'unread',
+        label: '읽지 않은 씨드',
+        value: userSeedInfo.unread,
+        onPress: () => {
+          // 읽지 않은 씨드 화면으로 이동하는 로직
+          // navigation.navigate('unreadSeeds')
+        },
+      },
     ],
-    [seeds.length, userSeedInfo],
+    [seeds.length, userSeedInfo, navigation], // navigation 의존성 추가
   );
 
   useEffect(() => {
@@ -146,12 +167,16 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.statRowContainer}>
               <View style={styles.statRow}>
                 {stats.map((s) => (
-                  <View key={s.key} style={styles.statBox}>
+                  <TouchableOpacity
+                    key={s.key}
+                    style={styles.statBox}
+                    onPress={s.onPress}
+                  >
                     <Text style={styles.statLabel}>{s.label}</Text>
                     <Text style={styles.statValue}>
                       {s.key === 'unread' ? `${s.value}+` : s.value}
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                 ))}
               </View>
             </View>

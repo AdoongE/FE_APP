@@ -18,6 +18,7 @@ import ImageSave from '../pages/add/ImageSave';
 import Add from '../pages/add/AddSeedPage';
 import Save from '../pages/add/SaveSeedPage';
 import Category from '../features/Category/Category';
+import SeedList from '../features/Seed/SeedList';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -74,6 +75,13 @@ function Router() {
         }}
       />
       <Stack.Screen name="category" component={Category} />
+      <Stack.Screen
+        name="seedList"
+        component={SeedList}
+        options={{
+          headerTitle: '전체 씨드',
+        }}
+      />
       <Stack.Screen
         name="view"
         component={View}

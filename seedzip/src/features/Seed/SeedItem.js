@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   Pressable,
   View,
@@ -12,6 +13,7 @@ import ActionModal from '../../components/ActionModal';
 import useSeedActions from '../../hooks/useSeedActions';
 
 const SeedItem = ({ seed, onPress }) => {
+  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const { seedActions, SeedActionModals } = useSeedActions({});
 
