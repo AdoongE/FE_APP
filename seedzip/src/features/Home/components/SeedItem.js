@@ -1,42 +1,80 @@
-import React from 'react';
-import { Pressable, View, Text, Image, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import {
+  Pressable,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Feather from '@expo/vector-icons/Feather';
+import ActionModal from '../../../components/ActionModal';
 
 const SeedItem = ({ seed, onPress }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const seedActions = [
+    {
+      icon: <Feather name="more-horizontal" size={20} />,
+      label: '세부 정보 보기',
+      onPress: () => {
+        onPress();
+      },
+    },
+    {
+      icon: <Feather name="trash-2" size={20} />,
+      label: '씨드 삭제하기',
+      onPress: () => {}, // TODO
+    },
+  ];
+
   return (
-    <Pressable key={seed.seedId} style={styles.seedRow} onPress={onPress}>
-      <View style={styles.seedThumb}>
-        {seed.seedType !== 'LINK' ? (
-          <Image
-            source={{ uri: seed.thumbnailImage }}
-            style={styles.seedImage}
-          />
-        ) : (
-          <Ionicons name="link-outline" size={30} color="#41C3AB" />
-        )}
-      </View>
-
-      <View style={{ flex: 1 }}>
-        <View style={styles.topContainer}>
-          <Text style={styles.seedTitle} numberOfLines={1}>
-            {seed.seedName}
-          </Text>
-          <Ionicons name="ellipsis-vertical" size={16} color="#4f4f4f" />
+    <>
+      <Pressable key={seed.seedId} style={styles.seedRow} onPress={onPress}>
+        <View style={styles.seedThumb}>
+          {seed.seedType !== 'LINK' ? (
+            <Image
+              source={{ uri: seed.thumbnailImage }}
+              style={styles.seedImage}
+            />
+          ) : (
+            <Ionicons name="link-outline" size={30} color="#41C3AB" />
+          )}
         </View>
 
-        <Text style={styles.seedCategory} numberOfLines={1}>
-          {seed.categoryName}
-        </Text>
-
-        <View style={styles.tagRow}>
-          {seed.tagName?.map((tag, index) => (
-            <Text key={index} style={styles.tag}>
-              {tag}
+        <View style={{ flex: 1 }}>
+          <View style={styles.topContainer}>
+            <Text style={styles.seedTitle} numberOfLines={1}>
+              {seed.seedName}
             </Text>
-          ))}
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              hitSlop={10}
+            >
+              <Ionicons name="ellipsis-vertical" size={16} color="#4f4f4f" />
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.seedCategory} numberOfLines={1}>
+            {seed.categoryName}
+          </Text>
+
+          <View style={styles.tagRow}>
+            {seed.tagName?.map((tag, index) => (
+              <Text key={index} style={styles.tag}>
+                {tag}
+              </Text>
+            ))}
+          </View>
         </View>
-      </View>
-    </Pressable>
+      </Pressable>
+      <ActionModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        actions={seedActions}
+      />
+    </>
   );
 };
 

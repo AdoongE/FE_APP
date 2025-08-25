@@ -19,20 +19,19 @@ import DeleteCategoryModal from '../Seed/DeleteSeedModal';
 import AlertToast from '../../components/AlertToast';
 
 function ViewContent({ route }) {
-  const contentId = route.params;
+  const seedId = route.params;
 
   const [contentInfo, setContentInfo] = useState({
-    contentId: contentId || 0,
-    contentDataType: '',
-    contentName: '',
-    contentLink: '',
-    contentImage: [],
-    contentDoc: [],
+    seedId: seedId || 0,
+    seedType: '',
+    seedName: '',
+    seedLink: '',
+    fileLinks: [],
     thumbnailImage: 0,
-    boardCategory: [],
-    tags: [],
-    dday: '',
-    contentDetail: '',
+    categoryName: [],
+    tagName: [],
+    dDay: '',
+    seedDetail: '',
   });
   const [remainingDays, setRemainingDays] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -45,15 +44,15 @@ function ViewContent({ route }) {
   }, []);
 
   useEffect(() => {
-    if (contentInfo.dday) {
-      calRemainingDays(contentInfo.dday);
+    if (contentInfo.dDay) {
+      calRemainingDays(contentInfo.dDay);
     }
-  }, [contentInfo.dday]);
+  }, [contentInfo.dDay]);
 
   const calRemainingDays = () => {
     const currentDate = new Date();
-    const ddayDate = new Date(contentInfo.dday);
-    const timeDiff = ddayDate - currentDate;
+    const dDayDate = new Date(contentInfo.dDay);
+    const timeDiff = dDayDate - currentDate;
     const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     setRemainingDays(dayDiff);
   };
@@ -61,22 +60,19 @@ function ViewContent({ route }) {
   const handleViewContent = async () => {
     try {
       const axios = await axiosInstance();
-      const response = await axios.get(
-        `/api/v1/content/all/${contentId.contentId}`,
-      );
+      const response = await axios.get(`/api/v1/seed/${seedId.seedId}`);
       const results = response.data.results[0];
       setContentInfo({
-        contentId: results.contentId,
-        contentDataType: results.contentDataType,
-        contentName: results.contentName,
-        contentLink: results.contentLink,
-        contentImage: results.contentImage,
-        contentDoc: results.contentDoc,
+        seedId: results.seedId,
+        seedType: results.seedType,
+        seedName: results.seedName,
+        seedLink: results.seedLink,
+        fileLinks: results.fileLinks,
         thumbnailImage: results.thumbnailImage,
-        boardCategory: results.boardCategory,
-        tags: results.tags,
-        dday: results.dday,
-        contentDetail: results.contentDetail,
+        categoryName: results.categoryName,
+        tagName: results.tagName,
+        dDay: results.dDay,
+        seedDetail: results.seedDetail,
         filename: results.title,
       });
     } catch (error) {
@@ -128,17 +124,19 @@ function ViewContent({ route }) {
             top: 105,
           }}
         >
-          <TouchableOpacity
-            onPress={() => {
-              closeMenu();
-              alert('씨드 수정하기');
-            }}
-          >
-            <View style={styles.menuItem}>
-              <Text style={styles.menuText}>씨드 수정하기</Text>
-              <Feather name="edit-3" size={16} color="#000" />
-            </View>
-          </TouchableOpacity>
+          {contentInfo.seedType !== 'PDF' && (
+            <TouchableOpacity
+              onPress={() => {
+                closeMenu();
+                alert('씨드 수정하기');
+              }}
+            >
+              <View style={styles.menuItem}>
+                <Text style={styles.menuText}>씨드 수정하기</Text>
+                <Feather name="edit-3" size={16} color="#000" />
+              </View>
+            </TouchableOpacity>
+          )}
           <View style={styles.menuDivider} />
           <TouchableOpacity
             onPress={() => {
@@ -182,28 +180,28 @@ function ViewContent({ route }) {
     <Provider>
       <View style={styles.contentPage}>
         <View style={styles.contents}>
-          <Text style={styles.titleDiv}>{contentInfo.contentName}</Text>
+          <Text style={styles.titleDiv}>{contentInfo.seedName}</Text>
           <View
             style={[
               styles.upperDiv,
               {
                 flexDirection:
-                  contentInfo.contentDataType === 'PDF' ||
-                  contentInfo.contentDataType === 'IMAGE'
+                  contentInfo.seedType === 'PDF' ||
+                  contentInfo.seedType === 'IMAGE'
                     ? 'column'
                     : 'row',
               },
             ]}
           >
-            {contentInfo.contentDataType === 'LINK' && (
+            {contentInfo.seedType === 'LINK' && (
               <TouchableOpacity
-                onPress={() => handleLinkClick(contentInfo.contentLink)}
+                onPress={() => handleLinkClick(contentInfo.seedLink)}
               >
                 <View style={styles.linkBox}>
                   <Text
                     style={[{ fontSize: 12, color: '#4f4f4f', paddingTop: 4 }]}
                   >
-                    {contentInfo.contentLink}
+                    {contentInfo.seedLink}
                   </Text>
                   <View
                     style={[
@@ -218,7 +216,7 @@ function ViewContent({ route }) {
                     ]}
                   >
                     <TouchableOpacity
-                      onPress={() => handleCopyLink(contentInfo.contentLink)}
+                      onPress={() => handleCopyLink(contentInfo.seedLink)}
                     >
                       <Text style={[{ fontSize: 10, color: '#fff' }]}>
                         링크복사
@@ -229,9 +227,9 @@ function ViewContent({ route }) {
               </TouchableOpacity>
             )}
 
-            {contentInfo.contentDataType === 'IMAGE' && (
+            {contentInfo.seedType !== 'LINK' && (
               <ScrollView horizontal style={styles.imagesWrapper}>
-                {contentInfo.contentImage.map((image, index) => (
+                {contentInfo.fileLinks.map((image, index) => (
                   <View key={image} style={styles.imageContainer}>
                     <TouchableOpacity onPress={() => openModal(image)}>
                       {index === contentInfo.thumbnailImage && (
@@ -250,9 +248,9 @@ function ViewContent({ route }) {
                 ))}
               </ScrollView>
             )}
-            {contentInfo.contentDataType === 'PDF' && (
+            {/* {contentInfo.seedType === 'PDF' && (
               <ScrollView horizontal style={styles.imagesWrapper}>
-                {contentInfo.contentDoc.map((file, index) => (
+                {contentInfo.fileLinks.map((file, index) => (
                   <View key={file} style={styles.imageContainer}>
                     <TouchableOpacity onPress={() => openModal(file)}>
                       {index === contentInfo.thumbnailImage && (
@@ -270,28 +268,28 @@ function ViewContent({ route }) {
                   </View>
                 ))}
               </ScrollView>
-            )}
+            )} */}
 
             {selectedFile && (
               <ThumbnailModal
                 file={selectedFile}
                 files={
-                  contentInfo.contentDataType === 'PDF'
-                    ? contentInfo.contentDoc
-                    : contentInfo.contentImage
+                  contentInfo.seedType === 'PDF'
+                    ? contentInfo.fileLinks
+                    : contentInfo.fileLinks
                 }
                 onClose={closeModal}
-                contentDataType={contentInfo.contentDataType}
+                seedType={contentInfo.seedType}
               />
             )}
           </View>
           <View style={styles.grayBox}></View>
           <View style={styles.infoDiv}>
-            <Text style={[{ fontSize: 20, fontWeight: 'bold' }]}>상세정보</Text>
+            <Text style={[{ fontSize: 20, fontWeight: '600' }]}>상세정보</Text>
             <View style={styles.contentDiv}>
               <Text style={styles.name}>카테고리</Text>
               <View style={styles.categoryContainer}>
-                {contentInfo.boardCategory.map((category) => (
+                {contentInfo.categoryName.map((category) => (
                   <View key={category} style={styles.textWrapper}>
                     <Text style={styles.divText}>{category}</Text>
                   </View>
@@ -301,8 +299,8 @@ function ViewContent({ route }) {
 
             <View style={styles.contentDiv}>
               <Text style={styles.name}>태그</Text>
-              <View style={styles.tagsContainer}>
-                {contentInfo.tags.map((tag) => (
+              <View style={styles.tagNameContainer}>
+                {contentInfo.tagName.map((tag) => (
                   <View key={tag} style={styles.textWrapper}>
                     <Text style={styles.divText}>{tag}</Text>
                   </View>
@@ -310,10 +308,10 @@ function ViewContent({ route }) {
               </View>
             </View>
 
-            {contentInfo.dday && (
+            {contentInfo.dDay && (
               <View style={styles.contentDiv}>
                 <Text style={styles.name}>디데이</Text>
-                <View style={styles.ddayDiv}>
+                <View style={styles.dDayDiv}>
                   {remainingDays !== null && (
                     <View
                       style={[
@@ -331,7 +329,7 @@ function ViewContent({ route }) {
                     </View>
                   )}
                   <View style={styles.textWrapper}>
-                    <Text style={styles.divText}>{contentInfo.dday}</Text>
+                    <Text style={styles.divText}>{contentInfo.dDay}</Text>
                   </View>
                 </View>
               </View>
@@ -340,7 +338,7 @@ function ViewContent({ route }) {
             <View style={styles.memo}>
               <Text style={styles.name}>메모</Text>
               <View style={styles.memoDiv}>
-                <Text style={styles.detail}>{contentInfo.contentDetail}</Text>
+                <Text style={styles.detail}>{contentInfo.seedDetail}</Text>
               </View>
             </View>
           </View>
@@ -375,12 +373,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   titleDiv: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 24,
+    fontSize: 20,
+    fontWeight: '600',
+    marginTop: 23,
   },
   grayBox: {
-    marginTop: 15,
+    marginTop: 20,
     backgroundColor: '#f2f2f2',
     height: 14,
     marginLeft: -20,
@@ -420,7 +418,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#4f4f4f',
   },
-  tagsContainer: {
+  tagNameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
@@ -500,7 +498,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  ddayDiv: {
+  dDayDiv: {
     flexDirection: 'row',
     alignItems: 'center',
   },

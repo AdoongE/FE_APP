@@ -217,13 +217,13 @@ export default function HomeScreen({ navigation }) {
             </View>
           ) : (
             seeds
-              .slice(0, 10)
+              .slice(0, 5)
               .map((seed) => (
                 <SeedItem
                   key={seed.seedId}
                   seed={seed}
                   onPress={() =>
-                    navigation?.navigate?.('view', { id: seed.seedId })
+                    navigation?.navigate?.('view', { seedId: seed.seedId })
                   }
                 />
               ))
