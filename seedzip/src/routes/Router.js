@@ -75,13 +75,7 @@ function Router() {
         }}
       />
       <Stack.Screen name="category" component={Category} />
-      <Stack.Screen
-        name="seedList"
-        component={SeedList}
-        options={{
-          headerTitle: '전체 씨드',
-        }}
-      />
+      <Stack.Screen name="seedList" component={SeedList} />
       <Stack.Screen
         name="view"
         component={View}

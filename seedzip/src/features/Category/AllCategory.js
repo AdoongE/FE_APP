@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -11,6 +12,7 @@ import AddCategoryModal from './AddCategoryModal';
 import { getUserSeedInfo } from '../../api/CategoryApi';
 
 const AllCategory = ({ onAddCategory }) => {
+  const navigation = useNavigation();
   const [openAddModal, setOpenAddModal] = useState(false);
   const [userSeedInfo, setUserSeedInfo] = useState([]);
 
@@ -47,34 +49,38 @@ const AllCategory = ({ onAddCategory }) => {
         </View>
 
         <View style={styles.cardsRow}>
-          <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => navigation.navigate('seedList', { mode: 'all' })}
+          >
             <Text style={styles.cardLabel}>전체 씨드</Text>
             <Text>
               <Text style={styles.cardNumber}>{userSeedInfo.totalSeed}</Text>
               <Text style={styles.cardCount}>개</Text>
             </Text>
-          </View>
-          <View style={styles.card}>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => navigation.navigate('seedList', { mode: 'popular' })}
+          >
             <Text style={styles.cardLabel}>많이 찾는 씨드</Text>
             <Text>
               <Text style={styles.cardNumber}>{userSeedInfo.popular}</Text>
               <Text style={styles.cardCount}>개</Text>
             </Text>
-          </View>
-          <View style={styles.card}>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => navigation.navigate('seedList', { mode: 'unread' })}
+          >
             <Text style={styles.cardLabel}>읽지 않은 씨드</Text>
             <Text>
               <Text style={styles.cardNumber}>{userSeedInfo.unread}</Text>
-              <Text
-                style={[
-                  styles.cardCount,
-                  { color: userSeedInfo.unread >= 30 ? '#41C3AB' : '#4f4f4f' },
-                ]}
-              >
-                {userSeedInfo.unread < 30 ? '개' : '+'}
-              </Text>
+              <Text style={styles.cardCount}>개</Text>
             </Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
 

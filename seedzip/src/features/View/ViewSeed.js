@@ -317,7 +317,6 @@ const styles = StyleSheet.create({
   titleDiv: {
     fontSize: 20,
     fontWeight: '600',
-    marginTop: 23,
   },
   grayBox: {
     marginTop: 20,

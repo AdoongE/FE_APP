@@ -66,28 +66,22 @@ export default function HomeScreen({ navigation }) {
         key: 'total',
         label: '전체 씨드',
         value: userSeedInfo.totalSeed,
-        onPress: () => navigation.navigate('seedList'),
+        onPress: () => navigation.navigate('seedList', { mode: 'all' }),
       },
       {
         key: 'most',
         label: '많이 찾는 씨드',
         value: userSeedInfo.popular,
-        onPress: () => {
-          // 많이 찾는 씨드 화면으로 이동하는 로직
-          // navigation.navigate('popularSeeds')
-        },
+        onPress: () => navigation.navigate('seedList', { mode: 'popular' }),
       },
       {
         key: 'unread',
         label: '읽지 않은 씨드',
         value: userSeedInfo.unread,
-        onPress: () => {
-          // 읽지 않은 씨드 화면으로 이동하는 로직
-          // navigation.navigate('unreadSeeds')
-        },
+        onPress: () => navigation.navigate('seedList', { mode: 'unread' }),
       },
     ],
-    [seeds.length, userSeedInfo, navigation], // navigation 의존성 추가
+    [seeds.length, userSeedInfo, navigation],
   );
 
   useEffect(() => {

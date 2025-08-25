@@ -10,6 +10,26 @@ export const getAllSeeds = async () => {
   }
 };
 
+export const getPopularSeeds = async () => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.get(`/api/v1/seed/popular`);
+    return response.data.results;
+  } catch (error) {
+    console.error('많이 찾는 씨드 조회 error:', error);
+  }
+};
+
+export const getUnreadSeeds = async () => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.get(`/api/v1/seed/unread`);
+    return response.data.results;
+  } catch (error) {
+    console.error('읽지 않은 씨드 조회 error:', error);
+  }
+};
+
 export const getSeed = async (seedId) => {
   try {
     const axios = await axiosInstance();

@@ -11,11 +11,16 @@ import {
 } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import { Ionicons } from '@expo/vector-icons';
-import { getAllSeeds } from '../../api/SeedApi';
+import {
+  getAllSeeds,
+  getPopularSeeds,
+  getUnreadSeeds,
+} from '../../api/SeedApi';
 import SeedItem from './SeedItem';
 import FilterModal from './FilterModal';
 
-const SeedList = ({ navigation }) => {
+const SeedList = ({ navigation, route }) => {
+  const mode = route?.params?.mode || 'all';
   const [seeds, setSeeds] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
@@ -37,12 +42,30 @@ const SeedList = ({ navigation }) => {
   const sortText = selectedSort ? sortLabels[selectedSort] : '정렬';
 
   useEffect(() => {
+    let title = '전체 씨드';
+    if (mode === 'popular') {
+      title = '많이 찾는 씨드';
+    } else if (mode === 'unread') {
+      title = '읽지 않은 씨드';
+    }
+    navigation.setOptions({ headerTitle: title });
+  }, [mode, navigation]);
+
+  useEffect(() => {
     fetchSeeds();
   }, []);
 
   const fetchSeeds = async () => {
-    const resAllSeeds = await getAllSeeds();
-    const seedData = resAllSeeds[0].seedInfoList.map((item) => ({
+    let response;
+    if (mode === 'all') {
+      response = await getAllSeeds();
+    } else if (mode === 'popular') {
+      response = await getPopularSeeds();
+    } else {
+      response = await getUnreadSeeds();
+    }
+
+    const seedData = response[0].seedInfoList.map((item) => ({
       seedId: item.seedId,
       seedName: item.seedName,
       categoryName: item.categoryName,
@@ -72,6 +95,8 @@ const SeedList = ({ navigation }) => {
   };
 
   const filteredSeeds = () => {
+    if (mode !== 'all') return seeds;
+
     return (
       seeds
         .filter((seed) => {
@@ -102,62 +127,65 @@ const SeedList = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginHorizontal: 20 }}>
-        {/* 검색창 */}
-        <View style={styles.searchContainer}>
-          <Ionicons name="search-outline" size={20} color="#9f9f9f" />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="씨드 제목과 메모를 검색해보세요"
-            placeholderTextColor="#9f9f9f"
-            value={searchText}
-            onChangeText={setSearchText}
-          />
-        </View>
-        <View style={styles.line} />
-        {/* 태그 선택 */}
-        <View style={styles.rowContainer}>
-          <Feather
-            name="tag"
-            size={14}
-            color="#4f4f4f"
-            style={{ marginTop: 2 }}
-          />
-          <Text style={styles.sectionTitle}>태그 선택</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.tagsContainer}>
-              {selectedTags.map((tag) => (
-                <View key={tag} style={styles.tagButton}>
-                  <Text style={styles.tagText}>{tag}</Text>
-                  <TouchableOpacity
-                    key={tag}
-                    onPress={(e) => {
-                      e.stopPropagation();
-                      handleTagRemove(tag);
-                    }}
-                  >
-                    <Ionicons name="close" size={12} color="#4f4f4f" />
-                  </TouchableOpacity>
-                </View>
-              ))}
+        {mode === 'all' && (
+          <>
+            {/* 검색창 */}
+            <View style={styles.searchContainer}>
+              <Ionicons name="search-outline" size={20} color="#9f9f9f" />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="씨드 제목과 메모를 검색해보세요"
+                placeholderTextColor="#9f9f9f"
+                value={searchText}
+                onChangeText={setSearchText}
+              />
             </View>
-          </ScrollView>
-        </View>
-        <View style={styles.line} />
-        {/* 저장형식 · 정렬 버튼 */}
-        <View style={styles.filterContainer}>
-          <TouchableOpacity
-            style={styles.filterButton}
-            onPress={() => {
-              setFilterModalVisible(true);
-            }}
-          >
-            <Text style={styles.filterText}>
-              {typeText} · {sortText}
-            </Text>
-            <Ionicons name="chevron-down" size={14} color="#4f4f4f" />
-          </TouchableOpacity>
-        </View>
-
+            <View style={styles.line} />
+            {/* 태그 선택 */}
+            <View style={styles.rowContainer}>
+              <Feather
+                name="tag"
+                size={14}
+                color="#4f4f4f"
+                style={{ marginTop: 2 }}
+              />
+              <Text style={styles.sectionTitle}>태그 선택</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={styles.tagsContainer}>
+                  {selectedTags.map((tag) => (
+                    <View key={tag} style={styles.tagButton}>
+                      <Text style={styles.tagText}>{tag}</Text>
+                      <TouchableOpacity
+                        key={tag}
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleTagRemove(tag);
+                        }}
+                      >
+                        <Ionicons name="close" size={12} color="#4f4f4f" />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
+            <View style={styles.line} />
+            {/* 저장형식 · 정렬 버튼 */}
+            <View style={styles.filterContainer}>
+              <TouchableOpacity
+                style={styles.filterButton}
+                onPress={() => {
+                  setFilterModalVisible(true);
+                }}
+              >
+                <Text style={styles.filterText}>
+                  {typeText} · {sortText}
+                </Text>
+                <Ionicons name="chevron-down" size={14} color="#4f4f4f" />
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
         {/* 씨드 목록 */}
         <FlatList
           data={filteredSeeds()}

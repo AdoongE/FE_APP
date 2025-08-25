@@ -15,7 +15,7 @@ import useSeedActions from '../../hooks/useSeedActions';
 const SeedItem = ({ seed, onPress }) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const { seedActions, SeedActionModals } = useSeedActions({});
+  const { seedActions, SeedActionModals } = useSeedActions({ navigation });
 
   return (
     <>
