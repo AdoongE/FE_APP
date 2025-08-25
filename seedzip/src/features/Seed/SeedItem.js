@@ -10,9 +10,12 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import ActionModal from '../../components/ActionModal';
+import DeleteSeedModal from '../Seed/DeleteSeedModal';
+import { deleteSeed } from '../../api/SeedApi';
 
 const SeedItem = ({ seed, onPress }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const seedActions = [
     {
@@ -25,9 +28,16 @@ const SeedItem = ({ seed, onPress }) => {
     {
       icon: <Feather name="trash-2" size={20} />,
       label: '씨드 삭제하기',
-      onPress: () => {}, // TODO
+      onPress: () => {
+        setDeleteModalVisible(true);
+      },
     },
   ];
+
+  const handleDeleteSeed = async () => {
+    await deleteSeed(seed.seedId);
+    setDeleteModalVisible(false);
+  };
 
   return (
     <>
@@ -73,6 +83,11 @@ const SeedItem = ({ seed, onPress }) => {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         actions={seedActions}
+      />
+      <DeleteSeedModal
+        visible={deleteModalVisible}
+        onCancel={() => setDeleteModalVisible(false)}
+        onDelete={handleDeleteSeed}
       />
     </>
   );

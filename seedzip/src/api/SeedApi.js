@@ -19,3 +19,13 @@ export const getSeed = async (seedId) => {
     console.error('씨드 상세 보기 error:', error);
   }
 };
+
+export const deleteSeed = async (seedId) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.delete(`/api/v1/seed/${seedId}`);
+    return response.data.results;
+  } catch (error) {
+    console.error('씨드 삭제 error:', error);
+  }
+};

@@ -16,7 +16,7 @@ import Feather from '@expo/vector-icons/Feather';
 import ThumbnailModal from './ThumbnailModal';
 import DeleteCategoryModal from '../Seed/DeleteSeedModal';
 import AlertToast from '../../components/AlertToast';
-import { getSeed } from '../../api/SeedApi';
+import { getSeed, deleteSeed } from '../../api/SeedApi';
 
 function ViewContent({ route }) {
   const seedId = route.params;
@@ -153,7 +153,6 @@ function ViewContent({ route }) {
     });
   }, [navigation, menuVisible]);
 
-  // 씨드 삭제하기, API 아직 연동 X
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [toast, setToast] = useState({
     visible: false,
@@ -164,6 +163,8 @@ function ViewContent({ route }) {
   });
 
   const handleDeleteSeed = async () => {
+    await deleteSeed(seedId.seedId);
+
     setOpenDeleteModal(false);
 
     setToast({
@@ -173,6 +174,10 @@ function ViewContent({ route }) {
       actionText: null,
       onActionPress: null,
     });
+
+    setTimeout(() => {
+      navigation.goBack();
+    }, 1500);
   };
 
   return (
