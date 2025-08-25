@@ -24,6 +24,18 @@ const SeedList = ({ navigation }) => {
   const [selectedType, setSelectedType] = useState(null);
   const [selectedSort, setSelectedSort] = useState(null);
 
+  const typeLabels = {
+    LINK: '링크',
+    IMAGE: '이미지',
+    PDF: 'PDF',
+  };
+  const sortLabels = {
+    latest: '최신순',
+    name: '이름순',
+  };
+  const typeText = selectedType ? typeLabels[selectedType] : '저장형식';
+  const sortText = selectedSort ? sortLabels[selectedSort] : '정렬';
+
   useEffect(() => {
     fetchSeeds();
   }, []);
@@ -139,7 +151,9 @@ const SeedList = ({ navigation }) => {
               setFilterModalVisible(true);
             }}
           >
-            <Text style={styles.filterText}>저장형식 · 정렬</Text>
+            <Text style={styles.filterText}>
+              {typeText} · {sortText}
+            </Text>
             <Ionicons name="chevron-down" size={14} color="#4f4f4f" />
           </TouchableOpacity>
         </View>
@@ -246,6 +260,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingHorizontal: 4,
+    paddingBottom: 140,
   },
 });
 

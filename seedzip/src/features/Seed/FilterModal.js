@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -11,6 +11,17 @@ const FilterModal = ({
 }) => {
   const [tempType, setTempType] = useState(initialType);
   const [tempSort, setTempSort] = useState(initialSort);
+
+  const typeOptions = [
+    { value: 'LINK', label: '링크' },
+    { value: 'IMAGE', label: '이미지' },
+    { value: 'PDF', label: 'PDF' },
+  ];
+
+  const sortOptions = [
+    { value: 'latest', label: '최신순' },
+    { value: 'name', label: '이름순' },
+  ];
 
   useEffect(() => {
     if (visible) {
@@ -36,9 +47,9 @@ const FilterModal = ({
             <TouchableOpacity onPress={onClose}>
               <Ionicons name="close" size={18} />
             </TouchableOpacity>
-            <Text style={styles.headerText}>보기옵션</Text>
+            <Text style={styles.modalTitle}>보기옵션</Text>
             <TouchableOpacity onPress={handleApply}>
-              <Text style={styles.headerText}>확인</Text>
+              <Text style={styles.confirmButton}>확인</Text>
             </TouchableOpacity>
           </View>
 
@@ -48,58 +59,28 @@ const FilterModal = ({
           <View style={styles.filterSection}>
             <Text style={styles.filterSectionTitle}>저장형식</Text>
             <View style={styles.filterOptions}>
-              <TouchableOpacity
-                style={[
-                  styles.filterOption,
-                  tempType === 'LINK' && styles.filterOptionSelected,
-                ]}
-                onPress={() => setTempType(tempType === 'LINK' ? null : 'LINK')}
-              >
-                <Text
+              {typeOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
                   style={[
-                    styles.filterOptionText,
-                    tempType === 'LINK' && styles.filterOptionTextSelected,
+                    styles.filterOption,
+                    tempType === option.value && styles.filterOptionSelected,
                   ]}
+                  onPress={() =>
+                    setTempType(tempType === option.value ? null : option.value)
+                  }
                 >
-                  링크
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.filterOption,
-                  tempType === 'IMAGE' && styles.filterOptionSelected,
-                ]}
-                onPress={() =>
-                  setTempType(tempType === 'IMAGE' ? null : 'IMAGE')
-                }
-              >
-                <Text
-                  style={[
-                    styles.filterOptionText,
-                    tempType === 'IMAGE' && styles.filterOptionTextSelected,
-                  ]}
-                >
-                  이미지
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.filterOption,
-                  tempType === 'PDF' && styles.filterOptionSelected,
-                ]}
-                onPress={() => setTempType(tempType === 'PDF' ? null : 'PDF')}
-              >
-                <Text
-                  style={[
-                    styles.filterOptionText,
-                    tempType === 'PDF' && styles.filterOptionTextSelected,
-                  ]}
-                >
-                  PDF
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.filterOptionText,
+                      tempType === option.value &&
+                        styles.filterOptionTextSelected,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
 
@@ -107,41 +88,28 @@ const FilterModal = ({
           <View style={styles.filterSection}>
             <Text style={styles.filterSectionTitle}>정렬</Text>
             <View style={styles.filterOptions}>
-              <TouchableOpacity
-                style={[
-                  styles.filterOption,
-                  tempSort === 'latest' && styles.filterOptionSelected,
-                ]}
-                onPress={() =>
-                  setTempSort(tempSort === 'latest' ? null : 'latest')
-                }
-              >
-                <Text
+              {sortOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
                   style={[
-                    styles.filterOptionText,
-                    tempSort === 'latest' && styles.filterOptionTextSelected,
+                    styles.filterOption,
+                    tempSort === option.value && styles.filterOptionSelected,
                   ]}
+                  onPress={() =>
+                    setTempSort(tempSort === option.value ? null : option.value)
+                  }
                 >
-                  최신순
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.filterOption,
-                  tempSort === 'name' && styles.filterOptionSelected,
-                ]}
-                onPress={() => setTempSort(tempSort === 'name' ? null : 'name')}
-              >
-                <Text
-                  style={[
-                    styles.filterOptionText,
-                    tempSort === 'name' && styles.filterOptionTextSelected,
-                  ]}
-                >
-                  이름순
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.filterOptionText,
+                      tempSort === option.value &&
+                        styles.filterOptionTextSelected,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
         </View>
