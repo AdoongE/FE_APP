@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
-import ActionModal from '../../../components/ActionModal';
+import ActionModal from '../../components/ActionModal';
 
 const SeedItem = ({ seed, onPress }) => {
   const [modalVisible, setModalVisible] = useState(false);

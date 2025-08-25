@@ -13,11 +13,11 @@ import homeImg from '../../assets/icons/home-img.png';
 import { Ionicons } from '@expo/vector-icons';
 import BottomNav from './BottomNav';
 import FolderSection from '../Category/FolderSection';
-import { getAllSeeds } from '../../api/HomeApi';
+import { getAllSeeds } from '../../api/SeedApi';
 import { getUserSeedInfo, getBookmark } from '../../api/CategoryApi';
 import useCategoryActions from '../../hooks/useCategoryActions';
 import ActionModal from '../../components/ActionModal';
-import SeedItem from './components/SeedItem';
+import SeedItem from '../Seed/SeedItem';
 
 export default function HomeScreen({ navigation }) {
   const [seeds, setSeeds] = useState([]);
@@ -78,7 +78,6 @@ export default function HomeScreen({ navigation }) {
         categoryName: item.categoryName,
         seedType: item.seedType,
         thumbnailImage: item.thumbnailImage,
-
         tagName: item.tagName,
       }));
       setSeeds(seedData);

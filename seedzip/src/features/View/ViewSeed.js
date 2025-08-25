@@ -11,17 +11,17 @@ import {
 } from 'react-native';
 import { Menu, Provider } from 'react-native-paper';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { axiosInstance } from '../../api/axios-instance';
 import { MaterialIcons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import ThumbnailModal from './ThumbnailModal';
 import DeleteCategoryModal from '../Seed/DeleteSeedModal';
 import AlertToast from '../../components/AlertToast';
+import { getSeed } from '../../api/SeedApi';
 
 function ViewContent({ route }) {
   const seedId = route.params;
 
-  const [contentInfo, setContentInfo] = useState({
+  const [seedInfo, setSeedInfo] = useState({
     seedId: seedId || 0,
     seedType: '',
     seedName: '',
@@ -44,14 +44,14 @@ function ViewContent({ route }) {
   }, []);
 
   useEffect(() => {
-    if (contentInfo.dDay) {
-      calRemainingDays(contentInfo.dDay);
+    if (seedInfo.dDay) {
+      calRemainingDays(seedInfo.dDay);
     }
-  }, [contentInfo.dDay]);
+  }, [seedInfo.dDay]);
 
   const calRemainingDays = () => {
     const currentDate = new Date();
-    const dDayDate = new Date(contentInfo.dDay);
+    const dDayDate = new Date(seedInfo.dDay);
     const timeDiff = dDayDate - currentDate;
     const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     setRemainingDays(dayDiff);
@@ -59,24 +59,23 @@ function ViewContent({ route }) {
 
   const handleViewContent = async () => {
     try {
-      const axios = await axiosInstance();
-      const response = await axios.get(`/api/v1/seed/${seedId.seedId}`);
-      const results = response.data.results[0];
-      setContentInfo({
-        seedId: results.seedId,
-        seedType: results.seedType,
-        seedName: results.seedName,
-        seedLink: results.seedLink,
-        fileLinks: results.fileLinks,
-        thumbnailImage: results.thumbnailImage,
-        categoryName: results.categoryName,
-        tagName: results.tagName,
-        dDay: results.dDay,
-        seedDetail: results.seedDetail,
-        filename: results.title,
+      const resSeed = await getSeed(seedId.seedId);
+      const seedData = resSeed[0];
+      setSeedInfo({
+        seedId: seedData.seedId,
+        seedType: seedData.seedType,
+        seedName: seedData.seedName,
+        seedLink: seedData.seedLink,
+        fileLinks: seedData.fileLinks,
+        thumbnailImage: seedData.thumbnailImage,
+        tagName: seedData.tagName,
+        categoryName: seedData.categoryName,
+        dDay: seedData.dDay,
+        seedDetail: seedData.seedDetail,
+        filename: seedData.title,
       });
     } catch (error) {
-      console.error('Error fetching content:', error);
+      console.error('Error fetching seed:', error);
     }
   };
 
@@ -124,7 +123,7 @@ function ViewContent({ route }) {
             top: 105,
           }}
         >
-          {contentInfo.seedType !== 'PDF' && (
+          {seedInfo.seedType !== 'PDF' && (
             <TouchableOpacity
               onPress={() => {
                 closeMenu();
@@ -180,28 +179,27 @@ function ViewContent({ route }) {
     <Provider>
       <View style={styles.contentPage}>
         <View style={styles.contents}>
-          <Text style={styles.titleDiv}>{contentInfo.seedName}</Text>
+          <Text style={styles.titleDiv}>{seedInfo.seedName}</Text>
           <View
             style={[
               styles.upperDiv,
               {
                 flexDirection:
-                  contentInfo.seedType === 'PDF' ||
-                  contentInfo.seedType === 'IMAGE'
+                  seedInfo.seedType === 'PDF' || seedInfo.seedType === 'IMAGE'
                     ? 'column'
                     : 'row',
               },
             ]}
           >
-            {contentInfo.seedType === 'LINK' && (
+            {seedInfo.seedType === 'LINK' && (
               <TouchableOpacity
-                onPress={() => handleLinkClick(contentInfo.seedLink)}
+                onPress={() => handleLinkClick(seedInfo.seedLink)}
               >
                 <View style={styles.linkBox}>
                   <Text
                     style={[{ fontSize: 12, color: '#4f4f4f', paddingTop: 4 }]}
                   >
-                    {contentInfo.seedLink}
+                    {seedInfo.seedLink}
                   </Text>
                   <View
                     style={[
@@ -216,7 +214,7 @@ function ViewContent({ route }) {
                     ]}
                   >
                     <TouchableOpacity
-                      onPress={() => handleCopyLink(contentInfo.seedLink)}
+                      onPress={() => handleCopyLink(seedInfo.seedLink)}
                     >
                       <Text style={[{ fontSize: 10, color: '#fff' }]}>
                         링크복사
@@ -227,12 +225,12 @@ function ViewContent({ route }) {
               </TouchableOpacity>
             )}
 
-            {contentInfo.seedType !== 'LINK' && (
+            {seedInfo.seedType !== 'LINK' && (
               <ScrollView horizontal style={styles.imagesWrapper}>
-                {contentInfo.fileLinks.map((image, index) => (
+                {seedInfo.fileLinks.map((image, index) => (
                   <View key={image} style={styles.imageContainer}>
                     <TouchableOpacity onPress={() => openModal(image)}>
-                      {index === contentInfo.thumbnailImage && (
+                      {index === seedInfo.thumbnailImage && (
                         <View style={styles.represenDiv}>
                           <Text style={styles.represenLabel}>대표</Text>
                         </View>
@@ -248,12 +246,12 @@ function ViewContent({ route }) {
                 ))}
               </ScrollView>
             )}
-            {/* {contentInfo.seedType === 'PDF' && (
+            {/* {seedInfo.seedType === 'PDF' && (
               <ScrollView horizontal style={styles.imagesWrapper}>
-                {contentInfo.fileLinks.map((file, index) => (
+                {seedInfo.fileLinks.map((file, index) => (
                   <View key={file} style={styles.imageContainer}>
                     <TouchableOpacity onPress={() => openModal(file)}>
-                      {index === contentInfo.thumbnailImage && (
+                      {index === seedInfo.thumbnailImage && (
                         <View style={styles.represenDiv}>
                           <Text style={styles.represenLabel}>대표</Text>
                         </View>
@@ -274,12 +272,12 @@ function ViewContent({ route }) {
               <ThumbnailModal
                 file={selectedFile}
                 files={
-                  contentInfo.seedType === 'PDF'
-                    ? contentInfo.fileLinks
-                    : contentInfo.fileLinks
+                  seedInfo.seedType === 'PDF'
+                    ? seedInfo.fileLinks
+                    : seedInfo.fileLinks
                 }
                 onClose={closeModal}
-                seedType={contentInfo.seedType}
+                seedType={seedInfo.seedType}
               />
             )}
           </View>
@@ -289,7 +287,7 @@ function ViewContent({ route }) {
             <View style={styles.contentDiv}>
               <Text style={styles.name}>카테고리</Text>
               <View style={styles.categoryContainer}>
-                {contentInfo.categoryName.map((category) => (
+                {seedInfo.categoryName.map((category) => (
                   <View key={category} style={styles.textWrapper}>
                     <Text style={styles.divText}>{category}</Text>
                   </View>
@@ -300,7 +298,7 @@ function ViewContent({ route }) {
             <View style={styles.contentDiv}>
               <Text style={styles.name}>태그</Text>
               <View style={styles.tagNameContainer}>
-                {contentInfo.tagName.map((tag) => (
+                {seedInfo.tagName.map((tag) => (
                   <View key={tag} style={styles.textWrapper}>
                     <Text style={styles.divText}>{tag}</Text>
                   </View>
@@ -308,7 +306,7 @@ function ViewContent({ route }) {
               </View>
             </View>
 
-            {contentInfo.dDay && (
+            {seedInfo.dDay && (
               <View style={styles.contentDiv}>
                 <Text style={styles.name}>디데이</Text>
                 <View style={styles.dDayDiv}>
@@ -329,7 +327,7 @@ function ViewContent({ route }) {
                     </View>
                   )}
                   <View style={styles.textWrapper}>
-                    <Text style={styles.divText}>{contentInfo.dDay}</Text>
+                    <Text style={styles.divText}>{seedInfo.dDay}</Text>
                   </View>
                 </View>
               </View>
@@ -338,7 +336,7 @@ function ViewContent({ route }) {
             <View style={styles.memo}>
               <Text style={styles.name}>메모</Text>
               <View style={styles.memoDiv}>
-                <Text style={styles.detail}>{contentInfo.seedDetail}</Text>
+                <Text style={styles.detail}>{seedInfo.seedDetail}</Text>
               </View>
             </View>
           </View>
