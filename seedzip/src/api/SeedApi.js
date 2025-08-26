@@ -30,6 +30,16 @@ export const getUnreadSeeds = async () => {
   }
 };
 
+export const getCategorySeeds = async (categoryId) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.get(`/api/v1/seed/category/${categoryId}`);
+    return response.data.results;
+  } catch (error) {
+    console.error('카테고리 내 씨드 모아보기 error:', error);
+  }
+};
+
 export const getSeed = async (seedId) => {
   try {
     const axios = await axiosInstance();

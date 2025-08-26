@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -24,6 +25,8 @@ const FolderSection = ({
   isFullView = false,
   isHome = false,
 }) => {
+  const navigation = useNavigation();
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -47,6 +50,13 @@ const FolderSection = ({
               <Folder
                 name={item.name}
                 onPressMorevert={() => handleFolderPress(item)}
+                onPress={() => {
+                  navigation.navigate('seedList', {
+                    mode: 'category',
+                    categoryId: item.id,
+                    categoryName: item.name,
+                  });
+                }}
               />
             </View>
           )}
@@ -83,6 +93,13 @@ const FolderSection = ({
                       <Folder
                         name={data[0].name}
                         onPressMorevert={() => handleFolderPress(data[0])}
+                        onPress={() => {
+                          navigation.navigate('seedList', {
+                            mode: 'category',
+                            categoryId: data[0].id,
+                            categoryName: data[0].name,
+                          });
+                        }}
                       />
                     </View>
                   )}
@@ -102,6 +119,13 @@ const FolderSection = ({
                   <Folder
                     name={item.name}
                     onPressMorevert={() => handleFolderPress(item)}
+                    onPress={() => {
+                      navigation.navigate('seedList', {
+                        mode: 'category',
+                        categoryId: item.id,
+                        categoryName: item.name,
+                      });
+                    }}
                   />
                 )}
                 scrollEnabled={false}

@@ -2,19 +2,21 @@ import { View, Image, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import folderIcon from '../assets/icons/folder.png';
 
-const Folder = ({ name, onPressMorevert }) => {
+const Folder = ({ name, onPressMorevert, onPress }) => {
   return (
-    <View>
-      <View style={styles.imageWrapper}>
-        <Image source={folderIcon} style={styles.image} />
-        <TouchableOpacity style={styles.moreButton} onPress={onPressMorevert}>
-          <MaterialIcons name="more-vert" size={16} color="#4f4f4f" />
-        </TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
+      <View>
+        <View style={styles.imageWrapper}>
+          <Image source={folderIcon} style={styles.image} />
+          <TouchableOpacity style={styles.moreButton} onPress={onPressMorevert}>
+            <MaterialIcons name="more-vert" size={16} color="#4f4f4f" />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.label} numberOfLines={1}>
+          {name}
+        </Text>
       </View>
-      <Text style={styles.label} numberOfLines={1}>
-        {name}
-      </Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -13,6 +13,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { Ionicons } from '@expo/vector-icons';
 import {
   getAllSeeds,
+  getCategorySeeds,
   getPopularSeeds,
   getUnreadSeeds,
 } from '../../api/SeedApi';
@@ -21,6 +22,9 @@ import FilterModal from './FilterModal';
 
 const SeedList = ({ navigation, route }) => {
   const mode = route?.params?.mode || 'all';
+  const categoryId = route?.params?.categoryId;
+  const categoryName = route?.params?.categoryName;
+
   const [seeds, setSeeds] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
@@ -47,6 +51,8 @@ const SeedList = ({ navigation, route }) => {
       title = '많이 찾는 씨드';
     } else if (mode === 'unread') {
       title = '읽지 않은 씨드';
+    } else if (mode === 'category') {
+      title = categoryName;
     }
     navigation.setOptions({ headerTitle: title });
   }, [mode, navigation]);
@@ -61,6 +67,8 @@ const SeedList = ({ navigation, route }) => {
       response = await getAllSeeds();
     } else if (mode === 'popular') {
       response = await getPopularSeeds();
+    } else if (mode === 'category' && categoryId) {
+      response = await getCategorySeeds(categoryId);
     } else {
       response = await getUnreadSeeds();
     }
@@ -95,7 +103,7 @@ const SeedList = ({ navigation, route }) => {
   };
 
   const filteredSeeds = () => {
-    if (mode !== 'all') return seeds;
+    if (mode !== 'all' && mode !== 'category') return seeds;
 
     return (
       seeds
@@ -127,7 +135,7 @@ const SeedList = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginHorizontal: 20 }}>
-        {mode === 'all' && (
+        {(mode === 'all' || mode === 'category') && (
           <>
             {/* 검색창 */}
             <View style={styles.searchContainer}>
