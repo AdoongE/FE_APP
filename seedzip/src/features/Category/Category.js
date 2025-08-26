@@ -15,11 +15,13 @@ import EmptyMyCategory from '../../assets/icons/emptyMyCategory.png';
 import { Ionicons } from '@expo/vector-icons';
 import { postCategory, getCategory, getBookmark } from '../../api/CategoryApi';
 import useCategoryActions from '../../hooks/useCategoryActions';
+import BottomNav from '../../components/BottomNav';
 
 const Category = ({ route }) => {
   const [bookmarks, setBookmarks] = useState([]);
   const [myCategories, setMyCategories] = useState([]);
   const [fullParams, setFullParams] = useState(null);
+  const [addSeedModalVisible, setAddSeedModalVisible] = useState(false);
   const navigation = useNavigation();
 
   const { actionBtnsBookmark, actionBtnsMyCategory, ActionModalAlert } =
@@ -178,6 +180,10 @@ const Category = ({ route }) => {
         </View>
       )}
 
+      <BottomNav
+        addSeedModalVisible={addSeedModalVisible}
+        setAddSeedModalVisible={setAddSeedModalVisible}
+      />
       <ActionModalAlert />
     </>
   );

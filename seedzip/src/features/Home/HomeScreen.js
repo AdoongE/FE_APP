@@ -11,12 +11,11 @@ import {
 } from 'react-native';
 import homeImg from '../../assets/icons/home-img.png';
 import { Ionicons } from '@expo/vector-icons';
-import BottomNav from './BottomNav';
+import BottomNav from '../../components/BottomNav';
 import FolderSection from '../Category/FolderSection';
 import { getAllSeeds } from '../../api/SeedApi';
 import { getUserSeedInfo, getBookmark } from '../../api/CategoryApi';
 import useCategoryActions from '../../hooks/useCategoryActions';
-import ActionModal from '../../components/ActionModal';
 import SeedItem from '../Seed/SeedItem';
 
 export default function HomeScreen({ navigation }) {
@@ -40,25 +39,6 @@ export default function HomeScreen({ navigation }) {
     fetchBookmark,
     setBookmarks,
   });
-
-  const addSeedActions = [
-    {
-      icon: <Ionicons name="link-outline" size={20} />,
-      label: '링크 저장하기',
-      onPress: () => {
-        setAddSeedModalVisible(false);
-        navigation.navigate('addLink');
-      },
-    },
-    {
-      icon: <Ionicons name="image-outline" size={20} />,
-      label: '이미지 저장하기',
-      onPress: () => {
-        setAddSeedModalVisible(false);
-        navigation.navigate('imageupload');
-      },
-    },
-  ];
 
   const stats = useMemo(
     () => [
@@ -249,13 +229,9 @@ export default function HomeScreen({ navigation }) {
         </View>
       </ScrollView>
 
-      <BottomNav onAddPress={() => setAddSeedModalVisible(true)} />
-      {/* 씨드 추가를 위한 */}
-      <ActionModal
-        visible={addSeedModalVisible}
-        onClose={() => setAddSeedModalVisible(false)}
-        title="저장 형식을 선택해주세요"
-        actions={addSeedActions}
+      <BottomNav
+        addSeedModalVisible={addSeedModalVisible}
+        setAddSeedModalVisible={setAddSeedModalVisible}
       />
       {/* 북마를 한 카테고리를 위한 */}
       <ActionModalAlert />
