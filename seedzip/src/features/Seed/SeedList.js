@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import {
 } from '../../api/SeedApi';
 import SeedItem from './SeedItem';
 import FilterModal from './FilterModal';
+import UnreadDeleteBtn from './UnreadDeleteBtn';
 
 const SeedList = ({ navigation, route }) => {
   const mode = route?.params?.mode || 'all';
@@ -32,6 +33,9 @@ const SeedList = ({ navigation, route }) => {
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [selectedType, setSelectedType] = useState(null);
   const [selectedSort, setSelectedSort] = useState(null);
+  // 읽지 않은 씨드, 삭제 모드
+  const [deleteMode, setDeleteMode] = useState(false);
+  const [selectedSeedIds, setSelectedSeedIds] = useState([]);
 
   const typeLabels = {
     LINK: '링크',
@@ -82,6 +86,39 @@ const SeedList = ({ navigation, route }) => {
       tagName: item.tagName,
     }));
     setSeeds(seedData);
+  };
+
+  useLayoutEffect(() => {
+    // 읽지 않은 씨드 헤더 삭제 버튼
+    if (mode === 'unread') {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity
+            style={{ marginRight: 18 }}
+            onPress={() => {
+              if (seeds.length > 0) {
+                setDeleteMode(!deleteMode);
+                setSelectedSeedIds([]);
+              }
+            }}
+          >
+            <Text style={{ color: '#4f4f4f', fontSize: 16 }}>
+              {deleteMode ? '완료' : '삭제'}
+            </Text>
+          </TouchableOpacity>
+        ),
+      });
+    }
+  }, [navigation, deleteMode, mode, seeds.length]);
+
+  const checkSeedSelection = (seedId) => {
+    setSelectedSeedIds((prev) => {
+      if (prev.includes(seedId)) {
+        return prev.filter((id) => id !== seedId);
+      } else {
+        return [...prev, seedId];
+      }
+    });
   };
 
   // const handleTagSelect = (tag) => {
@@ -204,17 +241,37 @@ const SeedList = ({ navigation, route }) => {
               onPress={() =>
                 navigation.navigate('view', { seedId: item.seedId })
               }
-              onDeleteSuccess={(deletedId) => {
-                setSeeds((prev) =>
-                  prev.filter((seed) => seed.seedId !== deletedId),
-                );
-              }}
+              // onDeleteSuccess={(deletedId) => {
+              //   setSeeds((prev) =>
+              //     prev.filter((seed) => seed.seedId !== deletedId),
+              //   );
+              // }}
+              deleteMode={deleteMode}
+              isSelected={selectedSeedIds.includes(item.seedId)}
+              onCheckSelect={checkSeedSelection}
             />
           )}
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}
         />
       </View>
+
+      {/* 읽지 않은 씨드 삭제 버튼 */}
+      {deleteMode && (
+        <UnreadDeleteBtn
+          selectedSeeds={selectedSeedIds}
+          onSelectAll={() =>
+            setSelectedSeedIds(seeds.map((seed) => seed.seedId))
+          }
+          onDeleteSuccess={(deletedIds) => {
+            setDeleteMode(false);
+            setSelectedSeedIds([]);
+            setSeeds((prev) =>
+              prev.filter((seed) => !deletedIds.includes(seed.seedId)),
+            );
+          }}
+        />
+      )}
 
       <FilterModal
         visible={filterModalVisible}

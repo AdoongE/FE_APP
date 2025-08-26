@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import Feather from '@expo/vector-icons/Feather';
-import { deleteSeed } from '../api/SeedApi';
+import { deleteSeed, deleteSeeds } from '../api/SeedApi';
 import DeleteSeedModal from '../features/Seed/DeleteSeedModal';
 import AlertToast from '../components/AlertToast';
 
 const useSeedActions = ({ onDeleteSuccess, navigation }) => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedSeed, setSelectedSeed] = useState(null);
+  const [selectedSeedIds, setSelectedSeedIds] = useState(null);
   const [toast, setToast] = useState({ visible: false });
 
   const handleDeleteSeed = async () => {
@@ -34,8 +35,34 @@ const useSeedActions = ({ onDeleteSuccess, navigation }) => {
     }
   };
 
+  const handleDeleteSeeds = async () => {
+    if (!selectedSeedIds || selectedSeedIds.length === 0) return;
+
+    await deleteSeeds(selectedSeedIds);
+
+    setDeleteModalVisible(false);
+    setSelectedSeedIds(null);
+
+    if (onDeleteSuccess) {
+      setToast({
+        visible: true,
+        message: '씨드가 삭제되었어요.',
+        icon: true,
+      });
+
+      setTimeout(() => {
+        onDeleteSuccess(selectedSeedIds);
+      }, 1500);
+    }
+  };
+
   const openDeleteModal = (seed) => {
     setSelectedSeed(seed);
+    setDeleteModalVisible(true);
+  };
+
+  const openMultipleDeleteModal = (seedIds) => {
+    setSelectedSeedIds(seedIds);
     setDeleteModalVisible(true);
   };
 
@@ -62,13 +89,18 @@ const useSeedActions = ({ onDeleteSuccess, navigation }) => {
           setDeleteModalVisible(false);
           setSelectedSeed(null);
         }}
-        onDelete={handleDeleteSeed}
+        onDelete={selectedSeedIds ? handleDeleteSeeds : handleDeleteSeed}
       />
       <AlertToast {...toast} onHide={() => setToast({ visible: false })} />
     </>
   );
 
-  return { openDeleteModal, seedActions, SeedActionModals };
+  return {
+    openDeleteModal,
+    openMultipleDeleteModal,
+    seedActions,
+    SeedActionModals,
+  };
 };
 
 export default useSeedActions;

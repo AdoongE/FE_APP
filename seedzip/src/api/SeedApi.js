@@ -50,6 +50,18 @@ export const getSeed = async (seedId) => {
   }
 };
 
+export const deleteSeeds = async (seedIdList) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.delete('/api/v1/seed/list', {
+      data: { seedIdList: seedIdList },
+    });
+    return response.data.results;
+  } catch (error) {
+    console.error('씨드 목록 선택 삭제 error:', error);
+  }
+};
+
 export const deleteSeed = async (seedId) => {
   try {
     const axios = await axiosInstance();

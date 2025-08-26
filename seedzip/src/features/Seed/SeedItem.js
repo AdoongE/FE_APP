@@ -8,11 +8,18 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
 import { Ionicons } from '@expo/vector-icons';
 import ActionModal from '../../components/ActionModal';
 import useSeedActions from '../../hooks/useSeedActions';
 
-const SeedItem = ({ seed, onPress }) => {
+const SeedItem = ({
+  seed,
+  onPress,
+  deleteMode = false,
+  isSelected = false,
+  onCheckSelect,
+}) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const { seedActions, SeedActionModals } = useSeedActions({ navigation });
@@ -20,6 +27,14 @@ const SeedItem = ({ seed, onPress }) => {
   return (
     <>
       <Pressable key={seed.seedId} style={styles.seedRow} onPress={onPress}>
+        {deleteMode && (
+          <TouchableOpacity
+            style={[styles.checkbox, isSelected && styles.checkboxSelected]}
+            onPress={() => onCheckSelect(seed.seedId)}
+          >
+            <Feather name="check" size={16} color="white" />
+          </TouchableOpacity>
+        )}
         <View style={styles.seedThumb}>
           {seed.seedType !== 'LINK' ? (
             <Image
@@ -88,6 +103,18 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 16,
     ...CARD.shadow,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 12,
+    backgroundColor: '#f2f2f2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  checkboxSelected: {
+    backgroundColor: '#41C3AB',
   },
   seedThumb: {
     width: 80,
