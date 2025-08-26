@@ -19,7 +19,7 @@ import { getUserSeedInfo, getBookmark } from '../../api/CategoryApi';
 import useCategoryActions from '../../hooks/useCategoryActions';
 import SeedItem from '../Seed/SeedItem';
 
-export default function HomeScreen({ navigation }) {
+export default function Home({ navigation }) {
   const [seeds, setSeeds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userSeedInfo, setUserSeedInfo] = useState([]);
@@ -115,7 +115,9 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.topBar}>
         <Text style={styles.brand}>seedzip</Text>
         <View style={styles.topIcons}>
-          <Ionicons name="search-outline" size={22} color="#ffffff" />
+          <TouchableOpacity onPress={() => navigation.navigate('search')}>
+            <Ionicons name="search-outline" size={22} color="#ffffff" />
+          </TouchableOpacity>
           <Ionicons
             name="notifications-outline"
             size={22}

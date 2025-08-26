@@ -8,7 +8,8 @@ import Consent from '../pages/signup/Consent';
 import Success from '../pages/signup/Success';
 import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
-import Home from '../features/Home/HomeScreen';
+import Home from '../features/Home/Home';
+import Search from '../features/Home/Search';
 import View from '../features/View/ViewSeed';
 import AddLink from '../pages/contentAdd/AddLink';
 import AddCategory from '../pages/contentAdd/AddCategory';
@@ -70,6 +71,13 @@ function Router() {
       <Stack.Screen
         name="home"
         component={Home}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="search"
+        component={Search}
         options={{
           headerShown: false,
         }}
