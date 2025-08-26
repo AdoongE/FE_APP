@@ -66,7 +66,9 @@ function ViewContent({ route }) {
       setSeedInfo({
         seedId: seedData.seedId,
         seedType: seedData.seedType,
-        seedName: seedData.seedName,
+        seedName:
+          seedData.seedName ||
+          new Date(seedData.updatedDt).toISOString().split('T')[0],
         seedLink: seedData.seedLink,
         fileLinks: seedData.fileLinks,
         thumbnailImage: seedData.thumbnailImage,

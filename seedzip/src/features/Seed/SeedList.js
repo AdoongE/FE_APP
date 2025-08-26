@@ -79,7 +79,8 @@ const SeedList = ({ navigation, route }) => {
 
     const seedData = response[0].seedInfoList.map((item) => ({
       seedId: item.seedId,
-      seedName: item.seedName,
+      seedName:
+        item.seedName || new Date(item.updatedDt).toISOString().split('T')[0],
       categoryName: item.categoryName,
       seedType: item.seedType,
       thumbnailImage: item.thumbnailImage,

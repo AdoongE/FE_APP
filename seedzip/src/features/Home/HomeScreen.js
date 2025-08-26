@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   ActivityIndicator,
   Image,
@@ -64,38 +65,42 @@ export default function HomeScreen({ navigation }) {
     [seeds.length, userSeedInfo, navigation],
   );
 
-  useEffect(() => {
-    const fetchSeeds = async () => {
-      const resAllSeeds = await getAllSeeds();
-      const seedData = resAllSeeds[0].seedInfoList.map((item) => ({
-        seedId: item.seedId,
-        seedName: item.seedName,
-        categoryName: item.categoryName,
-        seedType: item.seedType,
-        thumbnailImage: item.thumbnailImage,
-        tagName: item.tagName,
-      }));
-      setSeeds(seedData);
-      setLoading(false);
-    };
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchSeeds = async () => {
+        const resAllSeeds = await getAllSeeds();
+        const seedData = resAllSeeds[0].seedInfoList.map((item) => ({
+          seedId: item.seedId,
+          seedName:
+            item.seedName ||
+            new Date(item.updatedDt).toISOString().split('T')[0],
+          categoryName: item.categoryName,
+          seedType: item.seedType,
+          thumbnailImage: item.thumbnailImage,
+          tagName: item.tagName,
+        }));
+        setSeeds(seedData);
+        setLoading(false);
+      };
 
-    const fetchUserSeedInfo = async () => {
-      const resSeedInfo = await getUserSeedInfo();
-      setUserSeedInfo({
-        localDate: resSeedInfo[0].localDate.replace(/-/g, '.'),
-        userName: resSeedInfo[0].userName,
-        todaySeedCount: resSeedInfo[0].todaySeedCount,
-        totalCategory: resSeedInfo[0].totalCategoryCount,
-        totalSeed: resSeedInfo[0].totalSeedCount,
-        popular: resSeedInfo[0].mostReadSeedCount,
-        unread: resSeedInfo[0].neverReadSeedCount,
-      });
-    };
+      const fetchUserSeedInfo = async () => {
+        const resSeedInfo = await getUserSeedInfo();
+        setUserSeedInfo({
+          localDate: resSeedInfo[0].localDate.replace(/-/g, '.'),
+          userName: resSeedInfo[0].userName,
+          todaySeedCount: resSeedInfo[0].todaySeedCount,
+          totalCategory: resSeedInfo[0].totalCategoryCount,
+          totalSeed: resSeedInfo[0].totalSeedCount,
+          popular: resSeedInfo[0].mostReadSeedCount,
+          unread: resSeedInfo[0].neverReadSeedCount,
+        });
+      };
 
-    fetchSeeds();
-    fetchUserSeedInfo();
-    fetchBookmark();
-  }, []);
+      fetchSeeds();
+      fetchUserSeedInfo();
+      fetchBookmark();
+    }, []),
+  );
 
   if (loading) {
     return (

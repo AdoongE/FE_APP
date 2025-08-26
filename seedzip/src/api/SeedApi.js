@@ -52,10 +52,9 @@ export const getSeed = async (seedId) => {
 
 export const deleteSeeds = async (seedIdList) => {
   try {
+    const idsParam = seedIdList.join(',');
     const axios = await axiosInstance();
-    const response = await axios.delete('/api/v1/seed/list', {
-      data: { seedIdList: seedIdList },
-    });
+    const response = await axios.delete(`/api/v1/seed/list?ids=${idsParam}`);
     return response.data.results;
   } catch (error) {
     console.error('씨드 목록 선택 삭제 error:', error);
