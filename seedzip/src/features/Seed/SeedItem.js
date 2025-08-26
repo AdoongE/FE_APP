@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import {
   Pressable,
   View,
@@ -16,13 +15,17 @@ import useSeedActions from '../../hooks/useSeedActions';
 const SeedItem = ({
   seed,
   onPress,
+  onDeleteSuccess,
   deleteMode = false,
   isSelected = false,
   onCheckSelect,
 }) => {
-  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const { seedActions, SeedActionModals } = useSeedActions({ navigation });
+  const { seedActions, SeedActionModals } = useSeedActions({
+    onDeleteSuccess: () => {
+      onDeleteSuccess(seed.seedId);
+    },
+  });
 
   return (
     <>

@@ -18,17 +18,23 @@ const useSeedActions = ({ onDeleteSuccess, navigation }) => {
     setDeleteModalVisible(false);
     setSelectedSeed(null);
 
-    setToast({
-      visible: true,
-      message: '씨드가 삭제되었어요.',
-      icon: true,
-    });
-
     if (onDeleteSuccess) {
+      setToast({
+        visible: true,
+        message: '씨드가 삭제되었어요.',
+        icon: true,
+      });
+
       setTimeout(() => {
         onDeleteSuccess(selectedSeed.seedId);
-      }, 1500);
+      }, 2500);
     } else if (navigation) {
+      setToast({
+        visible: true,
+        message: '씨드가 삭제되었어요.',
+        icon: true,
+      });
+
       setTimeout(() => {
         navigation.goBack();
       }, 1500);

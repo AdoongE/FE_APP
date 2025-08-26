@@ -241,11 +241,11 @@ const SeedList = ({ navigation, route }) => {
               onPress={() =>
                 navigation.navigate('view', { seedId: item.seedId })
               }
-              // onDeleteSuccess={(deletedId) => {
-              //   setSeeds((prev) =>
-              //     prev.filter((seed) => seed.seedId !== deletedId),
-              //   );
-              // }}
+              onDeleteSuccess={(deletedId) => {
+                setSeeds((prev) =>
+                  prev.filter((seed) => seed.seedId !== deletedId),
+                );
+              }}
               deleteMode={deleteMode}
               isSelected={selectedSeedIds.includes(item.seedId)}
               onCheckSelect={checkSeedSelection}

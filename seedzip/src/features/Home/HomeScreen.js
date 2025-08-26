@@ -214,17 +214,20 @@ export default function HomeScreen({ navigation }) {
               </TouchableOpacity>
             </View>
           ) : (
-            seeds
-              .slice(0, 5)
-              .map((seed) => (
-                <SeedItem
-                  key={seed.seedId}
-                  seed={seed}
-                  onPress={() =>
-                    navigation?.navigate?.('view', { seedId: seed.seedId })
-                  }
-                />
-              ))
+            seeds.slice(0, 5).map((seed) => (
+              <SeedItem
+                key={seed.seedId}
+                seed={seed}
+                onPress={() =>
+                  navigation?.navigate?.('view', { seedId: seed.seedId })
+                }
+                onDeleteSuccess={(deletedId) => {
+                  setSeeds((prev) =>
+                    prev.filter((seed) => seed.seedId !== deletedId),
+                  );
+                }}
+              />
+            ))
           )}
         </View>
       </ScrollView>
