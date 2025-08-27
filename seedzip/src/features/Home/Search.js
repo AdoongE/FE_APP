@@ -1,37 +1,64 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
   TextInput,
-  StyleSheet,
-  FlatList,
   TouchableOpacity,
+  FlatList,
+  StyleSheet,
   SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Search() {
   const navigation = useNavigation();
-
   const [query, setQuery] = useState('');
-  const [recent, setRecent] = useState([
-    '검색어1',
-    '검색어2',
-    '검색어3',
-    '검색어4',
-  ]);
+  const [recent, setRecent] = useState([]);
 
-  const renderItem = ({ item }) => (
-    <View style={styles.itemRow}>
-      <Text style={styles.itemText} numberOfLines={1}>
-        {item}
-      </Text>
-      <TouchableOpacity onPress={() => {}}>
-        <Ionicons name="close" size={16} color="#4f4f4f" />
-      </TouchableOpacity>
-    </View>
-  );
+  useEffect(() => {
+    loadRecentSearches();
+  }, []);
+
+  const loadRecentSearches = async () => {
+    const recentSearches = await AsyncStorage.getItem('recentSearches');
+    if (recentSearches) {
+      setRecent(JSON.parse(recentSearches));
+    }
+  };
+
+  const handleSearch = async (searchText = query) => {
+    if (!searchText.trim()) return;
+
+    saveRecentSearch(searchText);
+    navigation.navigate('seedList', {
+      mode: 'search',
+      searchKeyword: searchText,
+    });
+  };
+
+  const saveRecentSearch = async (searchTerm) => {
+    const updatedRecent = recent.filter((item) => item !== searchTerm); // 이미 존재하는 검색어 제거
+    const newRecentSearches = [searchTerm, ...updatedRecent];
+
+    setRecent(newRecentSearches);
+    await AsyncStorage.setItem(
+      'recentSearches',
+      JSON.stringify(newRecentSearches),
+    );
+  };
+
+  const clearAll = async () => {
+    await AsyncStorage.removeItem('recentSearches');
+    setRecent([]);
+  };
+
+  const removeItem = async (term) => {
+    const updatedRecent = recent.filter((it) => it !== term);
+    setRecent(updatedRecent);
+    await AsyncStorage.setItem('recentSearches', JSON.stringify(updatedRecent));
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -41,10 +68,11 @@ export default function Search() {
             <Ionicons name="search-outline" size={20} color="#9f9f9f" />
             <TextInput
               style={styles.searchInput}
-              placeholder="씨드 제목과 메모를 검색해보세요"
+              placeholder="찾고 싶은 씨드를 검색하세요."
               placeholderTextColor="#9f9f9f"
               value={query}
               onChangeText={setQuery}
+              onSubmitEditing={() => handleSearch(query)}
             />
           </View>
           <TouchableOpacity
@@ -56,14 +84,33 @@ export default function Search() {
         </View>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>최근 검색어</Text>
-          <TouchableOpacity onPress={() => {}}>
-            <Text style={styles.clearAll}>비우기</Text>
-          </TouchableOpacity>
+          {recent.length > 0 && (
+            <TouchableOpacity onPress={clearAll}>
+              <Text style={styles.clearAll}>비우기</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <FlatList
           data={recent}
           keyExtractor={(item, idx) => `${item}-${idx}`}
-          renderItem={renderItem}
+          renderItem={({ item }) => (
+            <View style={styles.itemRow}>
+              <TouchableOpacity
+                style={styles.searchTermTouchable}
+                onPress={() => {
+                  setQuery(item);
+                  handleSearch(item);
+                }}
+              >
+                <Text style={styles.itemText} numberOfLines={1}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => removeItem(item)}>
+                <Ionicons name="close" size={16} color="#4f4f4f" />
+              </TouchableOpacity>
+            </View>
+          )}
           keyboardShouldPersistTaps="handled"
         />
       </View>

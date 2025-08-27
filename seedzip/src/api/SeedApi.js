@@ -70,3 +70,16 @@ export const deleteSeed = async (seedId) => {
     console.error('씨드 삭제 error:', error);
   }
 };
+
+export const searchSeeds = async (tags, keyword) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.post('/api/v1/seed/filtering', {
+      tags,
+      keyword,
+    });
+    return response.data.results;
+  } catch (error) {
+    console.error('전체 씨드 필터링 및 검색 error:', error);
+  }
+};

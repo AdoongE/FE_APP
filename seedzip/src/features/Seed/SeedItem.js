@@ -19,6 +19,7 @@ const SeedItem = ({
   deleteMode = false,
   isSelected = false,
   onCheckSelect,
+  searchKeyword = '',
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const { seedActions, SeedActionModals } = useSeedActions({
@@ -26,6 +27,43 @@ const SeedItem = ({
       onDeleteSuccess(seed.seedId);
     },
   });
+
+  // 검색어가 포함된 단어 추출
+  const highlightText = (text, keyword) => {
+    if (!keyword || !text)
+      return (
+        <Text style={styles.seedDetail} numberOfLines={1}>
+          {text}
+        </Text>
+      );
+
+    const lowerText = text.toLowerCase();
+    const lowerKeyword = keyword.toLowerCase();
+    const keywordIndex = lowerText.indexOf(lowerKeyword);
+
+    const startIndex = Math.max(0, keywordIndex - 15);
+    const endIndex = Math.min(text.length, keywordIndex + keyword.length + 15);
+    let contextText = text.substring(startIndex, endIndex);
+
+    if (startIndex > 0) contextText = '...' + contextText;
+    if (endIndex < text.length) contextText = contextText + '...';
+
+    const parts = contextText.split(new RegExp(`(${keyword})`, 'gi'));
+
+    return (
+      <Text style={styles.seedDetail} numberOfLines={2}>
+        {parts.map((part, i) =>
+          part.toLowerCase() === keyword.toLowerCase() ? (
+            <Text key={i} style={styles.highlight}>
+              {part}
+            </Text>
+          ) : (
+            part
+          ),
+        )}
+      </Text>
+    );
+  };
 
   return (
     <>
@@ -65,6 +103,13 @@ const SeedItem = ({
           <Text style={styles.seedCategory} numberOfLines={1}>
             {seed.categoryName}
           </Text>
+
+          {/* 메모 강조 표시 */}
+          {searchKeyword && seed.seedDetail && (
+            <View style={styles.detailContainer}>
+              {highlightText(seed.seedDetail, searchKeyword)}
+            </View>
+          )}
 
           <View style={styles.tagRow}>
             {seed.tagName?.map((tag, index) => (
@@ -146,6 +191,18 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#9f9f9f',
     marginTop: 4,
+  },
+  detailContainer: {
+    marginTop: 8,
+  },
+  seedDetail: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: '#9f9f9f',
+  },
+  highlight: {
+    color: '#41C3AB',
+    fontWeight: '500',
   },
   tagRow: { flexDirection: 'row', gap: 4, marginTop: 28, flexWrap: 'wrap' },
   tag: {

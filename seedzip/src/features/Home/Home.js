@@ -172,7 +172,10 @@ export default function Home({ navigation }) {
                 navigation?.navigate?.('category', { showBookmarkFull: true })
               }
             >
-              <Text style={styles.moreCategory}>카테고리 더보기 &gt;</Text>
+              <View style={styles.headerRow}>
+                <Text style={styles.moreCategory}>카테고리 더보기</Text>
+                <Ionicons name="chevron-forward" size={12} color="#9f9f9f" />
+              </View>
             </Pressable>
           </View>
         </View>
@@ -334,7 +337,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionTitle: { fontSize: 16, fontWeight: '600' },
-  moreCategory: { fontSize: 12, color: '#9f9f9f' },
+  moreCategory: { fontSize: 12, color: '#9f9f9f', marginRight: 2 },
 
   emptyBookmarkContainer: {
     backgroundColor: '#f8fbfb',

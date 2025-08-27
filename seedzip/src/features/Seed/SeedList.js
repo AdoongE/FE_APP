@@ -16,6 +16,7 @@ import {
   getCategorySeeds,
   getPopularSeeds,
   getUnreadSeeds,
+  searchSeeds,
 } from '../../api/SeedApi';
 import SeedItem from './SeedItem';
 import FilterModal from './FilterModal';
@@ -25,6 +26,7 @@ const SeedList = ({ navigation, route }) => {
   const mode = route?.params?.mode || 'all';
   const categoryId = route?.params?.categoryId;
   const categoryName = route?.params?.categoryName;
+  const searchKeyword = route?.params?.searchKeyword || '';
 
   const [seeds, setSeeds] = useState([]);
   const [searchText, setSearchText] = useState('');
@@ -62,6 +64,12 @@ const SeedList = ({ navigation, route }) => {
   }, [mode, navigation]);
 
   useEffect(() => {
+    if (mode === 'search' && searchKeyword) {
+      setSearchText(searchKeyword);
+    }
+  }, [mode, searchKeyword]);
+
+  useEffect(() => {
     fetchSeeds();
   }, []);
 
@@ -73,6 +81,8 @@ const SeedList = ({ navigation, route }) => {
       response = await getPopularSeeds();
     } else if (mode === 'category' && categoryId) {
       response = await getCategorySeeds(categoryId);
+    } else if (mode === 'search' && searchKeyword) {
+      response = await searchSeeds([], searchKeyword);
     } else {
       response = await getUnreadSeeds();
     }
@@ -85,6 +95,7 @@ const SeedList = ({ navigation, route }) => {
       seedType: item.seedType,
       thumbnailImage: item.thumbnailImage,
       tagName: item.tagName,
+      seedDetail: item.seedDetail,
     }));
     setSeeds(seedData);
   };
@@ -146,11 +157,6 @@ const SeedList = ({ navigation, route }) => {
     return (
       seeds
         .filter((seed) => {
-          // TODO: 검색어 필터링
-          const matchesSearch =
-            searchText === '' ||
-            seed.seedName.toLowerCase().includes(searchText.toLowerCase());
-
           // TODO: 태그 필터링
           const matchesTags =
             selectedTags.length === 0 ||
@@ -158,7 +164,7 @@ const SeedList = ({ navigation, route }) => {
               selectedTags.some((tag) => seed.tagName.includes(tag)));
           // 저장형식 필터링
           const matchesType = !selectedType || seed.seedType === selectedType;
-          return matchesSearch && matchesTags && matchesType;
+          return matchesTags && matchesType;
         })
         // 정렬 필터링
         .sort((a, b) => {
@@ -173,19 +179,24 @@ const SeedList = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginHorizontal: 20 }}>
-        {(mode === 'all' || mode === 'category') && (
+        {(mode === 'all' || mode === 'category' || mode === 'search') && (
           <>
             {/* 검색창 */}
-            <View style={styles.searchContainer}>
+            <TouchableOpacity
+              style={styles.searchContainer}
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('search')}
+            >
               <Ionicons name="search-outline" size={20} color="#9f9f9f" />
               <TextInput
                 style={styles.searchInput}
-                placeholder="씨드 제목과 메모를 검색해보세요"
+                placeholder="찾고 싶은 씨드를 검색하세요."
                 placeholderTextColor="#9f9f9f"
                 value={searchText}
-                onChangeText={setSearchText}
+                editable={false}
+                pointerEvents="none"
               />
-            </View>
+            </TouchableOpacity>
             <View style={styles.line} />
             {/* 태그 선택 */}
             <View style={styles.rowContainer}>
@@ -250,6 +261,7 @@ const SeedList = ({ navigation, route }) => {
               deleteMode={deleteMode}
               isSelected={selectedSeedIds.includes(item.seedId)}
               onCheckSelect={checkSeedSelection}
+              searchKeyword={mode === 'search' ? searchKeyword : ''}
             />
           )}
           contentContainerStyle={styles.listContainer}
