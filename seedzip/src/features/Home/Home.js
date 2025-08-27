@@ -18,6 +18,7 @@ import { getAllSeeds } from '../../api/SeedApi';
 import { getUserSeedInfo, getBookmark } from '../../api/CategoryApi';
 import useCategoryActions from '../../hooks/useCategoryActions';
 import SeedItem from '../Seed/SeedItem';
+import Spinner from '../../components/Spinner';
 
 export default function Home({ navigation }) {
   const [seeds, setSeeds] = useState([]);
@@ -102,11 +103,7 @@ export default function Home({ navigation }) {
   );
 
   if (loading) {
-    return (
-      <View style={styles.containerCenter}>
-        <ActivityIndicator size="large" color="#41C3AB" />
-      </View>
-    );
+    return <Spinner />;
   }
 
   return (
@@ -254,12 +251,6 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  containerCenter: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#FFFFFF',
   },
   topBar: {

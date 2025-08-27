@@ -2,7 +2,6 @@ import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   View,
   Text,
-  Image,
   TextInput,
   TouchableOpacity,
   FlatList,
@@ -27,6 +26,7 @@ import FilterModal from './FilterModal';
 import UnreadDeleteBtn from './UnreadDeleteBtn';
 import BottomNav from '../../components/BottomNav';
 import EmptyView from './EmptyView';
+import Spinner from '../../components/Spinner';
 
 const SeedList = ({ navigation, route }) => {
   const mode = route?.params?.mode || 'all';
@@ -34,6 +34,7 @@ const SeedList = ({ navigation, route }) => {
   const categoryName = route?.params?.categoryName;
   const searchKeyword = route?.params?.searchKeyword || '';
 
+  const [loading, setLoading] = useState(true);
   const [addSeedModalVisible, setAddSeedModalVisible] = useState(false);
   const [seeds, setSeeds] = useState([]);
   const [searchText, setSearchText] = useState('');
@@ -97,53 +98,59 @@ const SeedList = ({ navigation, route }) => {
 
   useEffect(() => {
     fetchSeeds();
-  }, []);
+  }, [mode]);
 
   const fetchSeeds = async () => {
+    setLoading(true);
     let response;
+    try {
+      switch (mode) {
+        case 'unread':
+          response = await getUnreadSeeds();
+          break;
+        case 'popular':
+          response = await getPopularSeeds();
+          break;
+        case 'category':
+          response = await getCategorySeeds(categoryId);
+          break;
+        case 'favorite':
+          response = await getFavoriteSeeds();
+          break;
+        case 'search':
+          response = await searchSeeds(selectedTags, searchKeyword);
+          break;
+        case 'categorySearch':
+          response = await searchCategorySeeds(
+            categoryId,
+            selectedTags,
+            searchKeyword,
+          );
+          break;
+        case 'favoriteSearch':
+          response = await searchFavoriteSeeds(searchKeyword);
+          break;
+        default:
+          response = await getAllSeeds();
+          break;
+      }
 
-    switch (mode) {
-      case 'unread':
-        response = await getUnreadSeeds();
-        break;
-      case 'popular':
-        response = await getPopularSeeds();
-        break;
-      case 'category':
-        response = await getCategorySeeds(categoryId);
-        break;
-      case 'favorite':
-        response = await getFavoriteSeeds();
-        break;
-      case 'search':
-        response = await searchSeeds(selectedTags, searchKeyword);
-        break;
-      case 'categorySearch':
-        response = await searchCategorySeeds(
-          categoryId,
-          selectedTags,
-          searchKeyword,
-        );
-        break;
-      case 'favoriteSearch':
-        response = await searchFavoriteSeeds(searchKeyword);
-        break;
-      default:
-        response = await getAllSeeds();
-        break;
+      const seedData = response[0].seedInfoList.map((item) => ({
+        seedId: item.seedId,
+        seedName: item.seedName,
+        categoryName: item.categoryName,
+        seedType: item.seedType,
+        thumbnailImage: item.thumbnailImage,
+        tagName: item.tagName,
+        seedDetail: item.seedDetail,
+        isFavorite: item.isSaved,
+      }));
+      setSeeds(seedData);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-
-    const seedData = response[0].seedInfoList.map((item) => ({
-      seedId: item.seedId,
-      seedName: item.seedName,
-      categoryName: item.categoryName,
-      seedType: item.seedType,
-      thumbnailImage: item.thumbnailImage,
-      tagName: item.tagName,
-      seedDetail: item.seedDetail,
-      isFavorite: item.isSaved,
-    }));
-    setSeeds(seedData);
   };
 
   useLayoutEffect(() => {
@@ -229,6 +236,10 @@ const SeedList = ({ navigation, route }) => {
   };
 
   const isEmpty = filteredSeeds().length == 0;
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
