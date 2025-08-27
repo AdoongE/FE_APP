@@ -74,7 +74,7 @@ export default function Search({ route }) {
             <Ionicons name="search-outline" size={20} color="#9f9f9f" />
             <TextInput
               style={styles.searchInput}
-              placeholder="찾고 싶은 씨드를 검색하세요."
+              placeholder="씨드 제목과 메모를 검색해보세요"
               placeholderTextColor="#9f9f9f"
               value={query}
               onChangeText={setQuery}

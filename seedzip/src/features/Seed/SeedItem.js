@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
   Pressable,
@@ -12,6 +12,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { Ionicons } from '@expo/vector-icons';
 import ActionModal from '../../components/ActionModal';
 import useSeedActions from '../../hooks/useSeedActions';
+import { postFavoriteSeed } from '../../api/SeedApi';
 
 const SeedItem = ({
   seed,
@@ -25,6 +26,7 @@ const SeedItem = ({
   const navigation = useNavigation();
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(seed.isFavorite || false);
   const { seedActions, SeedActionModals } = useSeedActions({
     onDeleteSuccess: () => {
       onDeleteSuccess(seed.seedId);
@@ -69,6 +71,15 @@ const SeedItem = ({
     );
   };
 
+  const onFavorite = async () => {
+    await postFavoriteSeed(seed.seedId);
+    setIsFavorite(!isFavorite);
+  };
+
+  useEffect(() => {
+    setIsFavorite(seed.isFavorite);
+  }, [seed.isFavorite]);
+
   return (
     <>
       <Pressable key={seed.seedId} style={styles.seedRow} onPress={onPress}>
@@ -93,9 +104,18 @@ const SeedItem = ({
 
         <View style={{ flex: 1 }}>
           <View style={styles.topContainer}>
-            <Text style={styles.seedTitle} numberOfLines={1}>
-              {seed.seedName}
-            </Text>
+            <View style={styles.titleContainer}>
+              <Text style={styles.seedTitle} numberOfLines={1}>
+                {seed.seedName}
+              </Text>
+              <TouchableOpacity onPress={onFavorite}>
+                <Ionicons
+                  name={isFavorite ? 'star' : 'star-outline'}
+                  size={12}
+                  color={isFavorite ? '#41C3AB' : '#4f4f4f'}
+                />
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity
               onPress={() => setModalVisible(true)}
               hitSlop={10}
@@ -185,10 +205,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    maxWidth: 220,
+  },
   seedTitle: {
     fontSize: 14,
     fontWeight: '500',
-    flex: 1,
+    marginRight: 4,
   },
   seedCategory: {
     fontSize: 10,

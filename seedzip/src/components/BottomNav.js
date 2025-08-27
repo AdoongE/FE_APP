@@ -109,7 +109,10 @@ export default function BottomNav({
 
       <TouchableOpacity
         style={styles.navButton}
-        onPress={() => handleTabPress('favorite')}
+        onPress={() => {
+          setActiveTab('favorite');
+          navigation.navigate('seedList', { mode: 'favorite' });
+        }}
       >
         <Ionicons
           name={activeTab === 'favorite' ? 'star' : 'star-outline'}

@@ -18,10 +18,12 @@ import {
   getUnreadSeeds,
   searchSeeds,
   searchCategorySeeds,
+  getFavoriteSeeds,
 } from '../../api/SeedApi';
 import SeedItem from './SeedItem';
 import FilterModal from './FilterModal';
 import UnreadDeleteBtn from './UnreadDeleteBtn';
+import BottomNav from '../../components/BottomNav';
 
 const SeedList = ({ navigation, route }) => {
   const mode = route?.params?.mode || 'all';
@@ -29,6 +31,7 @@ const SeedList = ({ navigation, route }) => {
   const categoryName = route?.params?.categoryName;
   const searchKeyword = route?.params?.searchKeyword || '';
 
+  const [addSeedModalVisible, setAddSeedModalVisible] = useState(false);
   const [seeds, setSeeds] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
@@ -54,12 +57,23 @@ const SeedList = ({ navigation, route }) => {
 
   useEffect(() => {
     let title = '전체 씨드';
-    if (mode === 'popular') {
-      title = '많이 찾는 씨드';
-    } else if (mode === 'unread') {
-      title = '읽지 않은 씨드';
-    } else if (mode === 'category' || mode === 'categorySearch') {
-      title = categoryName;
+
+    switch (mode) {
+      case 'popular':
+        title = '많이 찾는 씨드';
+        break;
+      case 'unread':
+        title = '읽지 않은 씨드';
+        break;
+      case 'category':
+        title = categoryName;
+        break;
+      case 'categorySearch':
+        title = categoryName;
+        break;
+      case 'favorite':
+        title = '즐겨찾기';
+        break;
     }
     navigation.setOptions({ headerTitle: title });
   }, [mode, navigation]);
@@ -87,6 +101,9 @@ const SeedList = ({ navigation, route }) => {
       case 'category':
         response = await getCategorySeeds(categoryId);
         break;
+      case 'favorite':
+        response = await getFavoriteSeeds();
+        break;
       case 'search':
         response = await searchSeeds(selectedTags, searchKeyword);
         break;
@@ -110,6 +127,7 @@ const SeedList = ({ navigation, route }) => {
       thumbnailImage: item.thumbnailImage,
       tagName: item.tagName,
       seedDetail: item.seedDetail,
+      isFavorite: item.isSaved,
     }));
     setSeeds(seedData);
   };
@@ -213,7 +231,7 @@ const SeedList = ({ navigation, route }) => {
               <Ionicons name="search-outline" size={20} color="#9f9f9f" />
               <TextInput
                 style={styles.searchInput}
-                placeholder="찾고 싶은 씨드를 검색하세요."
+                placeholder="씨드 제목과 메모를 검색해보세요"
                 placeholderTextColor="#9f9f9f"
                 value={searchText}
                 editable={false}
@@ -319,6 +337,10 @@ const SeedList = ({ navigation, route }) => {
         initialType={selectedType}
         initialSort={selectedSort}
         onApply={applyFilters}
+      />
+      <BottomNav
+        addSeedModalVisible={addSeedModalVisible}
+        setAddSeedModalVisible={setAddSeedModalVisible}
       />
     </SafeAreaView>
   );

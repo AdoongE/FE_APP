@@ -96,3 +96,36 @@ export const searchCategorySeeds = async (categoryId, tags, keyword) => {
     console.error('카테고리 내 필터링 및 검색 error:', error);
   }
 };
+
+export const searchFavoriteSeeds = async (tags, keyword) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.post('/api/v1/seed/filtering', {
+      tags,
+      keyword,
+    });
+    return response.data.results;
+  } catch (error) {
+    console.error('즐겨찾기 내 필터링 및 검색 error:', error);
+  }
+};
+
+export const postFavoriteSeed = async (seedId) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.post(`/api/v1/bookmark/seed/${seedId}`);
+    return response.data.results;
+  } catch (error) {
+    console.error('씨드 즐겨찾기 추가 error:', error);
+  }
+};
+
+export const getFavoriteSeeds = async () => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.get('/api/v1/bookmark/seed');
+    return response.data.results;
+  } catch (error) {
+    console.error('즐겨찾기 한 씨드 조회 error:', error);
+  }
+};

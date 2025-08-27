@@ -113,7 +113,9 @@ const Category = ({ route }) => {
     <>
       <ScrollView
         style={styles.container}
-        contentContainerStyle={styles.contentContainer}
+        contentContainerStyle={{
+          paddingBottom: 150,
+        }}
       >
         <AllCategory onAddCategory={handleAddCategory} />
         <View style={styles.categoryWrapper}>

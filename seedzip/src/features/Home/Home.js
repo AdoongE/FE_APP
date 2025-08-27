@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   ActivityIndicator,
@@ -66,7 +66,7 @@ export default function Home({ navigation }) {
   );
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       const fetchSeeds = async () => {
         const resAllSeeds = await getAllSeeds();
         const seedData = resAllSeeds[0].seedInfoList.map((item) => ({
@@ -76,6 +76,7 @@ export default function Home({ navigation }) {
           seedType: item.seedType,
           thumbnailImage: item.thumbnailImage,
           tagName: item.tagName,
+          isFavorite: item.isSaved,
         }));
         setSeeds(seedData);
         setLoading(false);
