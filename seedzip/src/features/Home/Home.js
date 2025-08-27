@@ -226,7 +226,7 @@ export default function Home({ navigation }) {
                 onPress={() =>
                   navigation.navigate('view', {
                     seedId: seed.seedId,
-                    isLink: true,
+                    isOpen: true,
                   })
                 }
                 onDeleteSuccess={(deletedId) => {

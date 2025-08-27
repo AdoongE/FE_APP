@@ -19,7 +19,7 @@ import useSeedActions from '../../hooks/useSeedActions';
 
 function ViewSeed({ route }) {
   const navigation = useNavigation();
-  const { seedId, isLink } = route.params;
+  const { seedId, isOpen } = route.params;
 
   const { openDeleteModal, SeedActionModals } = useSeedActions({ navigation });
 
@@ -60,12 +60,16 @@ function ViewSeed({ route }) {
   };
 
   useEffect(() => {
-    if (seedInfo && isLink) {
+    // seed item 클릭 시, 해당 링크로 이동
+    if (seedInfo && isOpen) {
       if (seedInfo.seedType === 'LINK' && seedInfo.seedLink) {
         handleLinkClick(seedInfo.seedLink);
       }
     }
-  }, [seedInfo, isLink, navigation]);
+    if (seedInfo.seedType !== 'LINK' && isOpen) {
+      openModal('justOpenThumbnailModal');
+    }
+  }, [seedInfo, isOpen, navigation]);
 
   const handleViewSeed = async () => {
     const resSeed = await getSeed(seedId);

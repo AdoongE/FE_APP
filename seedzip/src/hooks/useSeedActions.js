@@ -77,7 +77,7 @@ const useSeedActions = ({ onDeleteSuccess, navigation }) => {
       icon: <Feather name="more-horizontal" size={20} />,
       label: '세부 정보 보기',
       onPress: () => {
-        navigation.navigate('view', { seedId: seed.seedId, isLink: false });
+        navigation.navigate('view', { seedId: seed.seedId, isOpen: false });
       },
     },
     {
