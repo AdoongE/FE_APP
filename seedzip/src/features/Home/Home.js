@@ -71,9 +71,7 @@ export default function Home({ navigation }) {
         const resAllSeeds = await getAllSeeds();
         const seedData = resAllSeeds[0].seedInfoList.map((item) => ({
           seedId: item.seedId,
-          seedName:
-            item.seedName ||
-            new Date(item.updatedDt).toISOString().split('T')[0],
+          seedName: item.seedName,
           categoryName: item.categoryName,
           seedType: item.seedType,
           thumbnailImage: item.thumbnailImage,

@@ -17,6 +17,7 @@ import {
   getPopularSeeds,
   getUnreadSeeds,
   searchSeeds,
+  searchCategorySeeds,
 } from '../../api/SeedApi';
 import SeedItem from './SeedItem';
 import FilterModal from './FilterModal';
@@ -57,14 +58,14 @@ const SeedList = ({ navigation, route }) => {
       title = '많이 찾는 씨드';
     } else if (mode === 'unread') {
       title = '읽지 않은 씨드';
-    } else if (mode === 'category') {
+    } else if (mode === 'category' || mode === 'categorySearch') {
       title = categoryName;
     }
     navigation.setOptions({ headerTitle: title });
   }, [mode, navigation]);
 
   useEffect(() => {
-    if (mode === 'search' && searchKeyword) {
+    if ((mode === 'search' || mode === 'categorySearch') && searchKeyword) {
       setSearchText(searchKeyword);
     }
   }, [mode, searchKeyword]);
@@ -75,22 +76,35 @@ const SeedList = ({ navigation, route }) => {
 
   const fetchSeeds = async () => {
     let response;
-    if (mode === 'all') {
-      response = await getAllSeeds();
-    } else if (mode === 'popular') {
-      response = await getPopularSeeds();
-    } else if (mode === 'category' && categoryId) {
-      response = await getCategorySeeds(categoryId);
-    } else if (mode === 'search' && searchKeyword) {
-      response = await searchSeeds([], searchKeyword);
-    } else {
-      response = await getUnreadSeeds();
+
+    switch (mode) {
+      case 'unread':
+        response = await getUnreadSeeds();
+        break;
+      case 'popular':
+        response = await getPopularSeeds();
+        break;
+      case 'category':
+        response = await getCategorySeeds(categoryId);
+        break;
+      case 'search':
+        response = await searchSeeds(selectedTags, searchKeyword);
+        break;
+      case 'categorySearch':
+        response = await searchCategorySeeds(
+          categoryId,
+          selectedTags,
+          searchKeyword,
+        );
+        break;
+      default:
+        response = await getAllSeeds();
+        break;
     }
 
     const seedData = response[0].seedInfoList.map((item) => ({
       seedId: item.seedId,
-      seedName:
-        item.seedName || new Date(item.updatedDt).toISOString().split('T')[0],
+      seedName: item.seedName,
       categoryName: item.categoryName,
       seedType: item.seedType,
       thumbnailImage: item.thumbnailImage,
@@ -179,13 +193,22 @@ const SeedList = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginHorizontal: 20 }}>
-        {(mode === 'all' || mode === 'category' || mode === 'search') && (
+        {(mode === 'all' ||
+          mode === 'category' ||
+          mode === 'search' ||
+          mode === 'categorySearch') && (
           <>
             {/* 검색창 */}
             <TouchableOpacity
               style={styles.searchContainer}
               activeOpacity={0.7}
-              onPress={() => navigation.navigate('search')}
+              onPress={() =>
+                navigation.navigate('search', {
+                  returnMode: mode === 'category' ? 'categorySearch' : 'search',
+                  categoryId: mode === 'category' ? categoryId : null,
+                  categoryName: mode === 'category' ? categoryName : null,
+                })
+              }
             >
               <Ionicons name="search-outline" size={20} color="#9f9f9f" />
               <TextInput
@@ -261,7 +284,11 @@ const SeedList = ({ navigation, route }) => {
               deleteMode={deleteMode}
               isSelected={selectedSeedIds.includes(item.seedId)}
               onCheckSelect={checkSeedSelection}
-              searchKeyword={mode === 'search' ? searchKeyword : ''}
+              searchKeyword={
+                mode === 'search' || mode === 'categorySearch'
+                  ? searchKeyword
+                  : ''
+              }
             />
           )}
           contentContainerStyle={styles.listContainer}

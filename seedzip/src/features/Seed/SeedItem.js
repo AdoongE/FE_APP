@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   Pressable,
   View,
@@ -21,11 +22,14 @@ const SeedItem = ({
   onCheckSelect,
   searchKeyword = '',
 }) => {
+  const navigation = useNavigation();
+
   const [modalVisible, setModalVisible] = useState(false);
   const { seedActions, SeedActionModals } = useSeedActions({
     onDeleteSuccess: () => {
       onDeleteSuccess(seed.seedId);
     },
+    navigation,
   });
 
   // 검색어가 포함된 단어 추출

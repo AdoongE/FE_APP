@@ -83,3 +83,16 @@ export const searchSeeds = async (tags, keyword) => {
     console.error('전체 씨드 필터링 및 검색 error:', error);
   }
 };
+
+export const searchCategorySeeds = async (categoryId, tags, keyword) => {
+  try {
+    const axios = await axiosInstance();
+    const response = await axios.post(`/api/v1/seed/filtering/${categoryId}`, {
+      tags,
+      keyword,
+    });
+    return response.data.results;
+  } catch (error) {
+    console.error('카테고리 내 필터링 및 검색 error:', error);
+  }
+};

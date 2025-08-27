@@ -12,10 +12,14 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Search() {
+export default function Search({ route }) {
   const navigation = useNavigation();
   const [query, setQuery] = useState('');
   const [recent, setRecent] = useState([]);
+
+  const returnMode = route.params?.returnMode || 'search';
+  const categoryId = route.params?.categoryId;
+  const categoryName = route.params?.categoryName;
 
   useEffect(() => {
     loadRecentSearches();
@@ -33,8 +37,10 @@ export default function Search() {
 
     saveRecentSearch(searchText);
     navigation.navigate('seedList', {
-      mode: 'search',
+      mode: returnMode,
       searchKeyword: searchText,
+      categoryId,
+      categoryName,
     });
   };
 
