@@ -1,7 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import {
-  ActivityIndicator,
   Image,
   Pressable,
   ScrollView,
@@ -225,7 +224,10 @@ export default function Home({ navigation }) {
                 key={seed.seedId}
                 seed={seed}
                 onPress={() =>
-                  navigation?.navigate?.('view', { seedId: seed.seedId })
+                  navigation.navigate('view', {
+                    seedId: seed.seedId,
+                    isLink: true,
+                  })
                 }
                 onDeleteSuccess={(deletedId) => {
                   setSeeds((prev) =>

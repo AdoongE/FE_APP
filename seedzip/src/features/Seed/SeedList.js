@@ -352,7 +352,10 @@ const SeedList = ({ navigation, route }) => {
             <SeedItem
               seed={item}
               onPress={() =>
-                navigation.navigate('view', { seedId: item.seedId })
+                navigation.navigate('view', {
+                  seedId: item.seedId,
+                  isLink: true,
+                })
               }
               onDeleteSuccess={(deletedId) => {
                 setSeeds((prev) =>

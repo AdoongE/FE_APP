@@ -17,9 +17,9 @@ import ThumbnailModal from './ThumbnailModal';
 import { getSeed } from '../../api/SeedApi';
 import useSeedActions from '../../hooks/useSeedActions';
 
-function ViewContent({ route }) {
+function ViewSeed({ route }) {
   const navigation = useNavigation();
-  const seedId = route.params;
+  const { seedId, isLink } = route.params;
 
   const { openDeleteModal, SeedActionModals } = useSeedActions({ navigation });
 
@@ -42,8 +42,8 @@ function ViewContent({ route }) {
   const closeModal = () => setSelectedFile(null);
 
   useEffect(() => {
-    handleViewContent();
-  }, []);
+    handleViewSeed();
+  }, [seedId]);
 
   useEffect(() => {
     if (seedInfo.dDay) {
@@ -59,31 +59,34 @@ function ViewContent({ route }) {
     setRemainingDays(dayDiff);
   };
 
-  const handleViewContent = async () => {
-    try {
-      const resSeed = await getSeed(seedId.seedId);
-      const seedData = resSeed[0];
-      setSeedInfo({
-        seedId: seedData.seedId,
-        seedType: seedData.seedType,
-        seedName: seedData.seedName,
-        seedLink: seedData.seedLink,
-        fileLinks: seedData.fileLinks,
-        thumbnailImage: seedData.thumbnailImage,
-        tagName: seedData.tagName,
-        categoryName: seedData.categoryName,
-        dDay: seedData.dDay,
-        seedDetail: seedData.seedDetail,
-        filename: seedData.title,
-      });
-    } catch (error) {
-      console.error('Error fetching seed:', error);
+  useEffect(() => {
+    if (seedInfo && isLink) {
+      if (seedInfo.seedType === 'LINK' && seedInfo.seedLink) {
+        handleLinkClick(seedInfo.seedLink);
+      }
     }
+  }, [seedInfo, isLink, navigation]);
+
+  const handleViewSeed = async () => {
+    const resSeed = await getSeed(seedId);
+    const seedData = resSeed[0];
+    setSeedInfo({
+      seedId: seedData.seedId,
+      seedType: seedData.seedType,
+      seedName: seedData.seedName,
+      seedLink: seedData.seedLink,
+      fileLinks: seedData.fileLinks,
+      thumbnailImage: seedData.thumbnailImage,
+      tagName: seedData.tagName,
+      categoryName: seedData.categoryName,
+      dDay: seedData.dDay,
+      seedDetail: seedData.seedDetail,
+      filename: seedData.title,
+    });
   };
 
   const handleLinkClick = (url) => {
     Linking.openURL(url);
-    console.log('링크 클릭');
   };
 
   const handleCopyLink = (url) => {
@@ -473,4 +476,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewContent;
+export default ViewSeed;
