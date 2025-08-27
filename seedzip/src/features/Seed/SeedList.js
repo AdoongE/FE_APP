@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   View,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
   FlatList,
@@ -25,6 +26,7 @@ import SeedItem from './SeedItem';
 import FilterModal from './FilterModal';
 import UnreadDeleteBtn from './UnreadDeleteBtn';
 import BottomNav from '../../components/BottomNav';
+import EmptyView from './EmptyView';
 
 const SeedList = ({ navigation, route }) => {
   const mode = route?.params?.mode || 'all';
@@ -226,93 +228,111 @@ const SeedList = ({ navigation, route }) => {
     );
   };
 
+  const isEmpty = filteredSeeds().length == 0;
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginHorizontal: 20 }}>
-        {(mode === 'all' ||
-          mode === 'category' ||
-          mode === 'search' ||
-          mode === 'categorySearch' ||
-          mode === 'favorite' ||
-          mode === 'favoriteSearch') && (
+        {!isEmpty && (
           <>
-            {/* 검색창 */}
-            <TouchableOpacity
-              style={styles.searchContainer}
-              activeOpacity={0.7}
-              onPress={() =>
-                navigation.navigate('search', {
-                  returnMode:
-                    mode === 'category'
-                      ? 'categorySearch'
-                      : mode === 'favorite'
-                      ? 'favoriteSearch'
-                      : 'search',
-                  categoryId: mode === 'category' ? categoryId : null,
-                  categoryName: mode === 'category' ? categoryName : null,
-                })
-              }
-            >
-              <Ionicons name="search-outline" size={20} color="#9f9f9f" />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="씨드 제목과 메모를 검색해보세요"
-                placeholderTextColor="#9f9f9f"
-                value={searchText}
-                editable={false}
-                pointerEvents="none"
-              />
-            </TouchableOpacity>
-            {mode !== 'favorite' && mode != 'favoriteSearch' && (
+            {(mode === 'all' ||
+              mode === 'category' ||
+              mode === 'search' ||
+              mode === 'categorySearch' ||
+              mode === 'favorite' ||
+              mode === 'favoriteSearch') && (
               <>
-                <View style={styles.line} />
-                {/* 태그 선택 */}
-                <View style={styles.rowContainer}>
-                  <Feather
-                    name="tag"
-                    size={14}
-                    color="#4f4f4f"
-                    style={{ marginTop: 2 }}
+                {/* 검색창 */}
+                <TouchableOpacity
+                  style={styles.searchContainer}
+                  activeOpacity={0.7}
+                  onPress={() =>
+                    navigation.navigate('search', {
+                      returnMode:
+                        mode === 'category'
+                          ? 'categorySearch'
+                          : mode === 'favorite'
+                          ? 'favoriteSearch'
+                          : 'search',
+                      categoryId: mode === 'category' ? categoryId : null,
+                      categoryName: mode === 'category' ? categoryName : null,
+                    })
+                  }
+                >
+                  <Ionicons name="search-outline" size={20} color="#9f9f9f" />
+                  <TextInput
+                    style={styles.searchInput}
+                    placeholder="씨드 제목과 메모를 검색해보세요"
+                    placeholderTextColor="#9f9f9f"
+                    value={searchText}
+                    editable={false}
+                    pointerEvents="none"
                   />
-                  <Text style={styles.sectionTitle}>태그 선택</Text>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <View style={styles.tagsContainer}>
-                      {selectedTags.map((tag) => (
-                        <View key={tag} style={styles.tagButton}>
-                          <Text style={styles.tagText}>{tag}</Text>
-                          <TouchableOpacity
-                            key={tag}
-                            onPress={(e) => {
-                              e.stopPropagation();
-                              handleTagRemove(tag);
-                            }}
-                          >
-                            <Ionicons name="close" size={12} color="#4f4f4f" />
-                          </TouchableOpacity>
+                </TouchableOpacity>
+                {mode !== 'favorite' && mode != 'favoriteSearch' && (
+                  <>
+                    <View style={styles.line} />
+                    {/* 태그 선택 */}
+                    <View style={styles.rowContainer}>
+                      <Feather
+                        name="tag"
+                        size={14}
+                        color="#4f4f4f"
+                        style={{ marginTop: 2 }}
+                      />
+                      <Text style={styles.sectionTitle}>태그 선택</Text>
+                      <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                      >
+                        <View style={styles.tagsContainer}>
+                          {selectedTags.map((tag) => (
+                            <View key={tag} style={styles.tagButton}>
+                              <Text style={styles.tagText}>{tag}</Text>
+                              <TouchableOpacity
+                                key={tag}
+                                onPress={(e) => {
+                                  e.stopPropagation();
+                                  handleTagRemove(tag);
+                                }}
+                              >
+                                <Ionicons
+                                  name="close"
+                                  size={12}
+                                  color="#4f4f4f"
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          ))}
                         </View>
-                      ))}
+                      </ScrollView>
                     </View>
-                  </ScrollView>
-                </View>
-                <View style={styles.line} />
-                {/* 저장형식 · 정렬 버튼 */}
-                <View style={styles.filterContainer}>
-                  <TouchableOpacity
-                    style={styles.filterButton}
-                    onPress={() => {
-                      setFilterModalVisible(true);
-                    }}
-                  >
-                    <Text style={styles.filterText}>
-                      {typeText} · {sortText}
-                    </Text>
-                    <Ionicons name="chevron-down" size={14} color="#4f4f4f" />
-                  </TouchableOpacity>
-                </View>
+                    <View style={styles.line} />
+                    {/* 저장형식 · 정렬 버튼 */}
+                    <View style={styles.filterContainer}>
+                      <TouchableOpacity
+                        style={styles.filterButton}
+                        onPress={() => {
+                          setFilterModalVisible(true);
+                        }}
+                      >
+                        <Text style={styles.filterText}>
+                          {typeText} · {sortText}
+                        </Text>
+                        <Ionicons
+                          name="chevron-down"
+                          size={14}
+                          color="#4f4f4f"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
               </>
             )}
           </>
         )}
+
         {/* 씨드 목록 */}
         <FlatList
           data={filteredSeeds()}
@@ -338,7 +358,20 @@ const SeedList = ({ navigation, route }) => {
               }
             />
           )}
-          contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={() => (
+            <EmptyView
+              mode={mode}
+              isEmpty={
+                mode === 'search' ||
+                mode === 'categorySearch' ||
+                mode === 'favoriteSearch'
+              }
+            />
+          )}
+          contentContainerStyle={[
+            styles.listContainer,
+            filteredSeeds().length === 0 && styles.emptyListContainer,
+          ]}
           showsVerticalScrollIndicator={false}
         />
       </View>
@@ -445,6 +478,10 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingHorizontal: 4,
     paddingBottom: 140,
+  },
+  emptyListContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
   },
 });
 
