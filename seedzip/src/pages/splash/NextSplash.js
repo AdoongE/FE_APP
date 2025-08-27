@@ -1,6 +1,6 @@
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import {LinearGradient} from 'expo-linear-gradient';
-import React, {useEffect} from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect } from 'react';
 import seedzip from '../../assets/icons/seedzip.png';
 import newLogo from '../../assets/icons/whiteLogo.png';
 import naver from '../../assets/icons/naver.png';
@@ -64,7 +64,7 @@ const NextSplash = () => {
       } else if (status.code === 404) {
         console.log('회원가입 필요:', status.message);
 
-        const {result: accessToken, socialType} = results[0];
+        const { result: accessToken, socialType } = results[0];
         console.log('액세스 토큰:', accessToken, '소셜 타입:', socialType);
 
         await AsyncStorage.setItem('accessToken', accessToken);
@@ -82,39 +82,56 @@ const NextSplash = () => {
     <View style={styles.container}>
       <View style={StyleSheet.absoluteFill}>
         <LinearGradient
-          colors={['#41C3AB', '#82E9D6']}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 1}}
-          style={styles.gradient}>
+          colors={['#41c3ab', '#82E9D6']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.gradient}
+        >
           <View style={styles.new}>
             <View style={styles.images}>
               <Image source={newLogo} style={styles.newLogo} />
               <Image source={seedzip} style={styles.seedzip} />
             </View>
-            <View style={{transform: [{translateX: 20}]}}>
+            <View style={{ transform: [{ translateX: 20 }] }}>
               <Text style={styles.title}>한 곳에 모으는 인사이트!</Text>
             </View>
           </View>
           <View style={styles.logins}>
             <TouchableOpacity
               type="kakao"
-              style={[styles.button, {backgroundColor: '#FEE500'}]}
-              onPress={handleKakaoLogin}>
-              <MaterialCommunityIcons name="chat" size={12} color="black" />
-              <Text style={{color: 'black'}}>카카오톡으로 로그인하기</Text>
+              style={[styles.button, { backgroundColor: '#FEE500' }]}
+              onPress={handleKakaoLogin}
+            >
+              <MaterialCommunityIcons name="chat" size={14} color="black" />
+              <Text style={{ color: 'black' }}>카카오톡으로 로그인하기</Text>
             </TouchableOpacity>
             <TouchableOpacity
               type="naver"
-              style={[styles.button, {backgroundColor: '#03C75A'}]}>
+              style={[styles.button, { backgroundColor: '#03C75A' }]}
+            >
               <Image source={naver} />
-              <Text style={{color: 'white'}}>네이버로 로그인하기</Text>
+              <Text
+                style={{ color: 'white' }}
+                onPress={() => navigation.navigate('category')}
+              >
+                네이버로 로그인하기
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               type="google"
-              style={[styles.button, {backgroundColor: 'white'}]}
-              onPress={() => navigation.navigate('main')}>
+              style={[styles.button, { backgroundColor: 'white' }]}
+              onPress={() => navigation.navigate('main')}
+            >
               <Image source={google} />
-              <Text style={{color: '#4F4F4F'}}>구글로 로그인하기</Text>
+              <Text style={{ color: '#4F4F4F' }}>구글로 로그인하기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              type="apple"
+              style={[styles.button, { backgroundColor: 'black' }]}
+              onPress={() => navigation.navigate('main')}
+            >
+              <Image source={apple} />
+              <Text style={{ color: '#fff' }}>애플로 로그인하기</Text>
             </TouchableOpacity>
             <TouchableOpacity
               type="apple"
