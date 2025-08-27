@@ -19,6 +19,7 @@ import {
   searchSeeds,
   searchCategorySeeds,
   getFavoriteSeeds,
+  searchFavoriteSeeds,
 } from '../../api/SeedApi';
 import SeedItem from './SeedItem';
 import FilterModal from './FilterModal';
@@ -74,12 +75,20 @@ const SeedList = ({ navigation, route }) => {
       case 'favorite':
         title = '즐겨찾기';
         break;
+      case 'favoriteSearch':
+        title = '즐겨찾기';
+        break;
     }
     navigation.setOptions({ headerTitle: title });
   }, [mode, navigation]);
 
   useEffect(() => {
-    if ((mode === 'search' || mode === 'categorySearch') && searchKeyword) {
+    if (
+      (mode === 'search' ||
+        mode === 'categorySearch' ||
+        mode === 'favoriteSearch') &&
+      searchKeyword
+    ) {
       setSearchText(searchKeyword);
     }
   }, [mode, searchKeyword]);
@@ -113,6 +122,9 @@ const SeedList = ({ navigation, route }) => {
           selectedTags,
           searchKeyword,
         );
+        break;
+      case 'favoriteSearch':
+        response = await searchFavoriteSeeds(searchKeyword);
         break;
       default:
         response = await getAllSeeds();
@@ -214,7 +226,9 @@ const SeedList = ({ navigation, route }) => {
         {(mode === 'all' ||
           mode === 'category' ||
           mode === 'search' ||
-          mode === 'categorySearch') && (
+          mode === 'categorySearch' ||
+          mode === 'favorite' ||
+          mode === 'favoriteSearch') && (
           <>
             {/* 검색창 */}
             <TouchableOpacity
@@ -222,7 +236,12 @@ const SeedList = ({ navigation, route }) => {
               activeOpacity={0.7}
               onPress={() =>
                 navigation.navigate('search', {
-                  returnMode: mode === 'category' ? 'categorySearch' : 'search',
+                  returnMode:
+                    mode === 'category'
+                      ? 'categorySearch'
+                      : mode === 'favorite'
+                      ? 'favoriteSearch'
+                      : 'search',
                   categoryId: mode === 'category' ? categoryId : null,
                   categoryName: mode === 'category' ? categoryName : null,
                 })
@@ -238,50 +257,62 @@ const SeedList = ({ navigation, route }) => {
                 pointerEvents="none"
               />
             </TouchableOpacity>
-            <View style={styles.line} />
-            {/* 태그 선택 */}
-            <View style={styles.rowContainer}>
-              <Feather
-                name="tag"
-                size={14}
-                color="#4f4f4f"
-                style={{ marginTop: 2 }}
-              />
-              <Text style={styles.sectionTitle}>태그 선택</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View style={styles.tagsContainer}>
-                  {selectedTags.map((tag) => (
-                    <View key={tag} style={styles.tagButton}>
-                      <Text style={styles.tagText}>{tag}</Text>
-                      <TouchableOpacity
-                        key={tag}
-                        onPress={(e) => {
-                          e.stopPropagation();
-                          handleTagRemove(tag);
-                        }}
-                      >
-                        <Ionicons name="close" size={12} color="#4f4f4f" />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </View>
-              </ScrollView>
-            </View>
-            <View style={styles.line} />
-            {/* 저장형식 · 정렬 버튼 */}
-            <View style={styles.filterContainer}>
-              <TouchableOpacity
-                style={styles.filterButton}
-                onPress={() => {
-                  setFilterModalVisible(true);
-                }}
-              >
-                <Text style={styles.filterText}>
-                  {typeText} · {sortText}
-                </Text>
-                <Ionicons name="chevron-down" size={14} color="#4f4f4f" />
-              </TouchableOpacity>
-            </View>
+            {mode !== 'favorite' ||
+              (mode !== 'favoriteSearch' && (
+                <>
+                  <View style={styles.line} />
+                  {/* 태그 선택 */}
+                  <View style={styles.rowContainer}>
+                    <Feather
+                      name="tag"
+                      size={14}
+                      color="#4f4f4f"
+                      style={{ marginTop: 2 }}
+                    />
+                    <Text style={styles.sectionTitle}>태그 선택</Text>
+                    <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                    >
+                      <View style={styles.tagsContainer}>
+                        {selectedTags.map((tag) => (
+                          <View key={tag} style={styles.tagButton}>
+                            <Text style={styles.tagText}>{tag}</Text>
+                            <TouchableOpacity
+                              key={tag}
+                              onPress={(e) => {
+                                e.stopPropagation();
+                                handleTagRemove(tag);
+                              }}
+                            >
+                              <Ionicons
+                                name="close"
+                                size={12}
+                                color="#4f4f4f"
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        ))}
+                      </View>
+                    </ScrollView>
+                  </View>
+                  <View style={styles.line} />
+                  {/* 저장형식 · 정렬 버튼 */}
+                  <View style={styles.filterContainer}>
+                    <TouchableOpacity
+                      style={styles.filterButton}
+                      onPress={() => {
+                        setFilterModalVisible(true);
+                      }}
+                    >
+                      <Text style={styles.filterText}>
+                        {typeText} · {sortText}
+                      </Text>
+                      <Ionicons name="chevron-down" size={14} color="#4f4f4f" />
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ))}
           </>
         )}
         {/* 씨드 목록 */}
@@ -379,7 +410,7 @@ const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: -5,
+    marginVertical: -2,
   },
   tagsContainer: {
     flexDirection: 'row',

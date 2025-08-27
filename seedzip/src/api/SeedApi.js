@@ -97,13 +97,12 @@ export const searchCategorySeeds = async (categoryId, tags, keyword) => {
   }
 };
 
-export const searchFavoriteSeeds = async (tags, keyword) => {
+export const searchFavoriteSeeds = async (keyword) => {
   try {
     const axios = await axiosInstance();
-    const response = await axios.post('/api/v1/seed/filtering', {
-      tags,
-      keyword,
-    });
+    const response = await axios.post(
+      `/api/v1/seed/filtering/bookmark?keyword=${keyword}`,
+    );
     return response.data.results;
   } catch (error) {
     console.error('즐겨찾기 내 필터링 및 검색 error:', error);
