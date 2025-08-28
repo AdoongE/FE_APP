@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Image, FlatList, Dimensions } from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  FlatList,
+  Dimensions,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import RNFS from 'react-native-fs';
 
@@ -14,13 +23,15 @@ const ThumbnailModal = ({ visible, onClose, files }) => {
 
   const onSaveSingle = async (fileUrl) => {
     try {
-      const downloadDest = `${RNFS.DocumentDirectoryPath}/${fileUrl.split('/').pop()}`;
-  
+      const downloadDest = `${RNFS.DocumentDirectoryPath}/${fileUrl
+        .split('/')
+        .pop()}`;
+
       const result = await RNFS.downloadFile({
         fromUrl: fileUrl,
         toFile: downloadDest,
       }).promise;
-  
+
       if (result.statusCode === 200) {
         alert('파일이 저장되었습니다: ' + downloadDest);
       } else {
@@ -34,19 +45,21 @@ const ThumbnailModal = ({ visible, onClose, files }) => {
   const onSaveAll = async (fileUrls) => {
     try {
       const savePromises = fileUrls.map(async (fileUrl) => {
-        const downloadDest = `${RNFS.DocumentDirectoryPath}/${fileUrl.split('/').pop()}`;
+        const downloadDest = `${RNFS.DocumentDirectoryPath}/${fileUrl
+          .split('/')
+          .pop()}`;
         const result = await RNFS.downloadFile({
           fromUrl: fileUrl,
           toFile: downloadDest,
         }).promise;
-  
+
         if (result.statusCode !== 200) {
           throw new Error(`파일 저장 실패: 상태 코드 ${result.statusCode}`);
         }
-  
+
         return downloadDest;
       });
-  
+
       const savedFiles = await Promise.all(savePromises);
       alert(`모든 파일 저장 완료:\n${savedFiles.join('\n')}`);
     } catch (error) {
@@ -101,7 +114,7 @@ const ThumbnailModal = ({ visible, onClose, files }) => {
           snapToInterval={width * 0.8 + 20}
           onMomentumScrollEnd={(event) => {
             const index = Math.round(
-              event.nativeEvent.contentOffset.x / (width * 0.8 + 20)
+              event.nativeEvent.contentOffset.x / (width * 0.8 + 20),
             );
             handleSnapToItem(index);
           }}

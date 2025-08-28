@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   ScrollView,
@@ -9,26 +10,30 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Menu, Provider } from 'react-native-paper';
-import { axiosInstance } from '../../api/axios-instance';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { MaterialIcons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import ThumbnailModal from './ThumbnailModal';
+import { getSeed } from '../../api/SeedApi';
+import useSeedActions from '../../hooks/useSeedActions';
 
-function ViewContent({ route }) {
-  const contentId = route.params;
+function ViewSeed({ route }) {
+  const navigation = useNavigation();
+  const { seedId, isOpen } = route.params;
 
-  const [contentInfo, setContentInfo] = useState({
-    contentId: contentId || 0,
-    contentDataType: '',
-    contentName: '',
-    contentLink: '',
-    contentImage: [],
-    contentDoc: [],
+  const { openDeleteModal, SeedActionModals } = useSeedActions({ navigation });
+
+  const [seedInfo, setSeedInfo] = useState({
+    seedId: seedId || 0,
+    seedType: '',
+    seedName: '',
+    seedLink: '',
+    fileLinks: [],
     thumbnailImage: 0,
-    boardCategory: [],
-    tags: [],
-    dday: '',
-    contentDetail: '',
+    categoryName: [],
+    tagName: [],
+    dDay: '',
+    seedDetail: '',
   });
   const [remainingDays, setRemainingDays] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -37,50 +42,55 @@ function ViewContent({ route }) {
   const closeModal = () => setSelectedFile(null);
 
   useEffect(() => {
-    handleViewContent();
-  }, []);
+    handleViewSeed();
+  }, [seedId]);
 
   useEffect(() => {
-    if (contentInfo.dday) {
-      calRemainingDays(contentInfo.dday);
+    if (seedInfo.dDay) {
+      calRemainingDays(seedInfo.dDay);
     }
-  }, [contentInfo.dday]);
+  }, [seedInfo.dDay]);
 
   const calRemainingDays = () => {
     const currentDate = new Date();
-    const ddayDate = new Date(contentInfo.dday);
-    const timeDiff = ddayDate - currentDate;
+    const dDayDate = new Date(seedInfo.dDay);
+    const timeDiff = dDayDate - currentDate;
     const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     setRemainingDays(dayDiff);
   };
 
-  const handleViewContent = async () => {
-    try {
-      const axios = await axiosInstance();
-      const response = await axios.get(`/api/v1/content/all/${contentId.contentId}`);
-      const results = response.data.results[0];
-      setContentInfo({
-        contentId: results.contentId,
-        contentDataType: results.contentDataType,
-        contentName: results.contentName,
-        contentLink: results.contentLink,
-        contentImage: results.contentImage,
-        contentDoc: results.contentDoc,
-        thumbnailImage: results.thumbnailImage,
-        boardCategory: results.boardCategory,
-        tags: results.tags,
-        dday: results.dday,
-        contentDetail: results.contentDetail,
-        filename: results.title,
-      });
-    } catch (error) {
-      console.error('Error fetching content:', error);
+  useEffect(() => {
+    // seed item 클릭 시, 해당 링크로 이동
+    if (seedInfo && isOpen) {
+      if (seedInfo.seedType === 'LINK' && seedInfo.seedLink) {
+        handleLinkClick(seedInfo.seedLink);
+      }
     }
+    if (seedInfo.seedType !== 'LINK' && isOpen) {
+      openModal('justOpenThumbnailModal');
+    }
+  }, [seedInfo, isOpen, navigation]);
+
+  const handleViewSeed = async () => {
+    const resSeed = await getSeed(seedId);
+    const seedData = resSeed[0];
+    setSeedInfo({
+      seedId: seedData.seedId,
+      seedType: seedData.seedType,
+      seedName: seedData.seedName,
+      seedLink: seedData.seedLink,
+      fileLinks: seedData.fileLinks,
+      thumbnailImage: seedData.thumbnailImage,
+      tagName: seedData.tagName,
+      categoryName: seedData.categoryName,
+      dDay: seedData.dDay,
+      seedDetail: seedData.seedDetail,
+      filename: seedData.title,
+    });
   };
 
   const handleLinkClick = (url) => {
     Linking.openURL(url);
-    console.log('링크 클릭');
   };
 
   const handleCopyLink = (url) => {
@@ -92,28 +102,35 @@ function ViewContent({ route }) {
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
 
-  return (
-    <Provider>
-      <View style={styles.contentPage}>
-        <View style={styles.header}>
-          <Menu
-            contentStyle={{
-              backgroundColor: '#fff',
-              borderRadius: 8,
-              paddingVertical: 3,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.02,
-              shadowRadius: 12,
-            }}
-            visible={menuVisible}
-            onDismiss={closeMenu}
-            anchor={
-              <TouchableOpacity onPress={openMenu}>
-                <MaterialIcons name="more-vert" size={16} color="#4f4f4f" />
-              </TouchableOpacity>
-            }
-          >
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Menu
+          contentStyle={{
+            backgroundColor: '#fff',
+            borderRadius: 8,
+            paddingVertical: 3,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 0.01,
+            shadowRadius: 8,
+          }}
+          visible={menuVisible}
+          onDismiss={closeMenu}
+          anchor={
+            <TouchableOpacity
+              onPress={openMenu}
+              style={{ position: 'relative' }}
+            >
+              <MaterialIcons name="more-vert" size={20} color="#000" />
+            </TouchableOpacity>
+          }
+          style={{
+            position: 'absolute',
+            top: 105,
+          }}
+        >
+          {seedInfo.seedType !== 'PDF' && (
             <TouchableOpacity
               onPress={() => {
                 closeMenu();
@@ -125,44 +142,49 @@ function ViewContent({ route }) {
                 <Feather name="edit-3" size={16} color="#000" />
               </View>
             </TouchableOpacity>
-            <View style={styles.menuDivider} />
-            <TouchableOpacity
-              onPress={() => {
-                closeMenu();
-                alert('씨드 삭제하기');
-              }}
-            >
-              <View style={styles.menuItem}>
-                <Text style={styles.menuText}>씨드 삭제하기</Text>
-                <Feather name="trash-2" size={16} color="black" />
-              </View>
-            </TouchableOpacity>
-          </Menu>
-        </View>
+          )}
+          <View style={styles.menuDivider} />
+          <TouchableOpacity
+            onPress={() => {
+              closeMenu();
+              openDeleteModal(seedInfo);
+            }}
+          >
+            <View style={styles.menuItem}>
+              <Text style={styles.menuText}>씨드 삭제하기</Text>
+              <Feather name="trash-2" size={16} color="black" />
+            </View>
+          </TouchableOpacity>
+        </Menu>
+      ),
+    });
+  }, [navigation, menuVisible]);
 
+  return (
+    <Provider>
+      <View style={styles.contentPage}>
         <View style={styles.contents}>
-          <Text style={styles.titleDiv}>{contentInfo.contentName}</Text>
+          <Text style={styles.titleDiv}>{seedInfo.seedName}</Text>
           <View
             style={[
-              styles.contentDiv,
+              styles.upperDiv,
               {
                 flexDirection:
-                  contentInfo.contentDataType === 'PDF' ||
-                  contentInfo.contentDataType === 'IMAGE'
+                  seedInfo.seedType === 'PDF' || seedInfo.seedType === 'IMAGE'
                     ? 'column'
                     : 'row',
               },
             ]}
           >
-            {contentInfo.contentDataType === 'LINK' && (
+            {seedInfo.seedType === 'LINK' && (
               <TouchableOpacity
-                onPress={() => handleLinkClick(contentInfo.contentLink)}
+                onPress={() => handleLinkClick(seedInfo.seedLink)}
               >
                 <View style={styles.linkBox}>
                   <Text
                     style={[{ fontSize: 12, color: '#4f4f4f', paddingTop: 4 }]}
                   >
-                    {contentInfo.contentLink}
+                    {seedInfo.seedLink}
                   </Text>
                   <View
                     style={[
@@ -177,7 +199,7 @@ function ViewContent({ route }) {
                     ]}
                   >
                     <TouchableOpacity
-                      onPress={() => handleCopyLink(contentInfo.contentLink)}
+                      onPress={() => handleCopyLink(seedInfo.seedLink)}
                     >
                       <Text style={[{ fontSize: 10, color: '#fff' }]}>
                         링크복사
@@ -188,12 +210,12 @@ function ViewContent({ route }) {
               </TouchableOpacity>
             )}
 
-            {contentInfo.contentDataType === 'IMAGE' && (
+            {seedInfo.seedType !== 'LINK' && (
               <ScrollView horizontal style={styles.imagesWrapper}>
-                {contentInfo.contentImage.map((image, index) => (
+                {seedInfo.fileLinks.map((image, index) => (
                   <View key={image} style={styles.imageContainer}>
                     <TouchableOpacity onPress={() => openModal(image)}>
-                      {index === contentInfo.thumbnailImage && (
+                      {index === seedInfo.thumbnailImage && (
                         <View style={styles.represenDiv}>
                           <Text style={styles.represenLabel}>대표</Text>
                         </View>
@@ -209,48 +231,27 @@ function ViewContent({ route }) {
                 ))}
               </ScrollView>
             )}
-            {contentInfo.contentDataType === 'PDF' && (
-              <ScrollView horizontal style={styles.imagesWrapper}>
-                {contentInfo.contentDoc.map((file, index) => (
-                  <View key={file} style={styles.imageContainer}>
-                    <TouchableOpacity onPress={() => openModal(file)}>
-                      {index === contentInfo.thumbnailImage && (
-                        <View style={styles.represenDiv}>
-                          <Text style={styles.represenLabel}>대표</Text>
-                        </View>
-                      )}
-                      <View style={styles.imageDiv}>
-                        <Image
-                          source={{ uri: file }}
-                          style={styles.imagePreview}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </ScrollView>
-            )}
 
             {selectedFile && (
               <ThumbnailModal
                 file={selectedFile}
                 files={
-                  contentInfo.contentDataType === 'PDF'
-                    ? contentInfo.contentDoc
-                    : contentInfo.contentImage
+                  seedInfo.seedType === 'PDF'
+                    ? seedInfo.fileLinks
+                    : seedInfo.fileLinks
                 }
                 onClose={closeModal}
-                contentDataType={contentInfo.contentDataType}
+                seedType={seedInfo.seedType}
               />
             )}
           </View>
           <View style={styles.grayBox}></View>
           <View style={styles.infoDiv}>
-            <Text style={[{ fontSize: 20, fontWeight: 'bold' }]}>상세정보</Text>
+            <Text style={[{ fontSize: 20, fontWeight: '600' }]}>상세정보</Text>
             <View style={styles.contentDiv}>
               <Text style={styles.name}>카테고리</Text>
               <View style={styles.categoryContainer}>
-                {contentInfo.boardCategory.map((category) => (
+                {seedInfo.categoryName.map((category) => (
                   <View key={category} style={styles.textWrapper}>
                     <Text style={styles.divText}>{category}</Text>
                   </View>
@@ -260,8 +261,8 @@ function ViewContent({ route }) {
 
             <View style={styles.contentDiv}>
               <Text style={styles.name}>태그</Text>
-              <View style={styles.tagsContainer}>
-                {contentInfo.tags.map((tag) => (
+              <View style={styles.tagNameContainer}>
+                {seedInfo.tagName.map((tag) => (
                   <View key={tag} style={styles.textWrapper}>
                     <Text style={styles.divText}>{tag}</Text>
                   </View>
@@ -269,10 +270,10 @@ function ViewContent({ route }) {
               </View>
             </View>
 
-            {contentInfo.dday && (
+            {seedInfo.dDay && (
               <View style={styles.contentDiv}>
                 <Text style={styles.name}>디데이</Text>
-                <View style={styles.ddayDiv}>
+                <View style={styles.dDayDiv}>
                   {remainingDays !== null && (
                     <View
                       style={[
@@ -290,7 +291,7 @@ function ViewContent({ route }) {
                     </View>
                   )}
                   <View style={styles.textWrapper}>
-                    <Text style={styles.divText}>{contentInfo.dday}</Text>
+                    <Text style={styles.divText}>{seedInfo.dDay}</Text>
                   </View>
                 </View>
               </View>
@@ -299,12 +300,14 @@ function ViewContent({ route }) {
             <View style={styles.memo}>
               <Text style={styles.name}>메모</Text>
               <View style={styles.memoDiv}>
-                <Text style={styles.detail}>{contentInfo.contentDetail}</Text>
+                <Text style={styles.detail}>{seedInfo.seedDetail}</Text>
               </View>
             </View>
           </View>
         </View>
       </View>
+
+      <SeedActionModals />
     </Provider>
   );
 }
@@ -319,18 +322,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   titleDiv: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 24,
+    fontSize: 20,
+    fontWeight: '600',
   },
   grayBox: {
-    marginTop: 15,
+    marginTop: 20,
     backgroundColor: '#f2f2f2',
     height: 14,
     marginLeft: -20,
     marginRight: -20,
   },
   infoDiv: {
+    marginTop: 20,
+  },
+  upperDiv: {
     marginTop: 20,
   },
   contentDiv: {
@@ -361,7 +366,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#4f4f4f',
   },
-  tagsContainer: {
+  tagNameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
@@ -441,7 +446,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  ddayDiv: {
+  dDayDiv: {
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -455,11 +460,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 8,
     height: 174,
-  },
-  header: {
-    right: -350,
-    marginTop: 24,
-    marginBottom: 10,
   },
   menuItem: {
     flexDirection: 'row',
@@ -480,4 +480,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewContent;
+export default ViewSeed;

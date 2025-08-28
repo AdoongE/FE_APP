@@ -1,9 +1,10 @@
-import {NavigationContainer} from '@react-navigation/native';
-import {StatusBar} from 'expo-status-bar';
-import {StyleSheet} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { PaperProvider } from 'react-native-paper';
+import { NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Router from './src/routes/Router';
-import React, {createContext, useState} from 'react';
+import React, { createContext, useState } from 'react';
 
 export const MyContext = createContext();
 
@@ -18,32 +19,35 @@ export default function App() {
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
 
   return (
-    <NavigationContainer>
-      <MyContext.Provider
-        value={{
-          link,
-          setLink,
-          tags,
-          setTags,
-          title,
-          setTitle,
-          summary,
-          setSummary,
-          category,
-          setCategory,
-          totalTags,
-          setTotalTags,
-          selectedImages,
-          setSelectedImages,
-          thumbnailIndex,
-          setThumbnailIndex,
-        }}>
-        <SafeAreaView style={styles.safeArea}>
-          <Router />
-          <StatusBar style="auto" />
-        </SafeAreaView>
-      </MyContext.Provider>
-    </NavigationContainer>
+    <PaperProvider>
+      <NavigationContainer>
+        <MyContext.Provider
+          value={{
+            link,
+            setLink,
+            tags,
+            setTags,
+            title,
+            setTitle,
+            summary,
+            setSummary,
+            category,
+            setCategory,
+            totalTags,
+            setTotalTags,
+            selectedImages,
+            setSelectedImages,
+            thumbnailIndex,
+            setThumbnailIndex,
+          }}
+        >
+          <SafeAreaView style={styles.safeArea}>
+            <Router />
+            <StatusBar style="auto" />
+          </SafeAreaView>
+        </MyContext.Provider>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 

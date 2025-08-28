@@ -6,6 +6,7 @@ import {
   View,
   Text,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function AlertToast({
   visible,
@@ -66,7 +67,11 @@ export default function AlertToast({
         },
       ]}
     >
-      {icon && <View style={styles.iconWrapper}>{icon}</View>}
+      {icon && (
+        <View style={styles.iconWrapper}>
+          <Ionicons name="checkmark" size={18} color="#fff" />
+        </View>
+      )}
       <Text style={styles.message}>{message}</Text>
       {actionText && (
         <TouchableOpacity onPress={onActionPress}>
@@ -97,6 +102,9 @@ const styles = StyleSheet.create({
   },
   iconWrapper: {
     marginRight: 12,
+    backgroundColor: '#41C3AB',
+    borderRadius: 20,
+    padding: 2,
   },
   message: {
     flex: 1,

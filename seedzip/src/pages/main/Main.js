@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import SeedBox from './SeedBox';
-import BottomNav from './BottomNav';
+import BottomNav from '../../components/BottomNav';
 import SeedBlank from './SeedBlank';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { axiosInstance } from '../../api/axios-instance';

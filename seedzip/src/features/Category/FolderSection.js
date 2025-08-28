@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -22,7 +23,10 @@ const FolderSection = ({
   onPressAll, // 전체보기
   hideViewAll = false,
   isFullView = false,
+  isHome = false,
 }) => {
+  const navigation = useNavigation();
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -34,60 +38,101 @@ const FolderSection = ({
   const actions = selectedItem && actionBtns ? actionBtns(selectedItem) : [];
 
   return (
-    <View style={styles.section}>
-      <View style={styles.header}>
-        <View style={styles.titleRow}>
-          <Ionicons name={iconName} size={20} color="#000" />
-          <Text style={styles.title}>{title}</Text>
-        </View>
-        {!hideViewAll && (
-          <TouchableOpacity style={styles.viewAllBtn} onPress={onPressAll}>
-            <Text style={styles.viewAllText}>전체보기</Text>
-            <Ionicons name="chevron-forward" size={16} color="#9f9f9f" />
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {(data.length === 0 && title.split(' ')[0] === '북마크') ||
-      (data.length === 1 && title.split(' ')[0] === '내') ? (
-        isFullView ? (
-          <View style={styles.emptyContainerFull}>
-            <Text style={styles.emptyTitleFull}>{emptyTitle}</Text>
-            <Text style={styles.emptySubtitleFull}>{emptySubtitle}</Text>
-          </View>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>{emptySubtitle}</Text>
-            <View style={styles.rowContainer}>
-              {title.split(' ')[0] === '내' && (
-                <View style={styles.item}>
-                  <Folder
-                    name={data[0].name}
-                    onPressMorevert={() => handleFolderPress(data[0])}
-                  />
-                </View>
-              )}
-              <Image source={emptyImg} style={styles.emptyImage} />
-            </View>
-          </View>
-        )
-      ) : (
-        <>
-          <FlatList
-            data={data}
-            numColumns={3}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContent}
-            columnWrapperStyle={styles.folderRow}
-            renderItem={({ item }) => (
+    <>
+      {isHome ? (
+        <FlatList
+          data={data}
+          horizontal
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.homeListContent}
+          renderItem={({ item }) => (
+            <View style={styles.homeFolderItem}>
               <Folder
                 name={item.name}
                 onPressMorevert={() => handleFolderPress(item)}
+                onPress={() => {
+                  navigation.navigate('seedList', {
+                    mode: 'category',
+                    categoryId: item.id,
+                    categoryName: item.name,
+                  });
+                }}
               />
+            </View>
+          )}
+          showsHorizontalScrollIndicator={false}
+        />
+      ) : (
+        <View style={styles.section}>
+          <View style={styles.header}>
+            <View style={styles.titleRow}>
+              <Ionicons name={iconName} size={20} color="#000" />
+              <Text style={styles.title}>{title}</Text>
+            </View>
+            {!hideViewAll && (
+              <TouchableOpacity style={styles.viewAllBtn} onPress={onPressAll}>
+                <Text style={styles.viewAllText}>전체보기</Text>
+                <Ionicons name="chevron-forward" size={16} color="#9f9f9f" />
+              </TouchableOpacity>
             )}
-            scrollEnabled={false}
-          />
-        </>
+          </View>
+
+          {(data.length === 0 && title.split(' ')[0] === '북마크') ||
+          (data.length === 1 && title.split(' ')[0] === '내') ? (
+            isFullView ? (
+              <View style={styles.emptyContainerFull}>
+                <Text style={styles.emptyTitleFull}>{emptyTitle}</Text>
+                <Text style={styles.emptySubtitleFull}>{emptySubtitle}</Text>
+              </View>
+            ) : (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>{emptySubtitle}</Text>
+                <View style={styles.rowContainer}>
+                  {title.split(' ')[0] === '내' && (
+                    <View style={styles.item}>
+                      <Folder
+                        name={data[0].name}
+                        onPressMorevert={() => handleFolderPress(data[0])}
+                        onPress={() => {
+                          navigation.navigate('seedList', {
+                            mode: 'category',
+                            categoryId: data[0].id,
+                            categoryName: data[0].name,
+                          });
+                        }}
+                      />
+                    </View>
+                  )}
+                  <Image source={emptyImg} style={styles.emptyImage} />
+                </View>
+              </View>
+            )
+          ) : (
+            <>
+              <FlatList
+                data={data}
+                numColumns={3}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={styles.listContent}
+                columnWrapperStyle={styles.folderRow}
+                renderItem={({ item }) => (
+                  <Folder
+                    name={item.name}
+                    onPressMorevert={() => handleFolderPress(item)}
+                    onPress={() => {
+                      navigation.navigate('seedList', {
+                        mode: 'category',
+                        categoryId: item.id,
+                        categoryName: item.name,
+                      });
+                    }}
+                  />
+                )}
+                scrollEnabled={false}
+              />
+            </>
+          )}
+        </View>
       )}
       <ActionModal
         visible={modalVisible}
@@ -98,7 +143,7 @@ const FolderSection = ({
         title={selectedItem?.name}
         actions={actions}
       />
-    </View>
+    </>
   );
 };
 
@@ -108,6 +153,12 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 40,
     flex: 1,
+  },
+  homeListContent: {
+    paddingLeft: 20,
+  },
+  homeFolderItem: {
+    marginRight: 12,
   },
   header: {
     flexDirection: 'row',

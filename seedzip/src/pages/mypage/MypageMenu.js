@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { useNavigation } from '@react-navigation/native';
-import BottomNav from '../main/BottomNav';
+import BottomNav from '../../components/BottomNav';
 
 function Row({ label, right, onPress, accessibilityLabel }) {
   return (
@@ -33,6 +33,7 @@ export default function MypageMenu({
   onPressWithdraw,
 }) {
   const navigation = useNavigation();
+  const [addSeedModalVisible, setAddSeedModalVisible] = useState(false);
 
   const onPressLogout = async () => {
     try {
@@ -102,7 +103,10 @@ export default function MypageMenu({
           <Text style={styles.withdrawText}>회원탈퇴</Text>
         </TouchableOpacity>
       </ScrollView>
-      <BottomNav />
+      <BottomNav
+        addSeedModalVisible={addSeedModalVisible}
+        setAddSeedModalVisible={setAddSeedModalVisible}
+      />
     </SafeAreaView>
   );
 }

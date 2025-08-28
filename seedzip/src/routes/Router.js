@@ -8,7 +8,8 @@ import Consent from '../pages/signup/Consent';
 import Success from '../pages/signup/Success';
 import SplashPage from '../pages/splash/SplashPage';
 import NextSplash from '../pages/splash/NextSplash';
-import Main from '../pages/main/Main';
+import Home from '../features/Home/Home';
+import Search from '../features/Home/Search';
 import View from '../features/View/ViewSeed';
 import AddLink from '../pages/contentAdd/AddLink';
 import AddCategory from '../pages/contentAdd/AddCategory';
@@ -18,6 +19,7 @@ import ImageSave from '../pages/add/ImageSave';
 import Add from '../pages/add/AddSeedPage';
 import Save from '../pages/add/SaveSeedPage';
 import Category from '../features/Category/Category';
+import SeedList from '../features/Seed/SeedList';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -84,14 +86,28 @@ function Router() {
         }}
       />
       <Stack.Screen
-        name="main"
-        component={Main}
+        name="home"
+        component={Home}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="search"
+        component={Search}
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen name="category" component={Category} />
-      <Stack.Screen name="view" component={View} />
+      <Stack.Screen name="seedList" component={SeedList} />
+      <Stack.Screen
+        name="view"
+        component={View}
+        options={{
+          headerTitle: '씨드 상세보기',
+        }}
+      />
       <Stack.Screen name="addLink" component={AddLink} />
       <Stack.Screen name="addCategory" component={AddCategory} />
       <Stack.Screen name="addTag" component={AddTag} />
