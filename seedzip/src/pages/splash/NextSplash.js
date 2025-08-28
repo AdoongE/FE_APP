@@ -7,48 +7,43 @@ import naver from '../../assets/icons/naver.png';
 import google from '../../assets/icons/google.png';
 import apple from '../../assets/icons/apple.png';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import {useNavigation} from '@react-navigation/native';
-import {initializeKakaoSDK} from '@react-native-kakao/core';
-import {login} from '@react-native-kakao/user';
-import {Alert} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { initializeKakaoSDK } from '@react-native-kakao/core';
+import { login } from '@react-native-kakao/user';
+import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {axiosInstance} from '../../api/axios-instance';
-// import { REACT_NATIVE_APP_KEY } from '@env';
+import { axiosInstance } from '../../api/axios-instance';
+import { REACT_NATIVE_APP_KEY } from '@env';
 
 const NextSplash = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    console.log('REACT_NATIVE_APP_KEY:', '77696a11bd880d4a5495aa65a27aa752');
-    initializeKakaoSDK('77696a11bd880d4a5495aa65a27aa752');
+    initializeKakaoSDK(`${REACT_NATIVE_APP_KEY}`);
   }, []);
 
   const handleKakaoLogin = async () => {
     try {
-      // const token = await login();
-      // const kakaoAccessToken = token.accessToken;
-      // console.log('로그인 성공, 액세스 토큰:', kakaoAccessToken);
+      const token = await login();
+      const kakaoAccessToken = token.accessToken;
+      console.log('로그인 성공, 액세스 토큰:', kakaoAccessToken);
 
-      // const axios = await axiosInstance();
-      // const response = await axios.post(
-      //   `/api/v1/auth/login/kakao/app?accessToken=${kakaoAccessToken}`
+      const axios = await axiosInstance();
+      const response = await axios.post(
+        `/api/v1/auth/login/kakao/app?accessToken=${kakaoAccessToken}`,
+      );
 
-      // );
+      const { status, results } = response.data;
 
-      // const {status, results} = response.data;
-
-      const test = 200;
-
-      if (test === 200) {
-        // console.log('로그인 성공:', status.message);
-        // const jwtToken = response.headers['authorization'];
-        const jwtToken = `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNzgzODAyMDg1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3NDU1OTEyMDB9.FbY2U4CDe9M4UKYYreHk-CCWJOmbuiQzunqDQy7EKa4`;
+      if (status.code === 200) {
+        console.log('로그인 성공:', status.message);
+        const jwtToken = response.headers['authorization'];
 
         if (jwtToken) {
           await AsyncStorage.setItem('jwtToken', jwtToken);
           console.log('저장된 JWT Token:', jwtToken);
 
-          navigation.navigate('main');
+          navigation.navigate('home');
         }
       } else if (status.code === 401) {
         console.log('메세지:', status.message);
@@ -59,7 +54,7 @@ const NextSplash = () => {
           await AsyncStorage.setItem('jwtToken', jwtToken);
           console.log('만료 후, 저장된 JWT Token:', jwtToken);
 
-          navigation.navigate('main');
+          navigation.navigate('home');
         }
       } else if (status.code === 404) {
         console.log('회원가입 필요:', status.message);
@@ -120,7 +115,7 @@ const NextSplash = () => {
             <TouchableOpacity
               type="google"
               style={[styles.button, { backgroundColor: 'white' }]}
-              onPress={() => navigation.navigate('main')}
+              onPress={() => navigation.navigate('home')}
             >
               <Image source={google} />
               <Text style={{ color: '#4F4F4F' }}>구글로 로그인하기</Text>
@@ -128,24 +123,10 @@ const NextSplash = () => {
             <TouchableOpacity
               type="apple"
               style={[styles.button, { backgroundColor: 'black' }]}
-              onPress={() => navigation.navigate('main')}
+              onPress={() => navigation.navigate('home')}
             >
               <Image source={apple} />
               <Text style={{ color: '#fff' }}>애플로 로그인하기</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              type="apple"
-              style={[styles.button, {backgroundColor: 'black'}]}
-              onPress={() => navigation.navigate('main')}>
-              <Image source={apple} />
-              <Text style={{color: 'white'}}>애플로 로그인하기</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              type="apple"
-              style={[styles.button, {backgroundColor: 'black'}]}
-              onPress={() => navigation.navigate('main')}>
-              <Image source={apple} />
-              <Text style={{color: 'white'}}>애플로 로그인하기</Text>
             </TouchableOpacity>
           </View>
         </LinearGradient>
