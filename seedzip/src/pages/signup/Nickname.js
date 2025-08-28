@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
+import ProgressBar from '../../components/signup/ProgressBar';
 
 const Nickname = ({navigation}) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -29,6 +30,7 @@ const Nickname = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+      <ProgressBar step={1} />
       <Text style={styles.title}>닉네임을 입력해주세요</Text>
       <Text style={styles.short}>
         한글, 영문, 숫자 공백 포함 10자 이내로 입력해주세요

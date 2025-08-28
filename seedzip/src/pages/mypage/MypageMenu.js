@@ -1,0 +1,164 @@
+import React from 'react';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import { useNavigation } from '@react-navigation/native';
+import BottomNav from '../main/BottomNav';
+
+function Row({ label, right, onPress, accessibilityLabel }) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel || label}
+    >
+      <View style={styles.row}>
+        <Text style={styles.rowLabel}>{label}</Text>
+        <Text style={styles.rowRight}>{right ?? '›'}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+export default function MypageMenu({
+  userName = '씨드집',
+  appVersion = '1.0.0',
+  onPressWithdraw,
+}) {
+  const navigation = useNavigation();
+
+  const onPressLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('jwtToken');
+      Alert.alert('로그아웃 되었습니다');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'nextSplash' }],
+      });
+    } catch (err) {
+      console.error('로그아웃 실패:', err);
+    }
+  };
+  return (
+    <SafeAreaView style={styles.safe}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.title}>마이페이지</Text>
+        <View style={styles.nameBox}>
+          <Text style={styles.nameText}>{userName} 님</Text>
+          <TouchableOpacity
+            style={styles.nameEdit}
+            onPress={() => navigation.navigate('editMypage')}
+            accessibilityRole="button"
+            accessibilityLabel="이름 수정"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <SimpleLineIcons name="pencil" size={13} color="black" />{' '}
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.separator} />
+
+        <Row label="공지사항" onPress={() => navigation.navigate('info')} />
+        <View style={styles.divider} />
+        <Row label="이용약관" onPress={() => navigation.navigate('terms')} />
+        <View style={styles.divider} />
+        <Row label="FAQ" onPress={() => navigation.navigate('question')} />
+        <View style={styles.divider} />
+        <View style={[styles.row, styles.versionRow]}>
+          <Text style={styles.rowLabel}>
+            버전 정보 <Text style={styles.versionNum}>V {appVersion}</Text>
+          </Text>
+          <Text style={styles.versionRight}>최신 버전입니다.</Text>
+        </View>
+
+        <View style={styles.separator} />
+
+        <TouchableOpacity
+          onPress={onPressLogout}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="로그아웃"
+        >
+          <View style={styles.logoutBox}>
+            <Text style={styles.logoutText}>로그아웃</Text>
+          </View>
+        </TouchableOpacity>
+        <View style={styles.divider} />
+
+        <TouchableOpacity
+          onPress={onPressWithdraw}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="회원탈퇴"
+          style={styles.withdrawBtn}
+        >
+          <Text style={styles.withdrawText}>회원탈퇴</Text>
+        </TouchableOpacity>
+      </ScrollView>
+      <BottomNav />
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: '#fff' },
+  container: { paddingBottom: 32 },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+    paddingVertical: 20,
+  },
+  nameBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 32,
+    paddingBottom: 20,
+  },
+  nameText: { fontSize: 16, fontWeight: '500' },
+  nameEdit: { marginLeft: 8 },
+  editIcon: { fontSize: 16, color: '#666' },
+  separator: {
+    height: 6,
+    backgroundColor: '#F2F2F2',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    height: 56,
+    backgroundColor: '#fff',
+    justifyContent: 'space-between',
+  },
+  rowLabel: { fontSize: 16, fontWeight: '400' },
+  rowRight: { fontSize: 20, color: '#9F9F9F' },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: '#e6e6ea',
+    marginHorizontal: 20,
+  },
+  versionRow: { height: 56 },
+  versionNum: { fontSize: 12, fontWeight: '600', color: '#9F9F9F' },
+  versionRight: { fontSize: 13, color: '#9a9a9a' },
+  logoutBox: {
+    height: 56,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  logoutText: { fontSize: 16, color: '#111' },
+  withdrawBtn: { paddingHorizontal: 20, paddingVertical: 8 },
+  withdrawText: {
+    fontSize: 14,
+    color: '#111',
+    textDecorationLine: 'underline',
+    marginTop: 10,
+  },
+});

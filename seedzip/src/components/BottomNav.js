@@ -28,8 +28,8 @@ export default function BottomNav({
       setActiveTab('category');
     } else if (routeName.includes('favorite')) {
       setActiveTab('favorite');
-    } else if (routeName.includes('profile')) {
-      setActiveTab('profile');
+    } else if (routeName.includes('mypage')) {
+      setActiveTab('mypage');
     }
   }, [route]);
 
@@ -131,17 +131,17 @@ export default function BottomNav({
 
       <TouchableOpacity
         style={styles.navButton}
-        onPress={() => handleTabPress('profile')}
+        onPress={() => handleTabPress('mypage')}
       >
         <Ionicons
-          name={activeTab === 'profile' ? 'person' : 'person-outline'}
+          name={activeTab === 'mypage' ? 'person' : 'person-outline'}
           size={26}
-          color={activeTab === 'profile' ? '#41C3AB' : '#9F9F9F'}
+          color={activeTab === 'mypage' ? '#41C3AB' : '#9F9F9F'}
         />
         <Text
           style={[
             styles.navText,
-            { color: activeTab === 'profile' ? '#41C3AB' : '#9F9F9F' },
+            { color: activeTab === 'mypage' ? '#41C3AB' : '#9F9F9F' },
           ]}
         >
           마이

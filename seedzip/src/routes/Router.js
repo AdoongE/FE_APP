@@ -23,6 +23,16 @@ import SeedList from '../features/Seed/SeedList';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import MypageMenu from '../pages/mypage/MypageMenu';
+import EditMypage from '../pages/mypage/edit/EditMypage';
+import EditBirthday from '../pages/mypage/edit/EditBirthday';
+import EditGender from '../pages/mypage/edit/EditGender';
+import EditJob from '../pages/mypage/edit/EditJob';
+import EditField from '../pages/mypage/edit/EditField';
+import TermsPage from '../pages/mypage/ask/TermsPage';
+import InfoPage from '../pages/mypage/ask/InfoPage';
+import InfoDetailPage from '../pages/mypage/ask/InfoDetailPage';
+import QuestionPage from '../pages/mypage/ask/QuestionPage';
 const Stack = createNativeStackNavigator();
 
 function Router() {
@@ -52,6 +62,13 @@ function Router() {
       <Stack.Screen
         name="nextSplash"
         component={NextSplash}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="mypage"
+        component={MypageMenu}
         options={{
           headerShown: false,
         }}
@@ -104,6 +121,69 @@ function Router() {
       <Stack.Screen name="imagesave" component={ImageSave} />
       <Stack.Screen name="add" component={Add} />
       <Stack.Screen name="save" component={Save} />
+      <Stack.Screen
+        name="editMypage"
+        component={EditMypage}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="editBirthday"
+        component={EditBirthday}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="editGender"
+        component={EditGender}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="editJob"
+        component={EditJob}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="editField"
+        component={EditField}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="terms"
+        component={TermsPage}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="info"
+        component={InfoPage}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="info_detail"
+        component={InfoDetailPage}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="question"
+        component={QuestionPage}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }
