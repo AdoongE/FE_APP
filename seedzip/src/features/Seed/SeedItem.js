@@ -82,7 +82,11 @@ const SeedItem = ({
 
   return (
     <>
-      <Pressable key={seed.seedId} style={styles.seedRow} onPress={onPress}>
+      <Pressable
+        key={seed.seedId}
+        style={styles.seedRow}
+        onPress={() => (deleteMode ? onCheckSelect(seed.seedId) : onPress)}
+      >
         {deleteMode && (
           <TouchableOpacity
             style={[styles.checkbox, isSelected && styles.checkboxSelected]}
@@ -117,7 +121,9 @@ const SeedItem = ({
               </TouchableOpacity>
             </View>
             <TouchableOpacity
-              onPress={() => setModalVisible(true)}
+              onPress={() =>
+                deleteMode ? onCheckSelect(seed.seedId) : setModalVisible(true)
+              }
               hitSlop={10}
             >
               <Ionicons name="ellipsis-vertical" size={16} color="#4f4f4f" />
