@@ -41,4 +41,12 @@ const getFaq = async ({ page, take }) => {
   }
 };
 
-export { getNotice, getDetailNotice, getFaq };
+const postWithdraw = async () => {
+  try {
+    await axiosInstance.delete(`/api/v1/member`);
+  } catch (error) {
+    console.error('사용자 개인 정보 삭제 error:', error);
+  }
+};
+
+export { getNotice, getDetailNotice, getFaq, postWithdraw };
