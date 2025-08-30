@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,80 +6,86 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
-import {axiosInstance} from '../../api/axios-instance';
-import {useNavigation} from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { axiosInstance } from '../../api/axios-instance';
+import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
-import {MyContext} from '../../../App';
+import { MyContext } from '../../../App';
 import ImageSave from './ImageSave';
 
 const AddSeedPage = () => {
-  const [dataType, setDataType] = useState('');
-  const {tags, link, title, summary, category, selectedImages, thumbnailIndex} =
-    useContext(MyContext);
+  const [seedType, setSeedType] = useState('');
+  const {
+    tags,
+    link,
+    title,
+    summary,
+    category,
+    selectedImages,
+    thumbnailIndex,
+  } = useContext(MyContext);
   const navigation = useNavigation();
 
   const [contentInfo, setContentInfo] = useState({
-    dataType: '',
-    contentName: title || '',
-    contentLink: link || '',
-    contentImage: selectedImages || [],
+    seedType: '',
+    seedName: title || '',
+    seedLink: link || '',
+    seedFiles: selectedImages || [],
     thumbnailImage: thumbnailIndex || 0,
-    boardCategory: category || ['예시 1'],
-    tags: tags || ['예시 태그 1'],
-    dday: '',
-    contentDetail: summary || '',
+    categoryName: category || ['예시 1'],
+    tagName: tags || ['예시 태그 1'],
+    dDay: '',
+    seedDetail: summary || '',
   });
 
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (contentInfo.contentImage?.length > 0) {
-      setDataType('IMAGE');
+    if (contentInfo.seedFiles?.length > 0) {
+      setSeedType('IMAGE');
     } else if (contentInfo.contentDoc?.length > 0) {
-      setDataType('PDF');
-    } else if (contentInfo.contentLink !== '') {
-      setDataType('LINK');
+      setSeedType('PDF');
+    } else if (contentInfo.seedLink !== '') {
+      setSeedType('LINK');
     }
   }, []);
 
   useEffect(() => {
-    setContentInfo(prevState => ({
+    setContentInfo((prevState) => ({
       ...prevState,
-      dataType: dataType,
+      seedType: seedType,
     }));
-  }, [dataType]);
+  }, [seedType]);
 
-  const handleTitleChange = text => {
-    setContentInfo({...contentInfo, contentName: text});
+  const handleTitleChange = (text) => {
+    setContentInfo({ ...contentInfo, seedName: text });
   };
 
-  const handleMemoChange = text => {
-    setContentInfo({...contentInfo, contentDetail: text});
+  const handleMemoChange = (text) => {
+    setContentInfo({ ...contentInfo, seedDetail: text });
   };
 
-  const handleConfirm = selectedDate => {
+  const handleConfirm = (selectedDate) => {
     const formattedDate = selectedDate.toISOString().split('T')[0];
-    setContentInfo({...contentInfo, dday: formattedDate});
+    setContentInfo({ ...contentInfo, dday: formattedDate });
     setOpen(false);
   };
 
   const SaveSeed = async () => {
     try {
       const axios = await axiosInstance();
-
-      const contentResponse = await axios.post('/api/v1/content/', contentInfo);
+      const contentResponse = await axios.post('/api/v1/seed', contentInfo);
       console.log('콘텐츠 저장 성공:', contentResponse.data);
 
       if (
         contentResponse.data.status.code === 200 &&
-        contentInfo.dataType === 'IMAGE' &&
-        contentInfo.contentImage.length > 0
+        contentInfo.seedType === 'IMAGE' &&
+        contentInfo.seedFiles.length > 0
       ) {
         const formData = new FormData();
 
-        for (const uri of contentInfo.contentImage) {
+        for (const uri of contentInfo.seedFiles) {
           const response = await fetch(uri);
           const blob = await response.blob();
           const fileName = uri.split('/').pop();
@@ -92,7 +98,7 @@ const AddSeedPage = () => {
         }
 
         const imageUploadResponse = await axios.post(
-          `/api/v1/content/upload/${contentResponse.data.results[0].contentId}`,
+          `/api/v1/seed/upload/${contentResponse.data.results[0].seedId}`,
           formData,
           {
             headers: {
@@ -124,22 +130,22 @@ const AddSeedPage = () => {
         style={styles.input}
         placeholder="제목 입력하기(선택)"
         maxLength={30}
-        value={contentInfo.contentName}
+        value={contentInfo.seedName}
         onChangeText={handleTitleChange}
       />
-      {dataType === 'LINK' && (
+      {seedType === 'LINK' && (
         <View style={styles.linkBox}>
           <View style={styles.circle}>
             <Ionicons name="link-outline" color="white" />
           </View>
-          <Text style={styles.linkText}>{contentInfo.contentLink}</Text>
+          <Text style={styles.linkText}>{contentInfo.seedLink}</Text>
         </View>
       )}
-      {dataType === 'IMAGE' && (
+      {seedType === 'IMAGE' && (
         <ImageSave
           route={{
             params: {
-              selectedImages: contentInfo.contentImage,
+              selectedImages: contentInfo.seedFiles,
               thumbnailIndex: contentInfo.thumbnailImage,
             },
           }}
@@ -149,7 +155,7 @@ const AddSeedPage = () => {
         <View style={styles.contentDiv}>
           <Text style={styles.name}>카테고리</Text>
           <View style={styles.categoryContainer}>
-            {contentInfo.boardCategory.map(category => (
+            {contentInfo.categoryName.map((category) => (
               <View key={category} style={styles.textWrapper}>
                 <Text style={styles.divText}>{category}</Text>
               </View>
@@ -157,10 +163,10 @@ const AddSeedPage = () => {
           </View>
         </View>
 
-        <View style={[styles.contentDiv, {marginTop: 20}]}>
+        <View style={[styles.contentDiv, { marginTop: 20 }]}>
           <Text style={styles.name}>태그*</Text>
           <View style={styles.tagsContainer}>
-            {contentInfo.tags.map(tag => (
+            {contentInfo.tagName.map((tag) => (
               <View key={tag} style={styles.textWrapper}>
                 <Text style={styles.divText}>{tag}</Text>
               </View>
@@ -177,15 +183,16 @@ const AddSeedPage = () => {
           </Text>
           <TouchableOpacity
             style={styles.ddayContent}
-            onPress={() => setOpen(true)}>
+            onPress={() => setOpen(true)}
+          >
             <Ionicons
               name="calendar-clear-outline"
               size={12}
               color="#9f9f9f"
-              style={{marginRight: 4}}
+              style={{ marginRight: 4 }}
             />
             <Text style={styles.divText}>
-              {contentInfo.dday || 'YYYY/MM/DD'}
+              {contentInfo.dDay || 'YYYY/MM/DD'}
             </Text>
           </TouchableOpacity>
           <DatePicker
@@ -208,7 +215,7 @@ const AddSeedPage = () => {
               style={styles.detail}
               placeholder="여기를 눌러 메모를 입력하세요"
               maxLength={1500}
-              value={contentInfo?.contentDetail ?? ''}
+              value={contentInfo?.seedDetail ?? ''}
               onChangeText={handleMemoChange}
               multiline={true}
               textAlignVertical="top"
