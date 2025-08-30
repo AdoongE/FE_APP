@@ -7,7 +7,11 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+  useNavigation,
+  useRoute,
+  useNavigationState,
+} from '@react-navigation/native';
 import ActionModal from './ActionModal';
 
 const screenWidth = Dimensions.get('window').width;
@@ -18,20 +22,28 @@ export default function BottomNav({
 }) {
   const navigation = useNavigation();
   const route = useRoute();
+  const navigationState = useNavigationState((state) => state);
   const [activeTab, setActiveTab] = useState('home');
 
   useEffect(() => {
-    const routeName = route.name.toLowerCase();
-    if (routeName.includes('home')) {
-      setActiveTab('home');
-    } else if (routeName.includes('category')) {
-      setActiveTab('category');
-    } else if (routeName.includes('favorite')) {
-      setActiveTab('favorite');
-    } else if (routeName.includes('mypage')) {
-      setActiveTab('mypage');
+    if (navigationState) {
+      const currentRoute = navigationState.routes[navigationState.index];
+      const routeName = currentRoute.name.toLowerCase();
+
+      if (routeName.includes('home')) {
+        setActiveTab('home');
+      } else if (routeName.includes('category')) {
+        setActiveTab('category');
+      } else if (
+        routeName.includes('favorite') ||
+        (routeName.includes('seedlist') && route.params?.mode === 'favorite')
+      ) {
+        setActiveTab('favorite');
+      } else if (routeName.includes('mypage')) {
+        setActiveTab('mypage');
+      }
     }
-  }, [route]);
+  }, [navigationState, route.params]);
 
   const handleTabPress = (tabName) => {
     setActiveTab(tabName);

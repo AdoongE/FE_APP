@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
   Text,
+  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -55,30 +56,38 @@ export default function AlertToast({
     }
   }, [visible]);
 
-  if (!visible) return null;
-
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          opacity,
-          transform: [{ translateY }],
-        },
-      ]}
+    <Modal
+      transparent
+      visible={visible}
+      animationType="none"
+      onRequestClose={() => onHide && onHide()}
     >
-      {icon && (
-        <View style={styles.iconWrapper}>
-          <Ionicons name="checkmark" size={18} color="#fff" />
-        </View>
-      )}
-      <Text style={styles.message}>{message}</Text>
-      {actionText && (
-        <TouchableOpacity onPress={onActionPress}>
-          <Text style={styles.actionText}>{actionText}</Text>
-        </TouchableOpacity>
-      )}
-    </Animated.View>
+      <Animated.View
+        style={[
+          styles.container,
+          {
+            opacity,
+            transform: [{ translateY }],
+          },
+        ]}
+      >
+        {icon && (
+          <View style={styles.iconWrapper}>
+            <Ionicons name="checkmark" size={18} color="#fff" />
+          </View>
+        )}
+        <Text style={styles.message}>{message}</Text>
+        {actionText && (
+          <TouchableOpacity onPress={() => {
+            if (onActionPress) onActionPress();
+            if (onHide) onHide();
+          }}>
+            <Text style={styles.actionText}>{actionText}</Text>
+          </TouchableOpacity>
+        )}
+      </Animated.View>
+    </Modal>
   );
 }
 

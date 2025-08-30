@@ -44,11 +44,13 @@ const useCategoryActions = ({
             prev.filter((b) => b.bookmarkId !== item.bookmarkId),
           );
         }
-        setToast({
-          visible: true,
-          message: '북마크에서 제거되었어요',
-          icon: true,
-        });
+        setTimeout(() => {
+          setToast({
+            visible: true,
+            message: '북마크에서 제거되었어요',
+            icon: true,
+          });
+        }, 200);
         await deleteBookmark(item.bookmarkId);
         if (fetchBookmark) await fetchBookmark();
       },
@@ -70,15 +72,17 @@ const useCategoryActions = ({
             prev.filter((b) => b.bookmarkId !== item.bookmarkId),
           );
         }
-        setToast({
-          visible: true,
-          message: '카테고리가 제거되었어요',
-          icon: (
-            <View style={styles.checkIcon}>
-              <Ionicons name="checkmark" size={18} color="#fff" />
-            </View>
-          ),
-        });
+        setTimeout(() => {
+          setToast({
+            visible: true,
+            message: '카테고리가 제거되었어요',
+            icon: (
+              <View style={styles.checkIcon}>
+                <Ionicons name="checkmark" size={18} color="#fff" />
+              </View>
+            ),
+          });
+        }, 200);
         await deleteCategory(item.id);
         if (fetchMyCategory) await fetchMyCategory();
         if (fetchBookmark) await fetchBookmark();
@@ -93,23 +97,25 @@ const useCategoryActions = ({
       onPress: async () => {
         await postBookmark(item.id);
         if (fetchBookmark) await fetchBookmark();
-        setToast({
-          visible: true,
-          message: '북마크에 추가되었어요',
-          actionText: '보러가기',
-          onActionPress: () => {
-            if (handleShowFull) {
-              handleShowFull({
-                title: '북마크 전체보기',
-                iconName: 'bookmark-outline',
-                data: bookmarks,
-                actionBtns: actionBtnsBookmark,
-                emptyTitle: '아직 북마크한 카테고리가 없어요',
-                emptySubtitle: '자주 보는 카테고리를 북마크 해보세요!',
-              });
-            }
-          },
-        });
+        setTimeout(() => {
+          setToast({
+            visible: true,
+            message: '북마크에 추가되었어요',
+            actionText: '보러가기',
+            onActionPress: () => {
+              if (handleShowFull) {
+                handleShowFull({
+                  title: '북마크 전체보기',
+                  iconName: 'bookmark-outline',
+                  data: bookmarks,
+                  actionBtns: actionBtnsBookmark,
+                  emptyTitle: '아직 북마크한 카테고리가 없어요',
+                  emptySubtitle: '자주 보는 카테고리를 북마크 해보세요!',
+                });
+              }
+            },
+          });
+        }, 200);
       },
     },
     {
@@ -124,15 +130,17 @@ const useCategoryActions = ({
       icon: <Image source={TrashIcon} style={styles.iconSize} />,
       label: '카테고리 삭제',
       onPress: async () => {
-        setToast({
-          visible: true,
-          message: '카테고리가 제거되었어요',
-          icon: (
-            <View style={styles.checkIcon}>
-              <Ionicons name="checkmark" size={18} color="#fff" />
-            </View>
-          ),
-        });
+        setTimeout(() => {
+          setToast({
+            visible: true,
+            message: '카테고리가 제거되었어요',
+            icon: (
+              <View style={styles.checkIcon}>
+                <Ionicons name="checkmark" size={18} color="#fff" />
+              </View>
+            ),
+          });
+        }, 200);
         await deleteCategory(item.id);
         if (fetchMyCategory) await fetchMyCategory();
         if (fetchBookmark) await fetchBookmark();

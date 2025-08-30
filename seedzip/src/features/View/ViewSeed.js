@@ -61,13 +61,12 @@ function ViewSeed({ route }) {
 
   useEffect(() => {
     // seed item 클릭 시, 해당 링크로 이동
-    if (seedInfo && isOpen) {
+    if (seedInfo && seedInfo.seedType && isOpen) {
       if (seedInfo.seedType === 'LINK' && seedInfo.seedLink) {
         handleLinkClick(seedInfo.seedLink);
+      } else if (seedInfo.seedType !== 'LINK') {
+        openModal('justOpenThumbnailModal');
       }
-    }
-    if (seedInfo.seedType !== 'LINK' && isOpen) {
-      openModal('justOpenThumbnailModal');
     }
   }, [seedInfo, isOpen, navigation]);
 

@@ -41,8 +41,8 @@ const SeedList = ({ navigation, route }) => {
   const [selectedTags, setSelectedTags] = useState([]);
   // 저장형식, 정렬 필터링
   const [filterModalVisible, setFilterModalVisible] = useState(false);
-  const [selectedType, setSelectedType] = useState(null);
-  const [selectedSort, setSelectedSort] = useState(null);
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedSort, setSelectedSort] = useState('');
   // 읽지 않은 씨드, 삭제 모드
   const [deleteMode, setDeleteMode] = useState(false);
   const [selectedSeedIds, setSelectedSeedIds] = useState([]);
@@ -118,13 +118,20 @@ const SeedList = ({ navigation, route }) => {
           response = await getFavoriteSeeds();
           break;
         case 'search':
-          response = await searchSeeds(selectedTags, searchKeyword);
+          response = await searchSeeds(
+            selectedTags,
+            searchKeyword,
+            selectedType,
+            selectedSort,
+          );
           break;
         case 'categorySearch':
           response = await searchCategorySeeds(
             categoryId,
             selectedTags,
             searchKeyword,
+            selectedType,
+            selectedSort,
           );
           break;
         case 'favoriteSearch':
@@ -133,6 +140,11 @@ const SeedList = ({ navigation, route }) => {
         default:
           response = await getAllSeeds();
           break;
+      }
+
+      if (response === '씨드가 존재하지 않습니다.') {
+        setSeeds([]);
+        return;
       }
 
       const seedData = response[0].seedInfoList.map((item) => ({
@@ -202,40 +214,26 @@ const SeedList = ({ navigation, route }) => {
     setSelectedType(newType);
     setSelectedSort(newSort);
     setFilterModalVisible(false);
+
+    let newMode = mode;
+
+    if (mode === 'all') {
+      newMode = 'search';
+      navigation.setParams({ mode: 'search' });
+    } else if (mode === 'category') {
+      newMode = 'categorySearch';
+      navigation.setParams({ mode: 'categorySearch' });
+    }
   };
 
-  const filteredSeeds = () => {
-    if (
-      mode === 'popular' ||
-      mode === 'unread' ||
-      mode === 'favorite' ||
-      mode === 'favoriteSearch'
-    )
-      return seeds;
+  useEffect(() => {
+    // appltFilters 업데이트 될때
+    if (mode === 'search' || mode === 'categorySearch') {
+      fetchSeeds();
+    }
+  }, [selectedType, selectedSort, selectedTags, mode]);
 
-    return (
-      seeds
-        .filter((seed) => {
-          // TODO: 태그 필터링
-          const matchesTags =
-            selectedTags.length === 0 ||
-            (seed.tagName &&
-              selectedTags.some((tag) => seed.tagName.includes(tag)));
-          // 저장형식 필터링
-          const matchesType = !selectedType || seed.seedType === selectedType;
-          return matchesTags && matchesType;
-        })
-        // 정렬 필터링
-        .sort((a, b) => {
-          if (selectedSort === 'name') {
-            return a.seedName.localeCompare(b.seedName);
-          }
-          return b.seedId - a.seedId;
-        })
-    );
-  };
-
-  const isEmpty = filteredSeeds().length == 0;
+  const isEmpty = seeds.length === 0;
 
   if (loading) {
     return <Spinner />;
@@ -346,7 +344,7 @@ const SeedList = ({ navigation, route }) => {
 
         {/* 씨드 목록 */}
         <FlatList
-          data={filteredSeeds()}
+          data={seeds}
           keyExtractor={(item) => item.seedId.toString()}
           renderItem={({ item }) => (
             <SeedItem
@@ -384,7 +382,7 @@ const SeedList = ({ navigation, route }) => {
           )}
           contentContainerStyle={[
             styles.listContainer,
-            filteredSeeds().length === 0 && styles.emptyListContainer,
+            isEmpty && styles.emptyListContainer,
           ]}
           showsVerticalScrollIndicator={false}
         />

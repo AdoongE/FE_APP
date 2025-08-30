@@ -85,7 +85,7 @@ const SeedItem = ({
       <Pressable
         key={seed.seedId}
         style={styles.seedRow}
-        onPress={() => (deleteMode ? onCheckSelect(seed.seedId) : onPress)}
+        onPress={deleteMode ? () => onCheckSelect(seed.seedId) : onPress}
       >
         {deleteMode && (
           <TouchableOpacity

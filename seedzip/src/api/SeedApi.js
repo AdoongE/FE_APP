@@ -71,27 +71,53 @@ export const deleteSeed = async (seedId) => {
   }
 };
 
-export const searchSeeds = async (tags, keyword) => {
+export const searchSeeds = async (tags, keyword, seedType, sortBy) => {
+  let isAsc = false;
+  if (sortBy === 'name') {
+    isAsc = true;
+  } else {
+    isAsc = false;
+  }
+
   try {
     const axios = await axiosInstance();
-    const response = await axios.post('/api/v1/seed/filtering', {
-      tags,
-      keyword,
-    });
-    return response.data.results;
+    const response = await axios.post(
+      `/api/v1/seed/filtering?sortBy=${sortBy}&seedType=${seedType}&isAsc=${isAsc}`,
+      {
+        tags,
+        keyword,
+      },
+    );
+    return response.data.results || response.data.status.message;
   } catch (error) {
     console.error('전체 씨드 필터링 및 검색 error:', error);
   }
 };
 
-export const searchCategorySeeds = async (categoryId, tags, keyword) => {
+export const searchCategorySeeds = async (
+  categoryId,
+  tags,
+  keyword,
+  seedType,
+  sortBy,
+) => {
+  let isAsc = false;
+  if (sortBy === 'name') {
+    isAsc = true;
+  } else {
+    isAsc = false;
+  }
+
   try {
     const axios = await axiosInstance();
-    const response = await axios.post(`/api/v1/seed/filtering/${categoryId}`, {
-      tags,
-      keyword,
-    });
-    return response.data.results;
+    const response = await axios.post(
+      `/api/v1/seed/filtering/${categoryId}?sortBy=${sortBy}&seedType=${seedType}&isAsc=${isAsc}`,
+      {
+        tags,
+        keyword,
+      },
+    );
+    return response.data.results || response.data.status.message;
   } catch (error) {
     console.error('카테고리 내 필터링 및 검색 error:', error);
   }

@@ -10,6 +10,8 @@ import {
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { useNavigation } from '@react-navigation/native';
 import BottomNav from '../../components/BottomNav';
+import WithdrawModal from './ask/WithdrawModal';
+import { postWithdraw } from '../../api/MyPageApi';
 
 function Row({ label, right, onPress, accessibilityLabel }) {
   return (
@@ -30,9 +32,9 @@ function Row({ label, right, onPress, accessibilityLabel }) {
 export default function MypageMenu({
   userName = '씨드집',
   appVersion = '1.0.0',
-  onPressWithdraw,
 }) {
   const navigation = useNavigation();
+  const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [addSeedModalVisible, setAddSeedModalVisible] = useState(false);
 
   const onPressLogout = async () => {
@@ -47,6 +49,15 @@ export default function MypageMenu({
       console.error('로그아웃 실패:', err);
     }
   };
+
+  const handleWithdraw = async () => {
+    await postWithdraw();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'nextSplash' }],
+    });
+  };
+
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -94,7 +105,7 @@ export default function MypageMenu({
         <View style={styles.divider} />
 
         <TouchableOpacity
-          onPress={onPressWithdraw}
+          onPress={() => setWithdrawModalVisible(true)}
           activeOpacity={0.7}
           accessibilityRole="button"
           accessibilityLabel="회원탈퇴"
@@ -103,6 +114,13 @@ export default function MypageMenu({
           <Text style={styles.withdrawText}>회원탈퇴</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <WithdrawModal
+        visible={withdrawModalVisible}
+        onCancel={() => setWithdrawModalVisible(false)}
+        onDelete={handleWithdraw}
+      />
+
       <BottomNav
         addSeedModalVisible={addSeedModalVisible}
         setAddSeedModalVisible={setAddSeedModalVisible}
