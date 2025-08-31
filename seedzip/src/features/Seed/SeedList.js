@@ -7,6 +7,7 @@ import {
   FlatList,
   StyleSheet,
   SafeAreaView,
+  Modal,
   ScrollView,
 } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
@@ -27,6 +28,7 @@ import UnreadDeleteBtn from './UnreadDeleteBtn';
 import BottomNav from '../../components/BottomNav';
 import EmptyView from './EmptyView';
 import Spinner from '../../components/Spinner';
+import { MyTabs } from '../../components/tag/TagScreens';
 
 const SeedList = ({ navigation, route }) => {
   const mode = route?.params?.mode || 'all';
@@ -46,6 +48,7 @@ const SeedList = ({ navigation, route }) => {
   // 읽지 않은 씨드, 삭제 모드
   const [deleteMode, setDeleteMode] = useState(false);
   const [selectedSeedIds, setSelectedSeedIds] = useState([]);
+  const [visible, setVisible] = useState(false);
 
   const typeLabels = {
     LINK: '링크',
@@ -283,13 +286,18 @@ const SeedList = ({ navigation, route }) => {
                     <View style={styles.line} />
                     {/* 태그 선택 */}
                     <View style={styles.rowContainer}>
-                      <Feather
-                        name="tag"
-                        size={14}
-                        color="#4f4f4f"
-                        style={{ marginTop: 2 }}
-                      />
-                      <Text style={styles.sectionTitle}>태그 선택</Text>
+                      <TouchableOpacity
+                        onPress={() => setVisible(true)}
+                        activeOpacity={0.8}
+                      >
+                        <Feather
+                          name="tag"
+                          size={14}
+                          color="#4f4f4f"
+                          style={{ marginTop: 2 }}
+                        />
+                        <Text style={styles.sectionTitle}>태그 선택</Text>
+                      </TouchableOpacity>
                       <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -317,7 +325,6 @@ const SeedList = ({ navigation, route }) => {
                       </ScrollView>
                     </View>
                     <View style={styles.line} />
-                    {/* 저장형식 · 정렬 버튼 */}
                     <View style={styles.filterContainer}>
                       <TouchableOpacity
                         style={styles.filterButton}
@@ -342,7 +349,6 @@ const SeedList = ({ navigation, route }) => {
           </>
         )}
 
-        {/* 씨드 목록 */}
         <FlatList
           data={seeds}
           keyExtractor={(item) => item.seedId.toString()}
@@ -416,6 +422,35 @@ const SeedList = ({ navigation, route }) => {
         addSeedModalVisible={addSeedModalVisible}
         setAddSeedModalVisible={setAddSeedModalVisible}
       />
+
+      <Modal
+        visible={visible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.bottomSheet}>
+            <View style={styles.sheetHeader}>
+              <Text style={styles.sheetTitle}>태그를 선택하세요</Text>
+              <Text style={styles.sheetSub}>
+                태그를 통해 원하는 씨드를 찾아요
+              </Text>
+            </View>
+
+            <View style={{ flex: 1 }}>
+              <MyTabs />
+            </View>
+
+            <TouchableOpacity
+              style={styles.applyBtn}
+              onPress={() => setVisible(false)}
+            >
+              <Text style={styles.applyText}>적용완료</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -495,6 +530,34 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
   },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+  bottomSheet: {
+    height: '85%',
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+  },
+  sheetHeader: { paddingTop: 30, paddingBottom: 8 },
+  sheetTitle: { fontSize: 20, fontWeight: '600' },
+  sheetSub: { marginTop: 6, fontSize: 12, color: '#9F9F9F' },
+
+  applyBtn: {
+    height: 52,
+    borderRadius: 10,
+    backgroundColor: '#41C3AB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+    marginBottom: 25,
+  },
+  applyText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 });
 
 export default SeedList;
