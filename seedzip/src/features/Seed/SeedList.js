@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -29,8 +29,10 @@ import BottomNav from '../../components/BottomNav';
 import EmptyView from './EmptyView';
 import Spinner from '../../components/Spinner';
 import { MyTabs } from '../../components/tag/TagScreens';
+import { MyContext } from '../../../App';
 
 const SeedList = ({ navigation, route }) => {
+  const { totalTags, setTotalTags } = useContext(MyContext);
   const mode = route?.params?.mode || 'all';
   const categoryId = route?.params?.categoryId;
   const categoryName = route?.params?.categoryName;
@@ -201,14 +203,6 @@ const SeedList = ({ navigation, route }) => {
     });
   };
 
-  // const handleTagSelect = (tag) => {
-  //   if (selectedTags.includes(tag)) {
-  //     setSelectedTags(selectedTags.filter((t) => t !== tag));
-  //   } else {
-  //     setSelectedTags([...selectedTags, tag]);
-  //   }
-  // };
-
   const handleTagRemove = (tag) => {
     setSelectedTags(selectedTags.filter((t) => t !== tag));
   };
@@ -287,8 +281,12 @@ const SeedList = ({ navigation, route }) => {
                     {/* 태그 선택 */}
                     <View style={styles.rowContainer}>
                       <TouchableOpacity
-                        onPress={() => setVisible(true)}
+                        onPress={() => {
+                          setTotalTags(selectedTags);
+                          setVisible(true);
+                        }}
                         activeOpacity={0.8}
+                        style={styles.rowContainer}
                       >
                         <Feather
                           name="tag"
@@ -444,7 +442,15 @@ const SeedList = ({ navigation, route }) => {
 
             <TouchableOpacity
               style={styles.applyBtn}
-              onPress={() => setVisible(false)}
+              onPress={() => {
+                setSelectedTags(totalTags);
+                setVisible(false);
+                if (mode === 'all') {
+                  navigation.setParams({ mode: 'search' });
+                } else if (mode === 'category') {
+                  navigation.setParams({ mode: 'categorySearch' });
+                }
+              }}
             >
               <Text style={styles.applyText}>적용완료</Text>
             </TouchableOpacity>
@@ -501,6 +507,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 16,
     backgroundColor: '#f2f2f2',
+    alignItems: 'center',
   },
   tagButtonSelected: {
     backgroundColor: '#41C3AB',
