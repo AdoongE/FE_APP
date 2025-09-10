@@ -219,5 +219,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     flex: 1,
+    marginRight: 25,
   },
 });

@@ -45,6 +45,7 @@ function Router() {
         headerBackVisible: false,
         headerBackTitleVisible: false,
         headerTintColor: '#000',
+        headerShadowVisible: false,
         headerLeft: () => (
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back" size={24} color="#000" />
@@ -99,7 +100,14 @@ function Router() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="category" component={Category} />
+      <Stack.Screen
+        name="category"
+        component={Category}
+        options={{
+          headerLeft: null,
+          headerTitle: '카테고리',
+        }}
+      />
       <Stack.Screen name="seedList" component={SeedList} />
       <Stack.Screen
         name="view"

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   SafeAreaView,
   Modal,
+  Animated,
   ScrollView,
 } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
@@ -30,6 +31,7 @@ import EmptyView from './EmptyView';
 import Spinner from '../../components/Spinner';
 import { MyTabs } from '../../components/tag/TagScreens';
 import { MyContext } from '../../../App';
+import { useDragClose } from '../../utils/useDragClose';
 
 const SeedList = ({ navigation, route }) => {
   const { totalTags, setTotalTags } = useContext(MyContext);
@@ -51,6 +53,11 @@ const SeedList = ({ navigation, route }) => {
   const [deleteMode, setDeleteMode] = useState(false);
   const [selectedSeedIds, setSelectedSeedIds] = useState([]);
   const [visible, setVisible] = useState(false);
+
+  const { panHandlers, translateY } = useDragClose({
+    onCancel: () => setVisible(false),
+    visible,
+  });
 
   const typeLabels = {
     LINK: '링크',
@@ -87,7 +94,10 @@ const SeedList = ({ navigation, route }) => {
         title = '즐겨찾기';
         break;
     }
-    navigation.setOptions({ headerTitle: title });
+    navigation.setOptions({
+      headerTitle: title,
+      ...(title === '즐겨찾기' && { headerLeft: null }),
+    });
   }, [mode, navigation]);
 
   useEffect(() => {
@@ -428,7 +438,11 @@ const SeedList = ({ navigation, route }) => {
         onRequestClose={() => setVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.bottomSheet}>
+          <Animated.View
+            style={[styles.bottomSheet, { transform: [{ translateY }] }]}
+            {...panHandlers}
+          >
+            <View style={styles.dragHandle} />
             <View style={styles.sheetHeader}>
               <Text style={styles.sheetTitle}>태그를 선택하세요</Text>
               <Text style={styles.sheetSub}>
@@ -454,7 +468,7 @@ const SeedList = ({ navigation, route }) => {
             >
               <Text style={styles.applyText}>적용완료</Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         </View>
       </Modal>
     </SafeAreaView>
@@ -551,7 +565,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 20,
   },
-  sheetHeader: { paddingTop: 30, paddingBottom: 8 },
+  dragHandle: {
+    width: 29,
+    height: 4,
+    backgroundColor: '#dcdada',
+    borderRadius: 100,
+    alignSelf: 'center',
+    marginTop: 12,
+  },
+  sheetHeader: { paddingTop: 28, paddingBottom: 8 },
   sheetTitle: { fontSize: 20, fontWeight: '600' },
   sheetSub: { marginTop: 6, fontSize: 12, color: '#9F9F9F' },
 
