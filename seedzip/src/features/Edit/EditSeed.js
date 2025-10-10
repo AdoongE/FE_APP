@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
-import { updateSeed } from '../../api/SeedApi';
+import { patchSeed } from '../../api/SeedApi';
 
 const EditSeed = () => {
   const navigation = useNavigation();
@@ -49,20 +49,19 @@ const EditSeed = () => {
   };
 
   const handleUpdateSeed = async () => {
-    const seedDataToUpdate = {
-      title: title,
-      memo: memo,
-      categoryId: categories.map((c) => c.id),
-      tagId: tags.map((t) => t.tagId),
+    const patchData = {
+      seedType: seed.seedType,
+      seedName: title,
+      categoryName: categories,
+      thumbnailImage: 0,
+      seedLink: seed.seedLink,
+      tagName: tags,
       dDay: dDay,
+      seedDetail: memo,
     };
 
-    try {
-      await updateSeed(seed.id, seedDataToUpdate);
-      navigation.goBack();
-    } catch (error) {
-      console.error('Seed update failed:', error);
-    }
+    await patchSeed(seed.seedId, patchData);
+    navigation.navigate('view', { seedId: seed.seedId, isOpen: false });
   };
 
   return (
@@ -92,7 +91,8 @@ const EditSeed = () => {
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate('editCategory', {
-                  categories: categories,
+                  categories,
+                  seed,
                 })
               }
             >
@@ -100,8 +100,8 @@ const EditSeed = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.wrapper}>
-            {categories.map((category) => (
-              <View key={category.id} style={styles.textWrapper}>
+            {categories.map((category, index) => (
+              <View key={index} style={styles.textWrapper}>
                 <Text style={styles.divText}>{category}</Text>
               </View>
             ))}
@@ -115,7 +115,7 @@ const EditSeed = () => {
               onPress={() =>
                 navigation.navigate('editTag', {
                   tags,
-                  seed: seed,
+                  seed,
                 })
               }
             >
@@ -293,8 +293,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   nextButton: {
-    marginTop: 30, // Adjust as needed
-    marginBottom: 20, // Adjust as needed
+    marginTop: 30,
+    marginBottom: 20,
     borderRadius: 10,
     backgroundColor: '#41C3AB',
     paddingVertical: 15,
