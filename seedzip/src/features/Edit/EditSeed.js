@@ -18,7 +18,6 @@ const EditSeed = () => {
   const route = useRoute();
   const { seed } = route.params;
 
-  // Use individual state for each editable field
   const [title, setTitle] = useState(seed.seedName || '');
   const [memo, setMemo] = useState(seed.seedDetail || '');
   const [categories, setCategories] = useState(seed.categoryName || []);
@@ -113,7 +112,12 @@ const EditSeed = () => {
           <View style={styles.contentName}>
             <Text style={styles.name}>태그</Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('editTag', { tags: tags })}
+              onPress={() =>
+                navigation.navigate('editTag', {
+                  tags,
+                  seed: seed,
+                })
+              }
             >
               <Feather name="edit-3" size={16} />
             </TouchableOpacity>

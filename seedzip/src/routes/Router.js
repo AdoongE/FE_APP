@@ -206,14 +206,14 @@ function Router() {
         name="editCategory"
         component={EditCategory}
         options={{
-          headerTitle: '씨드 상세보기',
+          headerTitle: '씨드 수정',
         }}
       />
       <Stack.Screen
         name="editTag"
         component={EditTag}
         options={{
-          headerTitle: '씨드 상세보기',
+          headerTitle: '씨드 수정',
         }}
       />
     </Stack.Navigator>
