@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,9 @@ import {
   TextInput,
   StyleSheet,
 } from 'react-native';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {MyTag} from '../../api/MyTagApi';
-import {MyContext} from '../../../App';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { MyTag } from '../../api/MyTagApi';
+import { MyContext } from '../../../App';
 import tagImage from '../../assets/icons/tag.png';
 import tagButton from '../../assets/icons/tagEnter.png';
 
@@ -57,46 +57,36 @@ const TagOption = [
 ];
 
 export function OriginalTagScreen() {
-  const [selectedTags, setSelectedTags] = useState([]);
-  const {totalTags, setTotalTags} = useContext(MyContext);
+  const { totalTags, setTotalTags } = useContext(MyContext);
 
-  const handleSelectTag = tag => {
-    setSelectedTags(prev =>
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag],
-    );
+  const handleSelectTag = (tag) => {
+    const isSelected = totalTags.includes(tag);
+    if (isSelected) {
+      setTotalTags(totalTags.filter((t) => t !== tag));
+    } else {
+      setTotalTags([...totalTags, tag]);
+    }
   };
-
-  useEffect(() => {
-    setTotalTags(prev => {
-      const updated = [...new Set([...prev, ...selectedTags])];
-      return JSON.stringify(prev) !== JSON.stringify(updated) ? updated : prev;
-    });
-  }, [selectedTags]);
-
-  useEffect(() => {
-    setSelectedTags(prev => prev.filter(tag => totalTags.includes(tag)));
-  }, [totalTags]);
 
   return (
     <View style={styles.screen}>
       <View style={styles.TagContainer}>
-        {TagOption.map((tag, idx) => (
-          <TouchableOpacity
-            key={idx}
-            style={[
-              styles.TagButton,
-              selectedTags.includes(tag) && styles.selectedTagButton,
-            ]}
-            onPress={() => handleSelectTag(tag)}>
-            <Text
-              style={[
-                styles.TagText,
-                selectedTags.includes(tag) && styles.selectedTagText,
-              ]}>
-              {tag}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        {TagOption.map((tag, idx) => {
+          const isSelected = totalTags.includes(tag);
+          return (
+            <TouchableOpacity
+              key={idx}
+              style={[styles.TagButton, isSelected && styles.selectedTagButton]}
+              onPress={() => handleSelectTag(tag)}
+            >
+              <Text
+                style={[styles.TagText, isSelected && styles.selectedTagText]}
+              >
+                {tag}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
     </View>
   );
@@ -104,56 +94,49 @@ export function OriginalTagScreen() {
 
 export function MyTagScreen() {
   const [tags, setTags] = useState([]);
-  const [mySelectedTags, setMySelectedTags] = useState([]);
-  const {totalTags, setTotalTags} = useContext(MyContext);
+  const { totalTags, setTotalTags } = useContext(MyContext);
 
   useEffect(() => {
     const fetchTags = async () => {
       const myTags = await MyTag();
-      const names = Array.isArray(myTags) ? myTags.map(t => t.name) : [];
+      const names = Array.isArray(myTags) ? myTags.map((t) => t.name) : [];
       setTags(names);
     };
     fetchTags();
   }, []);
 
-  const handleSelectTag = tag => {
-    setMySelectedTags(prev =>
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag],
-    );
+  const handleSelectTag = (tag) => {
+    const isSelected = totalTags.includes(tag);
+    if (isSelected) {
+      setTotalTags(totalTags.filter((t) => t !== tag));
+    } else {
+      setTotalTags([...totalTags, tag]);
+    }
   };
-
-  useEffect(() => {
-    setTotalTags(prev => {
-      const updated = [...new Set([...prev, ...mySelectedTags])];
-      return JSON.stringify(prev) !== JSON.stringify(updated) ? updated : prev;
-    });
-  }, [mySelectedTags]);
-
-  useEffect(() => {
-    setMySelectedTags(prev => prev.filter(tag => totalTags.includes(tag)));
-  }, [totalTags]);
 
   return (
     <View style={styles.screen}>
       {tags.length ? (
         <View style={styles.TagContainer}>
-          {tags.map((tag, idx) => (
-            <TouchableOpacity
-              key={idx}
-              style={[
-                styles.TagButton,
-                mySelectedTags.includes(tag) && styles.selectedTagButton,
-              ]}
-              onPress={() => handleSelectTag(tag)}>
-              <Text
+          {tags.map((tag, idx) => {
+            const isSelected = totalTags.includes(tag);
+            return (
+              <TouchableOpacity
+                key={idx}
                 style={[
-                  styles.TagText,
-                  mySelectedTags.includes(tag) && styles.selectedTagText,
-                ]}>
-                {tag}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                  styles.TagButton,
+                  isSelected && styles.selectedTagButton,
+                ]}
+                onPress={() => handleSelectTag(tag)}
+              >
+                <Text
+                  style={[styles.TagText, isSelected && styles.selectedTagText]}
+                >
+                  {tag}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       ) : (
         <View style={styles.noTag}>
@@ -169,11 +152,11 @@ export function MyTagScreen() {
 
 export function NewTagScreen() {
   const [newTag, setNewTag] = useState('');
-  const {setTotalTags} = useContext(MyContext);
+  const { setTotalTags } = useContext(MyContext);
 
   const handleSubmit = () => {
     if (newTag.trim()) {
-      setTotalTags(prev => [...prev, newTag.trim()]);
+      setTotalTags((prev) => [...new Set([...prev, newTag.trim()])]);
       setNewTag('');
     }
   };
@@ -188,7 +171,7 @@ export function NewTagScreen() {
           style={styles.inputBox}
         />
         <TouchableOpacity onPress={handleSubmit}>
-          <Image source={tagButton} style={{marginTop: 10}} />
+          <Image source={tagButton} style={{ marginTop: 10 }} />
         </TouchableOpacity>
       </View>
     </View>
@@ -203,8 +186,9 @@ export function MyTabs() {
       screenOptions={{
         tabBarActiveTintColor: '#000',
         tabBarInactiveTintColor: 'gray',
-        tabBarIndicatorStyle: {backgroundColor: '#41C3AB', height: 3},
-      }}>
+        tabBarIndicatorStyle: { backgroundColor: '#41C3AB', height: 3 },
+      }}
+    >
       <Tab.Screen name="기본 태그" component={OriginalTagScreen} />
       <Tab.Screen name="나의 태그" component={MyTagScreen} />
       <Tab.Screen name="직접 입력" component={NewTagScreen} />
@@ -213,7 +197,7 @@ export function MyTabs() {
 }
 
 const styles = StyleSheet.create({
-  screen: {flex: 1, backgroundColor: 'white', paddingHorizontal: 20},
+  screen: { flex: 1, backgroundColor: 'white', paddingHorizontal: 20 },
   TagContainer: {
     marginVertical: 20,
     flexWrap: 'wrap',

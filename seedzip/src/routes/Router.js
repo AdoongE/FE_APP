@@ -33,6 +33,9 @@ import TermsPage from '../pages/mypage/ask/TermsPage';
 import InfoPage from '../pages/mypage/ask/InfoPage';
 import InfoDetailPage from '../pages/mypage/ask/InfoDetailPage';
 import QuestionPage from '../pages/mypage/ask/QuestionPage';
+import EditSeed from '../features/Edit/EditSeed';
+import EditCategory from '../features/Edit/EditCategory';
+import EditTag from '../features/Edit/EditTag';
 const Stack = createNativeStackNavigator();
 
 function Router() {
@@ -190,6 +193,27 @@ function Router() {
         component={QuestionPage}
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="editSeed"
+        component={EditSeed}
+        options={{
+          headerTitle: '씨드 수정',
+        }}
+      />
+      <Stack.Screen
+        name="editCategory"
+        component={EditCategory}
+        options={{
+          headerTitle: '씨드 수정',
+        }}
+      />
+      <Stack.Screen
+        name="editTag"
+        component={EditTag}
+        options={{
+          headerTitle: '씨드 수정',
         }}
       />
     </Stack.Navigator>

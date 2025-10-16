@@ -133,7 +133,7 @@ function ViewSeed({ route }) {
             <TouchableOpacity
               onPress={() => {
                 closeMenu();
-                alert('씨드 수정하기');
+                navigation.navigate('editSeed', {seed: seedInfo});
               }}
             >
               <View style={styles.menuItem}>

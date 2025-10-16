@@ -179,7 +179,7 @@ const AddSeedPage = () => {
             <Text style={styles.name}>디데이</Text>
           </View>
           <Text style={styles.sectionSubtitle}>
-            저장한 날에 알림을 받을 수 있어요
+            디데이를 설정하고 알림을 받아보세요.
           </Text>
           <TouchableOpacity
             style={styles.ddayContent}

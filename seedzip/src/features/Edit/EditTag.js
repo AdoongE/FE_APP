@@ -7,27 +7,35 @@ import {
   ScrollView,
 } from 'react-native';
 import React, { useContext, useEffect } from 'react';
-import { MyContext } from '../../../App';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import close from '../../assets/icons/close.png';
 import { MyTabs } from '../../components/tag/TagScreens';
+import { MyContext } from '../../../App';
 
-function AddTag({ navigation }) {
-  const { tags, setTags, totalTags, setTotalTags } = useContext(MyContext);
+function EditTag() {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { tags: initialTags, seed } = route.params;
+  const { totalTags, setTotalTags } = useContext(MyContext);
 
   useEffect(() => {
-    console.log('최종 태그: ', totalTags);
-  }, [tags, totalTags]);
+    if (initialTags) {
+      setTotalTags(initialTags);
+    }
 
-  const handleClick = () => {
-    console.log('제출 태그: ', totalTags);
-    setTags(totalTags);
-    navigation.navigate('add');
+    return () => {
+      setTotalTags([]);
+    };
+  }, [initialTags, setTotalTags]);
+
+  const handleComplete = () => {
+    navigation.navigate('editSeed', { seed: seed, updatedTags: totalTags });
   };
 
   return (
     <View style={styles.container}>
-      <View style={{ paddingHorizontal: '20' }}>
-        <Text style={styles.title}>태그를 입력해주세요</Text>
+      <View style={{ paddingHorizontal: 20 }}>
+        <Text style={styles.title}>태그를 수정해주세요</Text>
         <Text style={styles.short}>태그는 2개 이상 필수로 입력해야 해요 </Text>
         <ScrollView
           style={styles.input}
@@ -43,7 +51,7 @@ function AddTag({ navigation }) {
                   setTotalTags(updatedTags);
                 }}
               >
-                <Image source={close} />
+                <Image source={close} style={{ width: 12, height: 12 }} />
               </TouchableOpacity>
             </TouchableOpacity>
           ))}
@@ -56,9 +64,9 @@ function AddTag({ navigation }) {
       <TouchableOpacity
         style={styles.button}
         disabled={totalTags.length < 2}
-        onPress={handleClick}
+        onPress={handleComplete}
       >
-        <Text style={styles.buttonText}>다음</Text>
+        <Text style={styles.buttonText}>완료</Text>
       </TouchableOpacity>
     </View>
   );
@@ -81,74 +89,7 @@ const styles = StyleSheet.create({
   },
   tagP: {
     fontSize: 12,
-    fontWeight: 500,
-    color: 'white',
-  },
-  inputContainer: {
-    width: 350,
-    height: 53,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#DCDADA',
-    marginTop: 24,
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    columnGap: 5,
-  },
-  inputBox: {
-    width: 290,
-    height: 35,
-    fontSize: 16,
-    marginTop: 8,
-  },
-  screen: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
-  },
-  noText: {
-    marginTop: 12,
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 600,
-    lineHeight: 25.2,
-    color: '#4F4F4F',
-  },
-  noTag: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  TagContainer: {
-    marginVertical: 20,
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    gap: 4,
-    alignContent: 'flex-start',
-    marginRight: 20,
-  },
-  TagButton: {
-    height: 30,
-    alignSelf: 'flex-start',
-    borderRadius: 30,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    color: '#9F9F9F',
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#9F9F9F',
-    marginBottom: 10,
-  },
-  selectedTagButton: {
-    backgroundColor: '#41C3AB',
-    borderWidth: 0,
-  },
-  TagText: {
-    fontSize: 12,
     fontWeight: '500',
-    color: '#9F9F9F',
-  },
-  selectedTagText: {
     color: 'white',
   },
   container: {
@@ -156,20 +97,24 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingBottom: 24,
   },
-  title: { marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4 },
+  backButton: {
+    marginTop: 20,
+    marginLeft: 20,
+    marginBottom: 10,
+    alignSelf: 'flex-start',
+  },
+  title: { fontSize: 24, fontWeight: '600', marginBottom: 4 },
   short: {
     color: '#898989',
-    fontWeight: 400,
+    fontWeight: '400',
     fontSize: 14,
     marginBottom: 28,
   },
   button: {
     width: 350,
     height: 51,
-    border: 0,
     borderRadius: 10,
     backgroundColor: '#41C3AB',
-    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 15,
@@ -178,11 +123,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontWeight: 600,
+    fontWeight: '600',
     fontSize: 16,
   },
   input: {
-    width: 350,
+    width: '100%',
     height: 40,
     borderRadius: 5,
     borderWidth: 1,
@@ -191,7 +136,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 7,
     flexDirection: 'row',
-    overflow: 'scroll',
   },
   line: {
     height: 14,
@@ -200,4 +144,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddTag;
+export default EditTag;
