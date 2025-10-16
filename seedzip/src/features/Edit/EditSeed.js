@@ -12,6 +12,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import { patchSeed } from '../../api/SeedApi';
+import ImageSave from '../Add/ImageSave';
 
 const EditSeed = () => {
   const navigation = useNavigation();
@@ -53,8 +54,6 @@ const EditSeed = () => {
       seedType: seed.seedType,
       seedName: title,
       categoryName: categories,
-      thumbnailImage: 0,
-      seedLink: seed.seedLink,
       tagName: tags,
       dDay: dDay,
       seedDetail: memo,
@@ -75,17 +74,28 @@ const EditSeed = () => {
         value={title}
         onChangeText={setTitle}
       />
-      {seed.link && (
+
+      {seed.seedType === 'LINK' && (
         <View style={styles.linkBox}>
           <View style={styles.circle}>
             <Ionicons name="link-outline" color="white" />
           </View>
-          <Text style={styles.linkText}>{seed.link}</Text>
+          <Text style={styles.linkText}>{seed.seedLink}</Text>
         </View>
+      )}
+      {seed.seedType === 'IMAGE' && (
+        <ImageSave
+          route={{
+            params: {
+              selectedImages: seed.fileLinks,
+              thumbnailIndex: seed.thumbnailImage,
+            },
+          }}
+        />
       )}
 
       <View>
-        <View style={styles.contentDiv}>
+        <View style={[styles.contentDiv, { marginTop: 20 }]}>
           <View style={styles.contentName}>
             <Text style={styles.name}>카테고리</Text>
             <TouchableOpacity
@@ -102,13 +112,15 @@ const EditSeed = () => {
           <View style={styles.wrapper}>
             {categories.map((category, index) => (
               <View key={index} style={styles.textWrapper}>
-                <Text style={styles.divText}>{category}</Text>
+                <Text key={index} style={styles.divText}>
+                  {category}
+                </Text>
               </View>
             ))}
           </View>
         </View>
 
-        <View style={[styles.contentDiv, { marginTop: 20 }]}>
+        <View style={[styles.contentDiv]}>
           <View style={styles.contentName}>
             <Text style={styles.name}>태그</Text>
             <TouchableOpacity
@@ -123,16 +135,18 @@ const EditSeed = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.wrapper}>
-            {tags.map((tag) => (
-              <View key={tag.tagId} style={styles.textWrapper}>
-                <Text style={styles.divText}>{tag}</Text>
+            {tags.map((tag, index) => (
+              <View key={index} style={styles.textWrapper}>
+                <Text key={index} style={styles.divText}>
+                  {tag}
+                </Text>
               </View>
             ))}
           </View>
         </View>
 
         <View>
-          <View style={styles.contentDiv}>
+          <View style={[styles.contentDiv, { marginTop: 18 }]}>
             <Text style={styles.name}>디데이</Text>
           </View>
           <Text style={styles.sectionSubtitle}>
@@ -231,7 +245,7 @@ const styles = StyleSheet.create({
   },
   contentDiv: {
     flexDirection: 'row',
-    marginTop: 12,
+    marginTop: 10,
     alignItems: 'center',
   },
   contentName: {

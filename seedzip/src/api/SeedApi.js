@@ -158,7 +158,7 @@ export const getFavoriteSeeds = async () => {
 export const patchSeed = async (seedId, patchData) => {
   try {
     const axios = await axiosInstance();
-    const response = await axios.patch(`/api/v1/seed/${seedId}`, patchData);
+    const response = await axios.patch(`/api/v1/seed/app/${seedId}`, patchData);
     return response.data.results;
   } catch (error) {
     console.error('씨드 수정 error:', error);

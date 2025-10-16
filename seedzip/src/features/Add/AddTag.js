@@ -3,17 +3,16 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
   Image,
   ScrollView,
 } from 'react-native';
-import React, {useContext, useEffect} from 'react';
-import {MyContext} from '../../../App';
+import React, { useContext, useEffect } from 'react';
+import { MyContext } from '../../../App';
 import close from '../../assets/icons/close.png';
-import {MyTabs} from '../../components/tag/TagScreens';
+import { MyTabs } from '../../components/tag/TagScreens';
 
-function AddTag({navigation}) {
-  const {tags, setTags, totalTags, setTotalTags} = useContext(MyContext);
+function AddTag({ navigation }) {
+  const { tags, setTags, totalTags, setTotalTags } = useContext(MyContext);
 
   useEffect(() => {
     console.log('최종 태그: ', totalTags);
@@ -27,21 +26,23 @@ function AddTag({navigation}) {
 
   return (
     <View style={styles.container}>
-      <View style={{paddingHorizontal: '20'}}>
+      <View style={{ paddingHorizontal: '20' }}>
         <Text style={styles.title}>태그를 입력해주세요</Text>
         <Text style={styles.short}>태그는 2개 이상 필수로 입력해야 해요 </Text>
         <ScrollView
           style={styles.input}
           horizontal={true}
-          showsHorizontalScrollIndicator={false}>
+          showsHorizontalScrollIndicator={false}
+        >
           {totalTags.map((tag, idx) => (
             <TouchableOpacity style={styles.chip} key={idx}>
               <Text style={styles.tagP}>{tag}</Text>
               <TouchableOpacity
                 onPress={() => {
-                  const updatedTags = totalTags.filter(item => item !== tag);
+                  const updatedTags = totalTags.filter((item) => item !== tag);
                   setTotalTags(updatedTags);
-                }}>
+                }}
+              >
                 <Image source={close} />
               </TouchableOpacity>
             </TouchableOpacity>
@@ -55,7 +56,8 @@ function AddTag({navigation}) {
       <TouchableOpacity
         style={styles.button}
         disabled={totalTags.length < 2}
-        onPress={handleClick}>
+        onPress={handleClick}
+      >
         <Text style={styles.buttonText}>다음</Text>
       </TouchableOpacity>
     </View>
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingBottom: 24,
   },
-  title: {marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4},
+  title: { marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4 },
   short: {
     color: '#898989',
     fontWeight: 400,
