@@ -99,12 +99,20 @@ const EditSeed = () => {
           <View style={styles.contentName}>
             <Text style={styles.name}>카테고리</Text>
             <TouchableOpacity
-              onPress={() =>
+              onPress={() => {
+                const currentSeedState = {
+                  ...seed,
+                  seedName: title,
+                  seedDetail: memo,
+                  dDay: dDay,
+                  categoryName: categories,
+                  tagName: tags,
+                };
                 navigation.navigate('editCategory', {
                   categories,
-                  seed,
-                })
-              }
+                  seed: currentSeedState,
+                });
+              }}
             >
               <Feather name="edit-3" size={16} />
             </TouchableOpacity>
@@ -124,12 +132,20 @@ const EditSeed = () => {
           <View style={styles.contentName}>
             <Text style={styles.name}>태그</Text>
             <TouchableOpacity
-              onPress={() =>
+              onPress={() => {
+                const currentSeedState = {
+                  ...seed,
+                  seedName: title,
+                  seedDetail: memo,
+                  dDay: dDay,
+                  categoryName: categories,
+                  tagName: tags,
+                };
                 navigation.navigate('editTag', {
                   tags,
-                  seed,
-                })
-              }
+                  seed: currentSeedState,
+                });
+              }}
             >
               <Feather name="edit-3" size={16} />
             </TouchableOpacity>

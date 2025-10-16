@@ -40,11 +40,7 @@ const EditCategory = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      initialCategories &&
-      initialCategories.length > 0 &&
-      categoryList.length > 0
-    ) {
+    if (initialCategories && initialCategories.length > 0) {
       const clicks = initialCategories.map(() => ({ open: false }));
       setAddClick(clicks.length > 0 ? clicks : [{ open: false }]);
 
@@ -57,15 +53,13 @@ const EditCategory = () => {
       ];
       initialCategories.forEach((cat, index) => {
         if (index < categorySetters.length) {
-          if (categoryList.some((c) => c === cat)) {
-            categorySetters[index](cat);
-          }
+          categorySetters[index](cat);
         }
       });
     } else {
       setAddClick([{ open: false }]);
     }
-  }, [initialCategories, categoryList]);
+  }, [initialCategories]);
 
   const dropdownCategory = categoryList.map((MyCategory) => ({
     label: MyCategory.name,
