@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect } from 'react';
 import seedzip from '../../assets/icons/seedzip.png';
@@ -9,67 +16,126 @@ import apple from '../../assets/icons/apple.png';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
-import { login } from '@react-native-kakao/user';
-import { Alert } from 'react-native';
+import { login as kakaoLogin } from '@react-native-kakao/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { axiosInstance } from '../../api/axios-instance';
-import { REACT_NATIVE_APP_KEY } from '@env';
+import NaverLogin from '@react-native-seoul/naver-login';
+import appleAuth from '@invertase/react-native-apple-authentication';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {
+  REACT_NATIVE_APP_KEY,
+  NAVER_CLIENT_ID,
+  NAVER_CLIENT_SECRET,
+  GOOGLE_CLIENT_ID,
+} from '@env';
 
 const NextSplash = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
     initializeKakaoSDK(`${REACT_NATIVE_APP_KEY}`);
+    GoogleSignin.configure({
+      iosClientId: GOOGLE_CLIENT_ID,
+      scopes: ['profile', 'email'],
+    });
   }, []);
+
+  const callBackend = async (provider, accessToken) => {
+    const axios = await axiosInstance();
+    const url = `/api/v1/auth/login/${provider}/app?accessToken=${accessToken}`;
+    const response = await axios.post(url);
+    const { status, results } = response.data;
+
+    if (status.code === 200) {
+      const jwtToken = response.headers['authorization'];
+      if (jwtToken) {
+        await AsyncStorage.setItem('jwtToken', jwtToken);
+        navigation.navigate('home');
+      }
+    } else if (status.code === 401) {
+      Alert.alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+    } else if (status.code === 404) {
+      const { result: accessTokenForSignup, socialType } =
+        (results && results[0]) || {};
+      if (accessTokenForSignup)
+        await AsyncStorage.setItem('accessToken', accessTokenForSignup);
+      if (socialType) await AsyncStorage.setItem('socialType', socialType);
+      navigation.navigate('nickname');
+    } else {
+      Alert.alert(
+        '로그인 실패',
+        status.message ?? '잠시 후 다시 시도해주세요.',
+      );
+    }
+  };
 
   const handleKakaoLogin = async () => {
     try {
-      const token = await login();
-      const kakaoAccessToken = token.accessToken;
-      console.log('로그인 성공, 액세스 토큰:', kakaoAccessToken);
+      const token = await kakaoLogin();
+      await callBackend('kakao', token.accessToken);
+    } catch (e) {
+      Alert.alert('카카오 로그인 중 오류가 발생했습니다.');
+    }
+  };
 
-      const axios = await axiosInstance();
-      const response = await axios.post(
-        `/api/v1/auth/login/kakao/app?accessToken=${kakaoAccessToken}`,
+  const handleNaverLogin = async () => {
+    try {
+      const iosKeys = {
+        kConsumerKey: NAVER_CLIENT_ID,
+        kConsumerSecret: NAVER_CLIENT_SECRET,
+        kServiceAppName: 'seedzip',
+      };
+      const result = await NaverLogin.login(iosKeys);
+      const accessToken =
+        (result &&
+          result.successResponse &&
+          result.successResponse.accessToken) ||
+        result.accessToken;
+      if (!accessToken)
+        throw new Error('네이버 액세스 토큰을 가져오지 못했습니다.');
+      await callBackend('naver', accessToken);
+    } catch (e) {
+      Alert.alert('네이버 로그인 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await GoogleSignin.signIn();
+      const { accessToken } = await GoogleSignin.getTokens();
+      if (!accessToken)
+        throw new Error('구글 액세스 토큰을 가져오지 못했습니다.');
+      await callBackend('google', accessToken);
+    } catch (e) {
+      Alert.alert('구글 로그인 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    try {
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+      });
+
+      const credentialState = await appleAuth.getCredentialStateForUser(
+        appleAuthRequestResponse.user,
       );
 
-      const { status, results } = response.data;
-
-      if (status.code === 200) {
-        console.log('로그인 성공:', status.message);
-        const jwtToken = response.headers['authorization'];
-
-        if (jwtToken) {
-          await AsyncStorage.setItem('jwtToken', jwtToken);
-          console.log('저장된 JWT Token:', jwtToken);
-
-          navigation.navigate('home');
+      if (credentialState === appleAuth.State.AUTHORIZED) {
+        const identityToken = appleAuthRequestResponse.identityToken;
+        if (!identityToken) {
+          Alert.alert('애플 로그인 실패');
+          return;
         }
-      } else if (status.code === 401) {
-        console.log('메세지:', status.message);
 
-        const jwtToken = token.refreshToken;
-
-        if (jwtToken) {
-          await AsyncStorage.setItem('jwtToken', jwtToken);
-          console.log('만료 후, 저장된 JWT Token:', jwtToken);
-
-          navigation.navigate('home');
-        }
-      } else if (status.code === 404) {
-        console.log('회원가입 필요:', status.message);
-
-        const { result: accessToken, socialType } = results[0];
-        console.log('액세스 토큰:', accessToken, '소셜 타입:', socialType);
-
-        await AsyncStorage.setItem('accessToken', accessToken);
-        await AsyncStorage.setItem('socialType', socialType);
-
-        navigation.navigate('nickname'); // 회원가입 페이지 시작
+        await callBackend('apple', identityToken);
+      } else {
+        Alert.alert('애플 로그인 실패');
       }
     } catch (error) {
-      console.error('카카오 로그인 처리 중 에러:', error);
-      Alert.alert('로그인 처리 중 문제가 발생했습니다.');
+      console.log('애플 로그인 오류:', error);
+      Alert.alert('애플 로그인 중 오류가 발생했습니다.');
     }
   };
 
@@ -91,39 +157,35 @@ const NextSplash = () => {
               <Text style={styles.title}>한 곳에 모으는 인사이트!</Text>
             </View>
           </View>
+
           <View style={styles.logins}>
             <TouchableOpacity
-              type="kakao"
               style={[styles.button, { backgroundColor: '#FEE500' }]}
               onPress={handleKakaoLogin}
             >
               <MaterialCommunityIcons name="chat" size={14} color="black" />
               <Text style={{ color: 'black' }}>카카오톡으로 로그인하기</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
-              type="naver"
               style={[styles.button, { backgroundColor: '#03C75A' }]}
+              onPress={handleNaverLogin}
             >
               <Image source={naver} />
-              <Text
-                style={{ color: 'white' }}
-                onPress={() => navigation.navigate('category')}
-              >
-                네이버로 로그인하기
-              </Text>
+              <Text style={{ color: 'white' }}>네이버로 로그인하기</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
-              type="google"
               style={[styles.button, { backgroundColor: 'white' }]}
-              onPress={() => navigation.navigate('home')}
+              onPress={handleGoogleLogin}
             >
               <Image source={google} />
               <Text style={{ color: '#4F4F4F' }}>구글로 로그인하기</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
-              type="apple"
               style={[styles.button, { backgroundColor: 'black' }]}
-              onPress={() => navigation.navigate('home')}
+              onPress={handleAppleLogin}
             >
               <Image source={apple} />
               <Text style={{ color: '#fff' }}>애플로 로그인하기</Text>
@@ -136,10 +198,7 @@ const NextSplash = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-  },
+  container: { flex: 1, alignItems: 'center' },
   gradient: {
     flex: 1,
     width: '100%',
@@ -147,20 +206,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  title: {
-    marginTop: 9,
-    fontSize: 16,
-    fontWeight: 'semibold',
-    color: 'white',
-  },
-  logins: {
-    rowGap: 20,
-    flex: 'auto',
-    position: 'absolute',
-    bottom: 85,
-  },
+  title: { marginTop: 9, fontSize: 16, fontWeight: '600', color: 'white' },
+  logins: { rowGap: 20, flex: 'auto', position: 'absolute', bottom: 85 },
   button: {
-    border: 0,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -168,28 +216,16 @@ const styles = StyleSheet.create({
     height: 46,
     flexDirection: 'row',
     columnGap: 4,
-    fontSize: 14,
-    fontWeight: 'medium',
   },
-  new: {
-    position: 'absolute',
-    top: 262.92,
-    justifyContent: 'center',
-  },
+  new: { position: 'absolute', top: 262.92, justifyContent: 'center' },
   images: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-end',
     columnGap: 6,
   },
-  newLogo: {
-    width: 36,
-    height: 36,
-  },
-  seedzip: {
-    width: 155,
-    height: 36,
-  },
+  newLogo: { width: 36, height: 36 },
+  seedzip: { width: 155, height: 36 },
 });
 
 export default NextSplash;
