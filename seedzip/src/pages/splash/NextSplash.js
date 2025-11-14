@@ -40,7 +40,10 @@ const NextSplash = () => {
     });
   }, []);
 
-  const callBackend = async (provider, accessToken) => {
+  const callBackend = async (provider, token) => {
+    const accessToken = token.accessToken;
+    const refreshToken = token.refreshToken;
+
     const axios = await axiosInstance();
     const url = `/api/v1/auth/login/${provider}/app?accessToken=${accessToken}`;
     const response = await axios.post(url);
@@ -53,7 +56,12 @@ const NextSplash = () => {
         navigation.navigate('home');
       }
     } else if (status.code === 401) {
-      Alert.alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+      const jwtToken = refreshToken;
+
+      if (jwtToken) {
+        await AsyncStorage.setItem('jwtToken', jwtToken);
+        navigation.navigate('home');
+      }
     } else if (status.code === 404) {
       const { result: accessTokenForSignup, socialType } =
         (results && results[0]) || {};
@@ -72,7 +80,7 @@ const NextSplash = () => {
   const handleKakaoLogin = async () => {
     try {
       const token = await kakaoLogin();
-      await callBackend('kakao', token.accessToken);
+      await callBackend('kakao', token);
     } catch (e) {
       Alert.alert('카카오 로그인 중 오류가 발생했습니다.');
     }
