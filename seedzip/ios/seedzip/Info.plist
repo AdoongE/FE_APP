@@ -46,8 +46,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.$(GOOGLE_CLIENT_ID)</string>
-			</array>
+<string>com.googleusercontent.apps.935579516428-2ok4osn3ojftqqukomhanoa4mhesning</string>			</array>
 		</dict>
 	</array>
 

@@ -84,30 +84,44 @@ const NextSplash = () => {
         kConsumerKey: NAVER_CLIENT_ID,
         kConsumerSecret: NAVER_CLIENT_SECRET,
         kServiceAppName: 'seedzip',
+        kServiceAppUrlScheme: 'naversRhckDL5ywWQI66qKXAu',
       };
+
+      console.log('네이버 login 호출 직전', iosKeys);
+
       const result = await NaverLogin.login(iosKeys);
+
+      console.log('네이버 login 결과', result);
+
       const accessToken =
         (result &&
           result.successResponse &&
           result.successResponse.accessToken) ||
         result.accessToken;
+
       if (!accessToken)
         throw new Error('네이버 액세스 토큰을 가져오지 못했습니다.');
+
       await callBackend('naver', accessToken);
     } catch (e) {
+      console.log('네이버 로그인 오류 :', e);
       Alert.alert('네이버 로그인 중 오류가 발생했습니다.');
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      await GoogleSignin.signIn();
-      const { accessToken } = await GoogleSignin.getTokens();
-      if (!accessToken)
-        throw new Error('구글 액세스 토큰을 가져오지 못했습니다.');
+      const signInResult = await GoogleSignin.signIn();
+
+      const tokens = await GoogleSignin.getTokens();
+
+      const { accessToken } = tokens;
+      if (!accessToken) throw new Error('액세스 토큰 없음');
+
       await callBackend('google', accessToken);
     } catch (e) {
-      Alert.alert('구글 로그인 중 오류가 발생했습니다.');
+      console.log('❌ Google Login Error:', e);
+      Alert.alert('구글 로그인 중 오류가 발생했습니다.', e?.message ?? '');
     }
   };
 
