@@ -7,7 +7,8 @@ import Field from '../pages/signup/Field';
 import Consent from '../pages/signup/Consent';
 import Success from '../pages/signup/Success';
 import SplashPage from '../pages/splash/SplashPage';
-import NextSplash from '../pages/splash/NextSplash';
+import LoginPage from '../pages/splash/LoginPage';
+// import NextSplash from '../pages/splash/NextSplash';
 import Home from '../features/Home/Home';
 import Search from '../features/Home/Search';
 import View from '../features/View/ViewSeed';
@@ -64,12 +65,20 @@ function Router() {
         }}
       />
       <Stack.Screen
+        name="login"
+        component={LoginPage}
+        options={{
+          headerShown: false,
+        }}
+      />
+      {/* <Stack.Screen
         name="nextSplash"
         component={NextSplash}
         options={{
           headerShown: false,
         }}
       />
+       */}
       <Stack.Screen
         name="mypage"
         component={MypageMenu}

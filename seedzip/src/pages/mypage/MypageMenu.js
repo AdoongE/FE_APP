@@ -43,7 +43,7 @@ export default function MypageMenu({
       Alert.alert('로그아웃 되었습니다');
       navigation.reset({
         index: 0,
-        routes: [{ name: 'nextSplash' }],
+        routes: [{ name: 'login' }],
       });
     } catch (err) {
       console.error('로그아웃 실패:', err);
@@ -54,7 +54,7 @@ export default function MypageMenu({
     await postWithdraw();
     navigation.reset({
       index: 0,
-      routes: [{ name: 'nextSplash' }],
+      routes: [{ name: 'login' }],
     });
   };
 

@@ -57,7 +57,7 @@ const SplashPage = ({ navigation }) => {
       ]),
     ]).start(() => {
       setTimeout(() => {
-        navigation.navigate('nextSplash');
+        navigation.navigate('login');
       }, 800);
     });
   }, []);
