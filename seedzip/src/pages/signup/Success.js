@@ -33,7 +33,7 @@ const Success = ({ navigation }) => {
       const result = await SignUpHandler(formData);
       if (result?.data?.status?.code === 200) {
         alert('회원가입 성공: ' + result.data.status.message);
-        navigation.navigate('main');
+        navigation.navigate('home');
       }
     } catch (error) {
       console.log(error);
@@ -53,10 +53,7 @@ const Success = ({ navigation }) => {
           seedzip에서 나만의 씨앗들을 저장해보세요.
         </Text>
       </View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleSignupAndNavigate}
-      >
+      <TouchableOpacity style={styles.button} onPress={handleSignupAndNavigate}>
         <Text style={styles.buttonText}>홈으로 가기</Text>
       </TouchableOpacity>
     </View>

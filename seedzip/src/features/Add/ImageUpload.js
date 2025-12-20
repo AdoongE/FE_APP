@@ -15,7 +15,15 @@ import { axiosInstance } from '../../api/axios-instance';
 import { MyContext } from '../../../App';
 
 export default function App() {
-  const {selectedImages, setSelectedImages, thumbnailIndex, setThumbnailIndex, setTitle, setTags, setSummary} = useContext(MyContext);
+  const {
+    selectedImages,
+    setSelectedImages,
+    thumbnailIndex,
+    setThumbnailIndex,
+    setTitle,
+    setTags,
+    setSummary,
+  } = useContext(MyContext);
   const [showWarning, setShowWarning] = useState(false); // 경고 메시지 표시 여부
   const navigation = useNavigation();
 
@@ -29,7 +37,8 @@ export default function App() {
 
     try {
       const axios = await axiosInstance();
-      const finalRepresentativeIndex = thumbnailIndex !== null ? thumbnailIndex : 0;
+      const finalRepresentativeIndex =
+        thumbnailIndex !== null ? thumbnailIndex : 0;
       const imageUri = selectedImages[finalRepresentativeIndex];
 
       const formData = new FormData();
@@ -43,15 +52,19 @@ export default function App() {
         type: blob.type,
       });
 
-      const apiResponse = await axios.post('/api/v1/simplification/image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const apiResponse = await axios.post(
+        '/api/v1/simplification/image',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
 
       console.log('API 응답 성공:', apiResponse.data);
 
-      const simplifiedData = apiResponse.data.results[0];;
+      const simplifiedData = apiResponse.data.results[0];
 
       const tagsString = simplifiedData.tags || '';
       const tagsArray = tagsString.split(/,\s*/);
@@ -67,7 +80,7 @@ export default function App() {
     }
   };
   const handleBackToMain = () => {
-    navigation.navigate('main');
+    navigation.navigate('home');
   };
 
   const pickImage = async () => {
@@ -118,7 +131,10 @@ export default function App() {
     const fileExtension = uri.split('.').pop().toLowerCase(); // 확장자 추출
 
     if (!validExtensions.includes(fileExtension)) {
-      return { isValid: false, message: `허용되지 않는 확장자입니다: .${fileExtension}` };
+      return {
+        isValid: false,
+        message: `허용되지 않는 확장자입니다: .${fileExtension}`,
+      };
     }
 
     // fetch로 파일의 크기를 가져옵니다.
@@ -127,12 +143,17 @@ export default function App() {
     const fileSizeMB = fileBlob.size / (1024 * 1024); // MB로 변환
 
     if (fileSizeMB > maxSizeMB) {
-      return { isValid: false, message: `파일 크기가 ${maxSizeMB}MB를 초과했습니다: ${fileSizeMB.toFixed(2)}MB` };
+      return {
+        isValid: false,
+        message: `파일 크기가 ${maxSizeMB}MB를 초과했습니다: ${fileSizeMB.toFixed(
+          2,
+        )}MB`,
+      };
     }
 
     return { isValid: true, message: '유효한 파일입니다.' };
   };
-  
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBackToMain}>
@@ -157,21 +178,17 @@ export default function App() {
             <Ionicons
               name="cloud-upload-outline"
               size={40}
-              color='#41C3AB'
+              color="#41C3AB"
               style={styles.uploadIcon}
             />
-            <Text
-              style={[
-                styles.uploadText,
-              ]}
-            >
-              이미지 업로드
-            </Text>
+            <Text style={[styles.uploadText]}>이미지 업로드</Text>
           </TouchableOpacity>
 
           {/* 경고 메시지 */}
           {showWarning && (
-            <Text style={styles.warningText}>이미지를 1개 이상{'\n'}업로드하세요</Text>
+            <Text style={styles.warningText}>
+              이미지를 1개 이상{'\n'}업로드하세요
+            </Text>
           )}
         </View>
 
@@ -213,8 +230,8 @@ export default function App() {
           <View style={styles.tipBox}>
             <View style={styles.tipContent}>
               <Text style={styles.tipText}>
-                • 대표 이미지를 기준으로 제목, 태그, 요약을 자동 제공해요{'\n'}
-                • 첫 번째로 등록한 이미지가 대표 이미지가 돼요
+                • 대표 이미지를 기준으로 제목, 태그, 요약을 자동 제공해요{'\n'}•
+                첫 번째로 등록한 이미지가 대표 이미지가 돼요
               </Text>
             </View>
           </View>
