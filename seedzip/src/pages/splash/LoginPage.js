@@ -32,7 +32,7 @@ export default function LoginScreen() {
       const data = await postLogin(email.trim(), pw);
 
       if (data?.status?.code === 200) {
-        navigation.navigate('mypage');
+        navigation.navigate('home');
       } else {
         Alert.alert(
           '로그인 실패',
