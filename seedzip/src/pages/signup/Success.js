@@ -1,47 +1,12 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import Check from '../../assets/icons/check.png';
-import { SignUpHandler } from '../../api/SignUpApi';
-import { useRoute } from '@react-navigation/native';
 
 const Success = ({ navigation }) => {
-  const route = useRoute();
-  const {
-    nickname,
-    birthday,
-    gender,
-    occupation,
-    field,
-    consentToTermsOfService,
-    consentToPersonalInformation,
-    consentToMarketingAndAds,
-  } = route.params;
-
-  const handleSignupAndNavigate = async () => {
-    const formData = {
-      nickname,
-      birthday,
-      gender,
-      occupation,
-      field,
-      consentToTermsOfService,
-      consentToPersonalInformation,
-      consentToMarketingAndAds,
-    };
-
-    try {
-      const result = await SignUpHandler(formData);
-      if (result?.data?.status?.code === 200) {
-        alert('회원가입 성공: ' + result.data.status.message);
-        navigation.navigate('home');
-      }
-    } catch (error) {
-      console.log(error);
-      alert(
-        `회원가입 실패: ${error.message || '알 수 없는 오류가 발생했습니다.'}`,
-      );
-    }
+  const goHome = () => {
+    navigation.replace('home');
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.box}>
@@ -53,7 +18,8 @@ const Success = ({ navigation }) => {
           seedzip에서 나만의 씨앗들을 저장해보세요.
         </Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleSignupAndNavigate}>
+
+      <TouchableOpacity style={styles.button} onPress={goHome}>
         <Text style={styles.buttonText}>홈으로 가기</Text>
       </TouchableOpacity>
     </View>
@@ -69,13 +35,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 600,
+    fontWeight: '600',
     marginBottom: 4,
     textAlign: 'center',
   },
   short: {
     color: '#898989',
-    fontWeight: 400,
+    fontWeight: '400',
     fontSize: 16,
   },
   box: {
@@ -84,10 +50,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    border: 0,
     borderRadius: 10,
     backgroundColor: '#41C3AB',
-    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 15,
@@ -95,7 +59,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontWeight: 600,
+    fontWeight: '600',
     fontSize: 16,
   },
 });

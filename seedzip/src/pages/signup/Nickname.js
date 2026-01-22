@@ -5,10 +5,11 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import ProgressBar from '../../components/signup/ProgressBar';
 
-const Nickname = ({navigation}) => {
+const Nickname = ({ navigation, route }) => {
+  const { email, password } = route.params || {};
   const [isFocused, setIsFocused] = useState(false);
   const [nickname, setNickname] = React.useState('');
   const [error, setError] = useState(false);
@@ -16,7 +17,7 @@ const Nickname = ({navigation}) => {
 
   const nicknameRegex = /^[a-zA-Z0-9가-힣\s]{1,10}$/;
 
-  const handleChange = text => {
+  const handleChange = (text) => {
     setNickname(text);
 
     if (text.trim() === '') {
@@ -30,7 +31,7 @@ const Nickname = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <ProgressBar step={1} />
+      <ProgressBar step={2} />
       <Text style={styles.title}>닉네임을 입력해주세요</Text>
       <Text style={styles.short}>
         한글, 영문, 숫자 공백 포함 10자 이내로 입력해주세요
@@ -63,7 +64,10 @@ const Nickname = ({navigation}) => {
       <TouchableOpacity
         style={styles.button}
         disabled={!touched || error !== false || nickname.trim() === ''}
-        onPress={() => navigation.navigate('birthday', {nickname})}>
+        onPress={() =>
+          navigation.navigate('birthday', { email, password, nickname })
+        }
+      >
         <Text style={styles.buttonText}>다음</Text>
       </TouchableOpacity>
     </View>
@@ -77,7 +81,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
-  title: {marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4},
+  title: { marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 4 },
   short: {
     color: '#898989',
     fontWeight: 400,

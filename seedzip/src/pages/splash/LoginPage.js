@@ -10,16 +10,44 @@ import {
   StyleSheet,
   SafeAreaView,
   Image,
+  Alert,
 } from 'react-native';
 
-export default function LoginScreen() {
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
-  const [keep, setKeep] = useState(false);
+import { useNavigation } from '@react-navigation/native';
+import { postLogin } from '../../api/AuthApi';
 
-  const onLogin = () => {
-    console.log('login:', { id, pw, keep });
-    // TODO: 기존 axios 로그인 연결
+export default function LoginScreen() {
+  const navigation = useNavigation();
+
+  const [email, setEmail] = useState('');
+  const [pw, setPw] = useState('');
+
+  const onLogin = async () => {
+    if (!email.trim() || !pw) {
+      Alert.alert('안내', '이메일과 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    try {
+      const data = await postLogin(email.trim(), pw);
+
+      if (data?.status?.code === 200) {
+        navigation.navigate('mypage');
+      } else {
+        Alert.alert(
+          '로그인 실패',
+          data?.status?.message || '로그인에 실패했습니다.',
+        );
+      }
+    } catch (e) {
+      const msg =
+        e?.response?.data?.status?.message || '로그인에 실패했습니다.';
+      Alert.alert('로그인 실패', msg);
+    }
+  };
+
+  const onSignup = () => {
+    navigation.navigate('nickname');
   };
 
   return (
@@ -32,13 +60,14 @@ export default function LoginScreen() {
 
         <View style={styles.form}>
           <TextInput
-            value={id}
-            onChangeText={setId}
-            placeholder="아이디"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="이메일"
             placeholderTextColor="#9F9F9F"
             style={styles.input}
             autoCapitalize="none"
             autoCorrect={false}
+            keyboardType="email-address"
           />
           <TextInput
             value={pw}
@@ -49,15 +78,12 @@ export default function LoginScreen() {
             secureTextEntry
           />
 
-          <Pressable style={styles.keepRow} onPress={() => setKeep((v) => !v)}>
-            <View style={[styles.checkbox, keep && styles.checkboxOn]}>
-              {keep ? <View style={styles.checkboxDot} /> : null}
-            </View>
-            <Text style={styles.keepText}>로그인 상태 유지</Text>
-          </Pressable>
-
           <Pressable style={styles.button} onPress={onLogin}>
             <Text style={styles.buttonText}>로그인하기</Text>
+          </Pressable>
+
+          <Pressable style={styles.signButton} onPress={onSignup}>
+            <Text style={styles.signText}>회원가입</Text>
           </Pressable>
         </View>
 
@@ -133,6 +159,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 32,
   },
+  signButton: {
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#F2F2F2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  signText: { color: '#4F4F4F', fontSize: 16, fontWeight: '600' },
+
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
 
   footer: { marginTop: 200, color: '#fff', fontSize: 18, fontWeight: '600' },

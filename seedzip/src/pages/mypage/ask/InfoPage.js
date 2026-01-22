@@ -1,4 +1,3 @@
-// src/screens/InfoPage.jsx (MOCK 버전)
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   SafeAreaView,
@@ -33,23 +32,15 @@ function Badge({ label, type = 'new' }) {
 }
 
 function ItemRow({ item }) {
-  const { id, title, isNew, isImportant, createdAt } = item;
-  const formattedDate = (() => {
-    const d = createdAt ? new Date(createdAt) : null;
-    if (!d || isNaN(d.getTime())) return 'YYYY.MM.DD';
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}.${m}.${day}`;
-  })();
   const navigation = useNavigation();
+  const { id, title, isNew, isImportant, createdAt } = item;
 
   return (
     <Pressable onPress={() => navigation.navigate('info_detail', { id })}>
       <View style={styles.item}>
         <View style={styles.badgeRow}>
-          {isNew && <Badge label="NEW" type="new" />}
-          {isImportant && <Badge label="중요" type="important" />}
+          {!!isNew && <Badge label="NEW" type="new" />}
+          {!!isImportant && <Badge label="중요" type="important" />}
         </View>
 
         <View style={styles.itemMain}>
@@ -59,7 +50,7 @@ function ItemRow({ item }) {
           <Ionicons name="chevron-forward" size={18} color="#9F9F9F" />
         </View>
 
-        <Text style={styles.date}>{formattedDate}</Text>
+        <Text style={styles.date}>{String(createdAt ?? '')}</Text>
       </View>
       <View style={styles.divider} />
     </Pressable>
@@ -73,10 +64,16 @@ export default function InfoPage() {
   const [items, setItems] = useState([]);
 
   const fetchNotices = useCallback(async () => {
-    setLoading(true);
     try {
-      await new Promise((r) => setTimeout(r, 400));
-      setItems(MOCK_NOTICES);
+      const infoList = await getNotice();
+      setItems(Array.isArray(infoList) ? infoList : []);
+    } catch (err) {
+      console.log(
+        '[NOTICE] fetch error:',
+        err?.response?.status,
+        err?.response?.data || err?.message || err,
+      );
+      setItems([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -85,20 +82,6 @@ export default function InfoPage() {
 
   useEffect(() => {
     setLoading(true);
-    const fetchNotices = async () => {
-      try {
-        const infoList = await getNotice();
-        setItems(infoList);
-        setLoading(false);
-      } catch (err) {
-        console.error('Info 목록 로딩 실패:', err);
-      }
-    };
-
-    fetchNotices();
-  });
-
-  useEffect(() => {
     fetchNotices();
   }, [fetchNotices]);
 
@@ -106,13 +89,6 @@ export default function InfoPage() {
     setRefreshing(true);
     fetchNotices();
   };
-
-  const renderItem = ({ item }) => (
-    <ItemRow
-      item={item}
-      onPress={() => navigation.navigate('InfoDetail', { id: item.id })}
-    />
-  );
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -135,10 +111,17 @@ export default function InfoPage() {
         <FlatList
           data={items}
           keyExtractor={(it) => String(it.id)}
-          renderItem={renderItem}
+          renderItem={({ item }) => <ItemRow item={item} />}
           contentContainerStyle={styles.listContent}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          ListEmptyComponent={
+            <View style={{ paddingVertical: 24 }}>
+              <Text style={{ color: '#9F9F9F', textAlign: 'center' }}>
+                공지사항이 없습니다.
+              </Text>
+            </View>
           }
         />
       )}
@@ -166,10 +149,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 16, fontWeight: '400', marginTop: 5 },
   date: { marginTop: 12, fontSize: 12, color: '#9F9F9F' },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#DCDADA',
-  },
+  divider: { height: StyleSheet.hairlineWidth, backgroundColor: '#DCDADA' },
   badge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -177,9 +157,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     borderWidth: 1,
   },
+  badgeText: { fontWeight: '500', fontSize: 12 },
   badgeNew: { backgroundColor: '#FFF', borderColor: '#41C3AB' },
-  badgeNewText: { color: '#41C3AB', fontWeight: '500', fontSize: 12 },
+  badgeNewText: { color: '#41C3AB' },
   badgeImportant: { backgroundColor: '#FFF', borderColor: '#4F4F4F' },
-  badgeImportantText: { color: '#4F4F4F', fontWeight: '500', fontSize: 12 },
+  badgeImportantText: { color: '#4F4F4F' },
   loader: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 });

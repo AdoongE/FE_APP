@@ -1,13 +1,13 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-const ProgressBar = ({step, totalSteps = 5}) => {
+const ProgressBar = ({ step, totalSteps = 6 }) => {
   const progress = step / totalSteps;
 
   return (
     <View style={styles.container}>
-      <View style={[styles.progress, {flex: progress}]} />
-      <View style={[styles.remaining, {flex: 1 - progress}]} />
+      <View style={[styles.progress, { flex: progress }]} />
+      <View style={[styles.remaining, { flex: 1 - progress }]} />
     </View>
   );
 };
