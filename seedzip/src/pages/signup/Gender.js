@@ -1,41 +1,51 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import ProgressBar from '../../components/signup/ProgressBar';
 
-const Gender = ({route}) => {
+const Gender = ({ route }) => {
   const navigation = useNavigation();
-  const {nickname, birthday} = route.params;
+  const { email, password, nickname, birthday } = route.params;
   const [gender, setGender] = useState('');
 
   const handleNext = () => {
-    navigation.navigate('field', {nickname, birthday, gender});
+    navigation.navigate('field', {
+      email,
+      password,
+      nickname,
+      birthday,
+      gender,
+    });
   };
 
   return (
     <View style={styles.container}>
-      <ProgressBar step={3} />
+      <ProgressBar step={4} />
       <Text style={styles.title}>성별을 선택해주세요</Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, gender === 'MALE' && styles.selectedButton]}
-          onPress={() => setGender('MALE')}>
+          onPress={() => setGender('MALE')}
+        >
           <Text
             style={[
               styles.buttonText,
               gender !== 'MALE' && styles.unselectedButtonText,
-            ]}>
+            ]}
+          >
             남성
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, gender === 'FEMALE' && styles.selectedButton]}
-          onPress={() => setGender('FEMALE')}>
+          onPress={() => setGender('FEMALE')}
+        >
           <Text
             style={[
               styles.buttonText,
               gender !== 'FEMALE' && styles.unselectedButtonText,
-            ]}>
+            ]}
+          >
             여성
           </Text>
         </TouchableOpacity>
@@ -44,7 +54,8 @@ const Gender = ({route}) => {
         <TouchableOpacity
           style={styles.nextButton}
           onPress={handleNext}
-          disabled={!gender}>
+          disabled={!gender}
+        >
           <Text style={styles.nextButtonText}>다음</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.skipButton} onPress={handleNext}>

@@ -73,7 +73,7 @@ const s = StyleSheet.create({
   title: { fontSize: 16, fontWeight: '700', color: '#111' },
   container: { flex: 1, backgroundColor: '#fff' },
   row: {
-    height: 52,
+    height: 62,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',

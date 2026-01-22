@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   Image,
@@ -22,19 +22,28 @@ import Spinner from '../../components/Spinner';
 export default function Home({ navigation }) {
   const [seeds, setSeeds] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userSeedInfo, setUserSeedInfo] = useState([]);
+  const [userSeedInfo, setUserSeedInfo] = useState({
+    localDate: '',
+    userName: '',
+    todaySeedCount: 0,
+    totalCategory: 0,
+    totalSeed: 0,
+    popular: 0,
+    unread: 0,
+  });
   const [bookmarks, setBookmarks] = useState([]);
   const [addSeedModalVisible, setAddSeedModalVisible] = useState(false);
 
-  const fetchBookmark = async () => {
+  const fetchBookmark = useCallback(async () => {
     const resBookmark = await getBookmark();
-    const bookmarkData = resBookmark.map((cat) => ({
+    const list = Array.isArray(resBookmark) ? resBookmark : [];
+    const bookmarkData = list.map((cat) => ({
       bookmarkId: cat.bookmarkId,
       id: cat.categoryId,
       name: cat.name,
     }));
     setBookmarks(bookmarkData);
-  };
+  }, []);
 
   const { actionBtnsBookmark, ActionModalAlert } = useCategoryActions({
     fetchBookmark,
@@ -46,64 +55,113 @@ export default function Home({ navigation }) {
       {
         key: 'total',
         label: '전체 씨드',
-        value: userSeedInfo.totalSeed,
+        value: userSeedInfo.totalSeed ?? 0,
         onPress: () => navigation.navigate('seedList', { mode: 'all' }),
       },
       {
         key: 'most',
         label: '많이 찾는 씨드',
-        value: userSeedInfo.popular,
+        value: userSeedInfo.popular ?? 0,
         onPress: () => navigation.navigate('seedList', { mode: 'popular' }),
       },
       {
         key: 'unread',
         label: '읽지 않은 씨드',
-        value: userSeedInfo.unread,
+        value: userSeedInfo.unread ?? 0,
         onPress: () => navigation.navigate('seedList', { mode: 'unread' }),
       },
     ],
-    [seeds.length, userSeedInfo, navigation],
+    [userSeedInfo, navigation],
   );
 
   useFocusEffect(
     useCallback(() => {
+      let mounted = true;
+
       const fetchSeeds = async () => {
-        const resAllSeeds = await getAllSeeds();
-        const seedData = resAllSeeds[0].seedInfoList.map((item) => ({
-          seedId: item.seedId,
-          seedName: item.seedName,
-          categoryName: item.categoryName,
-          seedType: item.seedType,
-          thumbnailImage: item.thumbnailImage,
-          tagName: item.tagName,
-          isFavorite: item.isSaved,
-        }));
-        setSeeds(seedData);
-        setLoading(false);
+        try {
+          const resAllSeeds = await getAllSeeds();
+          const first = Array.isArray(resAllSeeds) ? resAllSeeds[0] : null;
+          const list = Array.isArray(first?.seedInfoList)
+            ? first.seedInfoList
+            : [];
+          const seedData = list.map((item) => ({
+            seedId: item.seedId,
+            seedName: item.seedName,
+            categoryName: item.categoryName,
+            seedType: item.seedType,
+            thumbnailImage: item.thumbnailImage,
+            tagName: item.tagName,
+            isFavorite: item.isSaved,
+          }));
+          if (mounted) setSeeds(seedData);
+        } catch (e) {
+          console.log(
+            '[HOME][SEEDS]',
+            e?.response?.status,
+            e?.response?.data || e?.message || '',
+          );
+          if (mounted) setSeeds([]);
+        }
       };
 
-      const fetchUserSeedInfo = async () => {
-        const resSeedInfo = await getUserSeedInfo();
-        setUserSeedInfo({
-          localDate: resSeedInfo[0].localDate.replace(/-/g, '.'),
-          userName: resSeedInfo[0].userName,
-          todaySeedCount: resSeedInfo[0].todaySeedCount,
-          totalCategory: resSeedInfo[0].totalCategoryCount,
-          totalSeed: resSeedInfo[0].totalSeedCount,
-          popular: resSeedInfo[0].mostReadSeedCount,
-          unread: resSeedInfo[0].neverReadSeedCount,
-        });
+      const fetchUserInfo = async () => {
+        try {
+          const resSeedInfo = await getUserSeedInfo();
+          const list = Array.isArray(resSeedInfo) ? resSeedInfo : [];
+          const info = list[0] ?? {};
+          const localDateRaw = info.localDate ?? '';
+          const localDate =
+            typeof localDateRaw === 'string'
+              ? localDateRaw.replace(/-/g, '.')
+              : '';
+
+          if (!mounted) return;
+
+          setUserSeedInfo({
+            localDate,
+            userName: info.userName ?? '',
+            todaySeedCount: info.todaySeedCount ?? 0,
+            totalCategory: info.totalCategoryCount ?? 0,
+            totalSeed: info.totalSeedCount ?? 0,
+            popular: info.mostReadSeedCount ?? 0,
+            unread: info.neverReadSeedCount ?? 0,
+          });
+        } catch (e) {
+          console.log(
+            '[HOME][STATISTICS]',
+            e?.response?.status,
+            e?.response?.data || e?.message || '',
+          );
+          if (mounted) {
+            setUserSeedInfo({
+              localDate: '',
+              userName: '',
+              todaySeedCount: 0,
+              totalCategory: 0,
+              totalSeed: 0,
+              popular: 0,
+              unread: 0,
+            });
+          }
+        }
       };
 
-      fetchSeeds();
-      fetchUserSeedInfo();
-      fetchBookmark();
-    }, []),
+      const run = async () => {
+        setLoading(true);
+        await Promise.all([fetchSeeds(), fetchUserInfo(), fetchBookmark()]);
+        if (mounted) setLoading(false);
+      };
+
+      run();
+
+      return () => {
+        mounted = false;
+      };
+    }, [fetchBookmark]),
   );
 
-  if (loading) {
-    return <Spinner />;
-  }
+  if (loading) return <Spinner />;
 
   return (
     <View style={styles.screen}>
@@ -127,7 +185,6 @@ export default function Home({ navigation }) {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         <View style={styles.contentContainer}>
-          {/* 헤더 카드 */}
           <View style={styles.headerCard}>
             <View style={styles.headerRow}>
               <View style={{ flex: 1 }}>
@@ -158,7 +215,6 @@ export default function Home({ navigation }) {
             </View>
           </View>
 
-          {/* 북마크한 카테고리 */}
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>북마크한 카테고리</Text>
             <Pressable
@@ -194,7 +250,6 @@ export default function Home({ navigation }) {
           </View>
         )}
 
-        {/* 최근 추가한 씨드 */}
         <Text
           style={[
             styles.sectionTitle,
@@ -231,7 +286,7 @@ export default function Home({ navigation }) {
                 }
                 onDeleteSuccess={(deletedId) => {
                   setSeeds((prev) =>
-                    prev.filter((seed) => seed.seedId !== deletedId),
+                    prev.filter((s) => s.seedId !== deletedId),
                   );
                 }}
               />
@@ -244,17 +299,13 @@ export default function Home({ navigation }) {
         addSeedModalVisible={addSeedModalVisible}
         setAddSeedModalVisible={setAddSeedModalVisible}
       />
-      {/* 북마를 한 카테고리를 위한 */}
       <ActionModalAlert />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+  screen: { flex: 1, backgroundColor: '#FFFFFF' },
   topBar: {
     height: 56,
     backgroundColor: '#41C3AB',
@@ -270,28 +321,18 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
   },
   topIcons: { flexDirection: 'row', alignItems: 'center' },
-  contentContainer: {
-    flex: 1,
-    position: 'relative',
-  },
+  contentContainer: { flex: 1, position: 'relative' },
   headerCard: {
     paddingBottom: 65,
     backgroundColor: '#41C3AB',
     paddingVertical: 5,
     paddingHorizontal: 20,
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
+  headerRow: { flexDirection: 'row', alignItems: 'center' },
   dateText: { color: '#fff', fontSize: 12, marginBottom: 10 },
   hello: { color: '#fff', fontSize: 24, fontWeight: '600' },
   helloSub: { color: '#fff', fontSize: 18, fontWeight: '500', marginTop: 4 },
-  headerImg: {
-    width: 126,
-    height: 124,
-  },
-
+  headerImg: { width: 126, height: 124 },
   statRowContainer: {
     position: 'absolute',
     left: 0,
@@ -300,7 +341,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     paddingHorizontal: 20,
   },
-
   statRow: {
     backgroundColor: '#fff',
     borderRadius: 14,
@@ -319,7 +359,6 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   statValue: { color: '#41C3AB', fontSize: 20, fontWeight: '600' },
-
   sectionHeader: {
     paddingHorizontal: 16,
     marginTop: 75,
@@ -328,9 +367,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  sectionTitle: { fontSize: 16, fontWeight: '600' },
+  sectionTitle: { fontSize: 16, fontWeight: '600', marginBottom: 15 },
   moreCategory: { fontSize: 12, color: '#9f9f9f', marginRight: 2 },
-
   emptyBookmarkContainer: {
     backgroundColor: '#f8fbfb',
     marginHorizontal: 20,
@@ -345,10 +383,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
   },
-
   emptyBox: {
     backgroundColor: '#f8fbfb',
-    marginHorizontal: 20,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -369,9 +405,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#41C3AB',
   },
-  addSeedText: {
-    color: '#41C3AB',
-    fontSize: 14,
-    fontWeight: '500',
-  },
+  addSeedText: { color: '#41C3AB', fontSize: 14, fontWeight: '500' },
 });

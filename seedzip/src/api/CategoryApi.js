@@ -2,81 +2,129 @@ import { axiosInstance } from './axios-instance';
 
 export const postCategory = async (newCategoryName, isPublic) => {
   try {
-    const axios = await axiosInstance();
-    await axios.post('/api/v1/category', {
-      name: newCategoryName,
-      isPublic: isPublic ? true : false,
+    const api = await axiosInstance();
+    await api.post('/api/v1/category', {
+      name: String(newCategoryName ?? '').trim(),
+      isPublic: !!isPublic,
     });
+    return true;
   } catch (error) {
-    console.error('카테고리 생성 error:', error);
+    console.log(
+      '[CATEGORY][POST]',
+      error?.response?.status,
+      error?.response?.data || error?.message || '',
+    );
+    return false;
   }
 };
 
 export const deleteCategory = async (categoryId) => {
   try {
-    const axios = await axiosInstance();
-    await axios.delete(`/api/v1/category/${categoryId}`);
+    const api = await axiosInstance();
+    await api.delete(`/api/v1/category/${categoryId}`);
+    return true;
   } catch (error) {
-    console.error('카테고리 삭제 error:', error);
+    console.log(
+      '[CATEGORY][DELETE]',
+      error?.response?.status,
+      error?.response?.data || error?.message || '',
+    );
+    return false;
   }
 };
 
 export const getCategory = async () => {
   try {
-    const axios = await axiosInstance();
-    const response = await axios.get('/api/v1/category');
-    return response.data.results;
+    const api = await axiosInstance();
+    const res = await api.get('/api/v1/category');
+    const results = res.data?.results;
+    return Array.isArray(results) ? results : [];
   } catch (error) {
-    console.error('카테고리 조회 error:', error);
+    console.log(
+      '[CATEGORY][GET]',
+      error?.response?.status,
+      error?.response?.data || error?.message || '',
+    );
+    return [];
   }
 };
 
 export const postBookmark = async (categoryId) => {
   try {
-    const axios = await axiosInstance();
-    await axios.post(`/api/v1/bookmark/category/${categoryId}`);
+    const api = await axiosInstance();
+    await api.post(`/api/v1/bookmark/category/${categoryId}`);
+    return true;
   } catch (error) {
-    console.error('북마크 추가 error:', error);
+    console.log(
+      '[BOOKMARK][POST]',
+      error?.response?.status,
+      error?.response?.data || error?.message || '',
+    );
+    return false;
   }
 };
 
 export const deleteBookmark = async (bookmarkId) => {
   try {
-    const axios = await axiosInstance();
-    await axios.delete(`/api/v1/bookmark/category/${bookmarkId}`);
+    const api = await axiosInstance();
+    await api.delete(`/api/v1/bookmark/category/${bookmarkId}`);
+    return true;
   } catch (error) {
-    console.error('북마크 삭제 error:', error);
+    console.log(
+      '[BOOKMARK][DELETE]',
+      error?.response?.status,
+      error?.response?.data || error?.message || '',
+    );
+    return false;
   }
 };
 
 export const getBookmark = async () => {
   try {
-    const axios = await axiosInstance();
-    const response = await axios.get('/api/v1/bookmark/category/bookmark');
-    return response.data.results;
+    const api = await axiosInstance();
+    const res = await api.get('/api/v1/bookmark/category/bookmark');
+    const results = res.data?.results;
+    return Array.isArray(results) ? results : [];
   } catch (error) {
-    console.error('북마크 조회 error:', error);
+    console.log(
+      '[BOOKMARK][GET]',
+      error?.response?.status,
+      error?.response?.data || error?.message || '',
+    );
+    return [];
   }
 };
 
 export const patchCategory = async (newCategoryName, categoryId) => {
   try {
-    const axios = await axiosInstance();
-    await axios.patch(`/api/v1/category`, {
-      name: newCategoryName,
-      categoryId: categoryId,
+    const api = await axiosInstance();
+    await api.patch('/api/v1/category', {
+      name: String(newCategoryName ?? '').trim(),
+      categoryId,
     });
+    return true;
   } catch (error) {
-    console.error('카테고리 수정 error:', error);
+    console.log(
+      '[CATEGORY][PATCH]',
+      error?.response?.status,
+      error?.response?.data || error?.message || '',
+    );
+    return false;
   }
 };
 
 export const getUserSeedInfo = async () => {
   try {
-    const axios = await axiosInstance();
-    const response = await axios.get(`/api/v1/member/statistics`);
-    return response.data.results;
+    const api = await axiosInstance();
+    const res = await api.get('/api/v1/member/statistics');
+    const results = res.data?.results;
+    return Array.isArray(results) ? results : [];
   } catch (error) {
-    console.error('유저 씨드 정보 조회 error:', error);
+    console.log(
+      '[STATISTICS][GET]',
+      error?.response?.status,
+      error?.response?.data || error?.message || '',
+    );
+    return [];
   }
 };

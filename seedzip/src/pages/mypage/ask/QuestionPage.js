@@ -23,6 +23,7 @@ export default function QuestionPage() {
       try {
         const faqList = await getFaq();
         setFaq(faqList);
+        console.log(faqList);
       } catch (err) {
         console.error('FAQ 로딩 실패:', err);
       }
@@ -71,7 +72,6 @@ export default function QuestionPage() {
         <View style={{ width: 22 }} />
       </View>
 
-      {/* Tabs */}
       <View style={styles.tabs}>
         <Pressable style={styles.tabBtn} onPress={() => setTab('service')}>
           <Text
@@ -133,7 +133,6 @@ const styles = StyleSheet.create({
   tabBtn: {
     flex: 1,
     alignItems: 'center',
-    paddingBottom: 8,
   },
 
   tabText: { fontSize: 16, color: '#9F9F9F', fontWeight: '600' },
@@ -150,7 +149,7 @@ const styles = StyleSheet.create({
   listContent: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 20 },
 
   row: {
-    minHeight: 48,
+    minHeight: 58,
     paddingVertical: 12,
     flexDirection: 'row',
     alignItems: 'center',

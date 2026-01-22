@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -6,12 +6,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import BottomNav from '../../components/BottomNav';
 import WithdrawModal from './ask/WithdrawModal';
 import { postWithdraw } from '../../api/MyPageApi';
+import { GetMyInfo } from '../../api/SignUpApi';
 
 function Row({ label, right, onPress, accessibilityLabel }) {
   return (
@@ -29,13 +33,35 @@ function Row({ label, right, onPress, accessibilityLabel }) {
   );
 }
 
-export default function MypageMenu({
-  userName = '씨드집',
-  appVersion = '1.0.0',
-}) {
+export default function MypageMenu({ appVersion = '1.0.0' }) {
   const navigation = useNavigation();
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [addSeedModalVisible, setAddSeedModalVisible] = useState(false);
+
+  const [userName, setUserName] = useState('씨드집');
+  const [loadingName, setLoadingName] = useState(false);
+
+  const fetchName = useCallback(async () => {
+    try {
+      setLoadingName(true);
+      const info = await GetMyInfo();
+      const nickname = info?.nickname?.trim();
+      if (nickname) setUserName(nickname);
+    } catch (e) {
+      console.error(
+        '마이페이지 닉네임 조회 실패:',
+        e?.response?.data || e?.message || e,
+      );
+    } finally {
+      setLoadingName(false);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchName();
+    }, [fetchName]),
+  );
 
   const onPressLogout = async () => {
     try {
@@ -51,19 +77,28 @@ export default function MypageMenu({
   };
 
   const handleWithdraw = async () => {
-    await postWithdraw();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'login' }],
-    });
+    try {
+      await postWithdraw();
+    } finally {
+      await AsyncStorage.removeItem('jwtToken');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'login' }],
+      });
+    }
   };
 
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>마이페이지</Text>
+
         <View style={styles.nameBox}>
-          <Text style={styles.nameText}>{userName} 님</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            {loadingName ? <ActivityIndicator /> : null}
+            <Text style={styles.nameText}>{userName} 님</Text>
+          </View>
+
           <TouchableOpacity
             style={styles.nameEdit}
             onPress={() => navigation.navigate('editMypage')}
@@ -71,7 +106,7 @@ export default function MypageMenu({
             accessibilityLabel="이름 수정"
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <SimpleLineIcons name="pencil" size={13} color="black" />{' '}
+            <SimpleLineIcons name="pencil" size={13} color="black" />
           </TouchableOpacity>
         </View>
 
@@ -92,23 +127,17 @@ export default function MypageMenu({
 
         <View style={styles.separator} />
 
-        <TouchableOpacity
-          onPress={onPressLogout}
-          activeOpacity={0.7}
-          accessibilityRole="button"
-          accessibilityLabel="로그아웃"
-        >
+        <TouchableOpacity onPress={onPressLogout} activeOpacity={0.7}>
           <View style={styles.logoutBox}>
             <Text style={styles.logoutText}>로그아웃</Text>
           </View>
         </TouchableOpacity>
+
         <View style={styles.divider} />
 
         <TouchableOpacity
           onPress={() => setWithdrawModalVisible(true)}
           activeOpacity={0.7}
-          accessibilityRole="button"
-          accessibilityLabel="회원탈퇴"
           style={styles.withdrawBtn}
         >
           <Text style={styles.withdrawText}>회원탈퇴</Text>
@@ -144,14 +173,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 32,
     paddingBottom: 20,
+    justifyContent: 'space-between',
   },
   nameText: { fontSize: 16, fontWeight: '500' },
   nameEdit: { marginLeft: 8 },
-  editIcon: { fontSize: 16, color: '#666' },
-  separator: {
-    height: 6,
-    backgroundColor: '#F2F2F2',
-  },
+  separator: { height: 6, backgroundColor: '#F2F2F2' },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

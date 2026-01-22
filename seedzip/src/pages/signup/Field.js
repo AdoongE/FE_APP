@@ -5,12 +5,12 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ProgressBar from '../../components/signup/ProgressBar';
 
-const Field = ({navigation, route}) => {
-  const {nickname, birthday, gender} = route.params;
+const Field = ({ navigation, route }) => {
+  const { email, password, nickname, birthday, gender } = route.params;
   const [open, setOpen] = useState(false);
   const [fieldOpen, setFieldOpen] = useState(false);
   const [occupation, setOccupation] = React.useState('');
@@ -47,12 +47,12 @@ const Field = ({navigation, route}) => {
     '기타(직접입력)',
   ];
 
-  const dropdownJobs = jobs.map(job => ({
+  const dropdownJobs = jobs.map((job) => ({
     label: job,
     value: job,
   }));
 
-  const dropdownFields = fields.map(field => ({
+  const dropdownFields = fields.map((field) => ({
     label: field,
     value: field,
   }));
@@ -62,23 +62,23 @@ const Field = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      <ProgressBar step={4} />
+      <ProgressBar step={5} />
       <Text style={styles.title}>
         평소 관심있는 {'\n'}직업과 분야를 선택해주세요(선택)
       </Text>
-      <View style={{rowGap: 20}}>
+      <View style={{ rowGap: 20 }}>
         <DropDownPicker
           placeholder="직업 선택하기"
           open={open}
           value={occupation}
           items={jobItem}
-          setOpen={open => {
+          setOpen={(open) => {
             setOpen(open);
           }}
           setValue={setOccupation}
           setItems={setJobItem}
-          style={{borderColor: '#DCDADA'}}
-          dropDownContainerStyle={{borderColor: '#DCDADA'}}
+          style={{ borderColor: '#DCDADA' }}
+          dropDownContainerStyle={{ borderColor: '#DCDADA' }}
           zIndex={3000}
           zIndexInverse={1000}
           textStyle={{
@@ -92,7 +92,7 @@ const Field = ({navigation, route}) => {
         {occupation === '기타(직접입력)' && (
           <TextInput
             value={customOccupation}
-            onChangeText={text => setCustomOccupation(text)}
+            onChangeText={(text) => setCustomOccupation(text)}
             placeholder="직업을 입력하세요"
             style={styles.blank}
             placeholderTextColmor="#DCDADA"
@@ -103,13 +103,13 @@ const Field = ({navigation, route}) => {
           open={fieldOpen}
           value={field}
           items={fieldItem}
-          setOpen={open => {
+          setOpen={(open) => {
             setFieldOpen(open);
           }}
           setValue={setField}
           setItems={setFieldItem}
-          style={{borderColor: '#DCDADA'}}
-          dropDownContainerStyle={{borderColor: '#DCDADA'}}
+          style={{ borderColor: '#DCDADA' }}
+          dropDownContainerStyle={{ borderColor: '#DCDADA' }}
           zIndex={2000}
           zIndexInverse={2000}
           textStyle={{
@@ -123,7 +123,7 @@ const Field = ({navigation, route}) => {
         {field === '기타(직접입력)' && (
           <TextInput
             value={customField}
-            onChangeText={text => setCustomField(text)}
+            onChangeText={(text) => setCustomField(text)}
             placeholder="분야를 입력하세요"
             style={styles.blank}
             placeholderTextColmor="#DCDADA"
@@ -141,20 +141,24 @@ const Field = ({navigation, route}) => {
               occupation,
               field,
             })
-          }>
+          }
+        >
           <Text style={styles.buttonText}>다음</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.skipButton}
           onPress={() =>
             navigation.navigate('consent', {
+              email,
+              password,
               nickname,
               birthday,
               gender,
               occupation,
               field,
             })
-          }>
+          }
+        >
           <Text style={styles.skipButtonText}>건너뛰기</Text>
         </TouchableOpacity>
       </View>
@@ -169,7 +173,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
-  title: {marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 20},
+  title: { marginTop: 29.96, fontSize: 24, fontWeight: 600, marginBottom: 20 },
   footer: {
     marginTop: 'auto',
     gap: 12,
