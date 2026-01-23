@@ -78,13 +78,22 @@ export default function MypageMenu({ appVersion = '1.0.0' }) {
 
   const handleWithdraw = async () => {
     try {
-      await postWithdraw();
-    } finally {
+      const res = await postWithdraw(); // 실패면 throw로 catch로 감
+
       await AsyncStorage.removeItem('jwtToken');
       navigation.reset({
         index: 0,
         routes: [{ name: 'login' }],
       });
+
+      return res;
+    } catch (e) {
+      console.log(
+        '[WITHDRAW_UI] error:',
+        e?.response?.status,
+        e?.response?.data || e?.message || e,
+      );
+      Alert.alert('탈퇴 실패', '잠시 후 다시 시도해주세요.');
     }
   };
 

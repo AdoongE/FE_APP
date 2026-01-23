@@ -19,24 +19,41 @@ const getDetailNotice = async (id) => {
 
 const getFaq = async ({ page, take } = {}) => {
   try {
+    console.log('[FAQ] start', { page, take });
     const api = await axiosInstance();
-    const res = await api.get('/api/v1/faq', {
-      params: { page, take },
-    });
+    console.log('[FAQ] got api:', !!api, 'get:', typeof api?.get);
 
-    const faqList = res.data?.results ?? [];
-    console.log('[FAQ] results:', faqList);
-    return faqList;
+    const res = await api.get('/api/v1/faq', { params: { page, take } });
+    console.log('[FAQ] status:', res?.status);
+
+    return res.data?.results ?? [];
   } catch (error) {
+    console.log(
+      '[FAQ] error:',
+      error?.response?.status,
+      error?.response?.data || error?.message || String(error),
+    );
     throw error;
   }
 };
 
 const postWithdraw = async () => {
   try {
-    await axiosInstance.delete(`/api/v1/member`);
+    console.log('[WITHDRAW] start');
+    const api = await axiosInstance();
+    console.log('[WITHDRAW] got api:', !!api, 'delete:', typeof api?.delete);
+
+    const res = await api.delete('/api/v1/member');
+    console.log('[WITHDRAW] status:', res?.status);
+
+    return res.data;
   } catch (error) {
-    console.error('사용자 개인 정보 삭제 error:', error);
+    console.log(
+      '[WITHDRAW] error:',
+      error?.response?.status,
+      error?.response?.data || error?.message || String(error),
+    );
+    throw error;
   }
 };
 
