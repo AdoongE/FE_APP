@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,50 +25,48 @@ export default function App() {
     setTags,
     setSummary,
   } = useContext(MyContext);
-  const [showWarning, setShowWarning] = useState(false); // 경고 메시지 표시 여부
+
+  const [showWarning, setShowWarning] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const navigation = useNavigation();
 
   const handleNext = async () => {
+    if (submitting) return;
+
     if (selectedImages.length === 0) {
       setShowWarning(true);
       return;
     }
 
     setShowWarning(false);
+    setSubmitting(true);
 
     try {
-      const axios = await axiosInstance();
+      const api = await axiosInstance();
       const finalRepresentativeIndex =
         thumbnailIndex !== null ? thumbnailIndex : 0;
       const imageUri = selectedImages[finalRepresentativeIndex];
 
-      const formData = new FormData();
       const response = await fetch(imageUri);
       const blob = await response.blob();
-      const fileName = imageUri.split('/').pop();
+      const fileName = imageUri.split('/').pop() || `image_${Date.now()}`;
 
+      const formData = new FormData();
       formData.append('file', {
         uri: imageUri,
         name: fileName,
-        type: blob.type,
+        type: blob.type || 'image/jpeg',
       });
 
-      const apiResponse = await axios.post(
+      const apiResponse = await api.post(
         '/api/v1/simplification/image',
         formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
+        { headers: { 'Content-Type': 'multipart/form-data' } },
       );
 
-      console.log('API 응답 성공:', apiResponse.data);
-
-      const simplifiedData = apiResponse.data.results[0];
-
+      const simplifiedData = apiResponse?.data?.results?.[0] || {};
       const tagsString = simplifiedData.tags || '';
-      const tagsArray = tagsString.split(/,\s*/);
+      const tagsArray = tagsString ? tagsString.split(/,\s*/) : [];
 
       setTitle(simplifiedData.title || '');
       setSummary(simplifiedData.summary || '');
@@ -75,72 +74,31 @@ export default function App() {
 
       navigation.navigate('addCategory');
     } catch (error) {
-      console.error('API 요청 오류:', error.response?.data || error.message);
+      console.error('API 요청 오류:', error?.response?.data || error?.message);
       alert('이미지 업로드 중 문제가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setSubmitting(false);
     }
   };
+
   const handleBackToMain = () => {
     navigation.navigate('home');
   };
 
-  const pickImage = async () => {
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        const imageUri = result.assets[0].uri;
-
-        // 파일 유효성 검사
-        const validation = await isValidFile(imageUri);
-        if (!validation.isValid) {
-          alert(validation.message);
-          return; // 유효하지 않은 파일인 경우 중단
-        }
-
-        setSelectedImages([...selectedImages, imageUri]);
-        setShowWarning(false); // 이미지 업로드 시 경고 제거
-      }
-    } catch (error) {
-      console.error('Image picking failed:', error);
-    }
-  };
-
-  const removeImage = (index) => {
-    const updatedImages = selectedImages.filter((_, i) => i !== index);
-    setSelectedImages(updatedImages);
-
-    // 대표 이미지가 삭제된 경우 첫 번째 이미지로 자동 설정
-    if (thumbnailIndex === index) {
-      setThumbnailIndex(0);
-    } else if (thumbnailIndex > index) {
-      setThumbnailIndex(thumbnailIndex - 1);
-    }
-  };
-
-  const setThumbnailImage = (index) => {
-    setThumbnailIndex(index);
-  };
-
   const isValidFile = async (uri, maxSizeMB = 10) => {
-    const validExtensions = ['jpg', 'jpeg', 'png', 'svg']; // 허용된 확장자
-    const fileExtension = uri.split('.').pop().toLowerCase(); // 확장자 추출
+    const validExtensions = ['jpg', 'jpeg', 'png', 'svg'];
+    const fileExtension = uri.split('.').pop()?.toLowerCase();
 
-    if (!validExtensions.includes(fileExtension)) {
+    if (!fileExtension || !validExtensions.includes(fileExtension)) {
       return {
         isValid: false,
-        message: `허용되지 않는 확장자입니다: .${fileExtension}`,
+        message: `허용되지 않는 확장자입니다: .${fileExtension || ''}`,
       };
     }
 
-    // fetch로 파일의 크기를 가져옵니다.
     const response = await fetch(uri);
     const fileBlob = await response.blob();
-    const fileSizeMB = fileBlob.size / (1024 * 1024); // MB로 변환
+    const fileSizeMB = fileBlob.size / (1024 * 1024);
 
     if (fileSizeMB > maxSizeMB) {
       return {
@@ -154,9 +112,54 @@ export default function App() {
     return { isValid: true, message: '유효한 파일입니다.' };
   };
 
+  const pickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        const imageUri = result.assets[0].uri;
+        const validation = await isValidFile(imageUri);
+
+        if (!validation.isValid) {
+          alert(validation.message);
+          return;
+        }
+
+        setSelectedImages([...selectedImages, imageUri]);
+        setShowWarning(false);
+      }
+    } catch (error) {
+      console.error('Image picking failed:', error);
+    }
+  };
+
+  const removeImage = (index) => {
+    const updatedImages = selectedImages.filter((_, i) => i !== index);
+    setSelectedImages(updatedImages);
+
+    if (thumbnailIndex === index) {
+      setThumbnailIndex(0);
+    } else if (thumbnailIndex > index) {
+      setThumbnailIndex(thumbnailIndex - 1);
+    }
+  };
+
+  const setThumbnailImage = (index) => {
+    setThumbnailIndex(index);
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={handleBackToMain}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={handleBackToMain}
+        disabled={submitting}
+      >
         <Ionicons name="chevron-back" size={24} color="black" />
       </TouchableOpacity>
 
@@ -167,13 +170,10 @@ export default function App() {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View>
-          {/* 업로드 버튼 */}
           <TouchableOpacity
-            style={[
-              styles.uploadBox,
-              showWarning && styles.uploadBoxWarning, // 경고 상태 시 빨간색 테두리
-            ]}
+            style={[styles.uploadBox, showWarning && styles.uploadBoxWarning]}
             onPress={pickImage}
+            disabled={submitting}
           >
             <Ionicons
               name="cloud-upload-outline"
@@ -181,10 +181,9 @@ export default function App() {
               color="#41C3AB"
               style={styles.uploadIcon}
             />
-            <Text style={[styles.uploadText]}>이미지 업로드</Text>
+            <Text style={styles.uploadText}>이미지 업로드</Text>
           </TouchableOpacity>
 
-          {/* 경고 메시지 */}
           {showWarning && (
             <Text style={styles.warningText}>
               이미지를 1개 이상{'\n'}업로드하세요
@@ -192,7 +191,6 @@ export default function App() {
           )}
         </View>
 
-        {/* 업로드된 이미지 */}
         {selectedImages.map((image, index) => (
           <View
             key={index}
@@ -204,11 +202,15 @@ export default function App() {
             <TouchableOpacity
               style={styles.removeButton}
               onPress={() => removeImage(index)}
+              disabled={submitting}
             >
               <Ionicons name="close" size={16} color="black" />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setThumbnailImage(index)}>
+            <TouchableOpacity
+              onPress={() => setThumbnailImage(index)}
+              disabled={submitting}
+            >
               <Image source={{ uri: image }} style={styles.image} />
               {thumbnailIndex === index && (
                 <View style={styles.thumbnailLabel}>
@@ -220,7 +222,6 @@ export default function App() {
         ))}
       </ScrollView>
 
-      {/* TIP 섹션 */}
       {selectedImages.length === 0 && (
         <>
           <Image
@@ -240,11 +241,16 @@ export default function App() {
 
       <Button
         mode="contained"
-        style={styles.nextButton}
-        labelStyle={styles.nextButtonText}
+        style={[styles.nextButton, submitting && { opacity: 0.8 }]}
+        contentStyle={{ height: 48 }}
         onPress={handleNext}
+        disabled={submitting}
       >
-        다음
+        {submitting ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text style={styles.nextButtonText}>다음</Text>
+        )}
       </Button>
     </View>
   );
@@ -290,7 +296,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   uploadBoxWarning: {
-    borderColor: '#FF0000', // 경고 상태 테두리 빨간색
+    borderColor: '#FF0000',
   },
   uploadIcon: {
     marginBottom: 5,
@@ -371,8 +377,8 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#41C3AB',
     borderRadius: 10,
-    padding: 10,
     alignSelf: 'center',
+    justifyContent: 'center',
   },
   nextButtonText: {
     fontSize: 16,

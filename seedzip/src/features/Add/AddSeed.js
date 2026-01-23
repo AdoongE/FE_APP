@@ -68,7 +68,8 @@ const AddSeedPage = () => {
 
   const handleConfirm = (selectedDate) => {
     const formattedDate = selectedDate.toISOString().split('T')[0];
-    setContentInfo({ ...contentInfo, dday: formattedDate });
+    setDate(selectedDate);
+    setContentInfo((prev) => ({ ...prev, dDay: formattedDate }));
     setOpen(false);
   };
 
