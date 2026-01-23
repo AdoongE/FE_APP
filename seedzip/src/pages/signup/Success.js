@@ -4,7 +4,7 @@ import Check from '../../assets/icons/check.png';
 
 const Success = ({ navigation }) => {
   const goHome = () => {
-    navigation.replace('home');
+    navigation.replace('login');
   };
 
   return (
