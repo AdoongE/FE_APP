@@ -47,7 +47,7 @@ export default function LoginScreen() {
   };
 
   const onSignup = () => {
-    navigation.navigate('nickname');
+    navigation.navigate('email');
   };
 
   return (
