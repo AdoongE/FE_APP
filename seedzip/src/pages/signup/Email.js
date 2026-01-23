@@ -16,7 +16,6 @@ const Email = ({ navigation }) => {
   const [touched, setTouched] = useState({ email: false, password: false });
 
   const emailRegex = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/, []);
-
   const passwordRegex = useMemo(
     () => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/,
     [],
@@ -49,7 +48,12 @@ const Email = ({ navigation }) => {
   };
 
   const onPressNext = () => {
-    navigation.navigate('nickname', { email: email.trim(), password });
+    const payload = { email: email.trim(), password };
+    console.log('[EMAIL] send:', {
+      email: payload.email,
+      password: payload.password ? '(exists)' : payload.password,
+    });
+    navigation.navigate('nickname', payload);
   };
 
   return (

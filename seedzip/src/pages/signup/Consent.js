@@ -1,6 +1,6 @@
 import { View, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
 import { Pressable, Linking } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Checkbox from 'expo-checkbox';
 import ProgressBar from '../../components/signup/ProgressBar';
 import { postSignup } from '../../api/AuthApi';
